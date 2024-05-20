@@ -16,11 +16,13 @@ form {
     padding: 20px;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    height: 100px;
-    width: 100px;
+    height: 200px;
+    width: 300px;
+    padding-left: 5%;
+    padding-right: 10%;
 }
 
-input[type="text"], input[type="email"], select, textarea {
+input[type="text"], input[type="password"], select, textarea {
     width: 100%;
     padding: 10px;
     margin: 10px 0;
@@ -39,7 +41,7 @@ input[type="submit"] {
     font-size: 16px;
     margin: 10px 0;
     cursor: pointer;
-    border-radius: 5px;
+    
 }
 
 input[type="submit"]:hover {

@@ -7,14 +7,18 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
+  <nav class="navbar" ><img src="./static/img/custom-logo.png" /><h1>CARDIOIB</h1></nav>
   <div class="container">
-    <h1>Digite sus credenciales</h1>
+    
     <form action="/submit" method="post">
+      <img class="image-form" src="./static/img/custom-logo.png" /><br>
+        <h1>Iniciar Sesión</h1>
         <label for="name">Usuario</label><br>
-        <input type="text" id="name" name="name" required><br><br>
-        
+        <br>
+        <input type="text" placeholder="Nombre de usuario" id="username"><br><br>
+        <br>
         <label for="Clave">Clave</label><br>
-        <input type="password" id="pasword" name="pasword" required><br><br>
+        <input type="password" placeholder="Contraseña" id="password"><br><br>
         
         <input type="submit" value="Enviar">
     </form>

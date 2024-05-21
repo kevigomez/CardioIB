@@ -6,32 +6,64 @@ body {
     margin: 0;
     padding: 0;
 }
-
-h1 {
-    color: #333;
+img{
+    width: 183px;
+    height: 45px;
+    
 }
 
+.image-form{
+    display: block;
+    margin: 0 auto;
+    margin-left: 27%;
+}
+h1{
+    text-align: center;
+    color: #53577F;
+}
+
+.navbar {
+    background-color: #e7e7e7;
+    height: 50px; 
+    width: 100%;
+    margin: 0;
+    top: 0;
+    left: 0;
+    color: #53577F;
+    border-top: #53577f5b 0.1px solid;
+    border-bottom: #53577f5b 0.1px solid;
+}
 form {
+    
     background-color: #fff;
     padding: 20px;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    height: 200px;
-    width: 300px;
+    height: 450px;
+    width: 400px;
     padding-left: 5%;
-    padding-right: 10%;
+    padding-right: 5%;
+    padding-bottom: 5%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #53577F;
 }
 
 input[type="text"], input[type="password"], select, textarea {
-    width: 100%;
+    width: 94%;
     padding: 10px;
-    margin: 10px 0;
     border: 1px solid #ccc;
-    border-radius: 5px;
+    border-radius: 2px;
+    display: flex;
+    align-content: center;
+    margin-top: 3%;
+    height: 5%;
 }
 
 input[type="submit"] {
-    background-color: #4CAF50;
+    background-color: #53577F;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -41,9 +73,16 @@ input[type="submit"] {
     font-size: 16px;
     margin: 10px 0;
     cursor: pointer;
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    top: 85%;
+    width: 73%;
     
 }
 
 input[type="submit"]:hover {
-    background-color: #45a049;
+    background-color: #616380;
+    transition-duration: 0.2s;
+    
 }

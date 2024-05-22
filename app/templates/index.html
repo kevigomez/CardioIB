@@ -7,12 +7,12 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
-  <nav class="navbar" ><img src="./static/img/custom-logo.png" /><h1>CARDIOIB</h1></nav>
+  <nav class="navbar" ><img src="{{ url_for('static', filename='img/custom-logo.png') }}"/><h1>CARDIOIB</h1></nav>
   <div class="container">
     
-    <form action="/submit" method="post">
-      <img class="image-form" src="./static/img/custom-logo.png" /><br>
-        <h1>Iniciar Sesión</h1>
+        <form action="{{ url_for('main.index') }}" method="POST">
+          <img class="image-form" src="{{ url_for('static', filename='img/custom-logo.png') }}" alt="Logo"><br>
+          <h1>Iniciar Sesión</h1>
         <label for="name">Usuario</label><br>
         <br>
         <input type="text" placeholder="Nombre de usuario" id="username"><br><br>
@@ -20,8 +20,15 @@
         <label for="Clave">Clave</label><br>
         <input type="password" placeholder="Contraseña" id="password"><br><br>
         
-        <input type="submit" value="Enviar">
+        <input type="submit"  value="Enviar"> 
     </form>
   </div>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="flash-{{ category }}">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
 </body>
 </html>

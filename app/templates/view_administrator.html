@@ -1,12 +1,37 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin</title>
+    <title>Administrador</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/stylesadm.css') }}">
+    <script src="https://kit.fontawesome.com/6131ecdde6.js" crossorigin="anonymous"></script>
 </head>
 <body>
-    <h1>hi Admin</h1>
+  <header class="main-header">
+    <label for="btn-nav" class="btn-nav"><div class="menuBarra">
+      <span class="fila1"></span>
+      <span class="fila2"></span>
+      <span class="fila3"></span>
+  </div></i></label>
+    <input type="checkbox" id="btn-nav">
     
+    <nav>
+      <ul class="navigation">
+        <li><img src="{{ url_for('static', filename='img/custom-logo.png') }}"/></li>
+        <li><a href=""><i class="fa-solid fa-table"></i>Table</a></li>
+        <li><a href=""><i class="fa-solid fa-user"></i>Mi cuenta</a></li>
+        <li><a href=""><i class="fa-solid fa-clipboard"></i>Planificacion</a></li>
+        <li><a href=""><i class="fa-solid fa-list-check"></i>Gestion de la aplicaion</a></li>
+        <li><a href=""><i class="fa-solid fa-clipboard"></i>Informes</a></li>
+      </ul>
+    </nav>
+    
+  </header>|
+  <div class="container">
+    <h1>Bienvenid@ al Panel de Administración</h1>
+    
+  </div>
+  <script src="{{ url_for('static', filename='script/script.js') }}" ></script>
 </body>
 </html>

@@ -9,29 +9,72 @@
 </head>
 <body>
   <header class="main-header">
-    <label for="btn-nav" class="btn-nav"><div class="menuBarra">
-      <span class="fila1"></span>
-      <span class="fila2"></span>
-      <span class="fila3"></span>
-  </div></i></label>
+    <label for="btn-nav" class="btn-nav">
+      <div class="menuBarra">
+        <li class="brder_decr"><img class ="img-nav" src="{{ url_for('static', filename='img/custom-logo.png') }}"/></li>
+      </div>
+    </label>
     <input type="checkbox" id="btn-nav">
     
     <nav>
       <ul class="navigation">
-        <li><img src="{{ url_for('static', filename='img/custom-logo.png') }}"/></li>
-        <li><a href=""><i class="fa-solid fa-table"></i>Table</a></li>
-        <li><a href=""><i class="fa-solid fa-user"></i>Mi cuenta</a></li>
-        <li><a href=""><i class="fa-solid fa-clipboard"></i>Planificacion</a></li>
-        <li><a href=""><i class="fa-solid fa-list-check"></i>Gestion de la aplicaion</a></li>
-        <li><a href=""><i class="fa-solid fa-clipboard"></i>Informes</a></li>
+        
+        <li class="brder_decr"><a href=""><i class="fa-solid fa-table"></i> Table</a></li>
+        <li class="brder_decr"><a href=""><i class="fa-solid fa-user"></i> Mi cuenta</a>
+          <ul class="submenu">
+            <li>Perfil</li>
+            <li>Cambiar contraseña</li>
+            <li>Preferencias de notificación</li>
+            <li>Invitaciones pendientes</li>
+          </ul>
+        </li>
+        <li class="brder_decr"><a href=""><i class="fa-regular fa-clipboard"></i> Planificación</a>
+          <ul class="submenu">
+            <li>Citas</li>
+            <li>Mi Calendario</li>
+            <li>Calendario de recursos</li>
+            <li>Buscar Citas</li>
+          </ul>
+        </li>
+        <li class="brder_decr"><a href=""><i class="fa-solid fa-list-check"></i> Gestión de la aplicación</a>
+          <div class="brder_decr_2">
+            <ul class="submenu">
+            <li>Gestionar Citas</li>
+            <li>Agenda de no disponibilidad</li>
+            <li>Cuotas</li>
+          </ul>
+          <ul class="submenu">
+            <li>Planificaciones</li>
+            <li>Recursos</li>
+            <li>Accesorios</li>
+          </ul>
+          <ul class="submenu">
+            <li>Usuarios</li>
+            <li>Grupos</li>
+            <li>Anuncios</li>
+          </ul>
+          <ul class="submenu" >
+            <li>Personalizar atributos</li>
+            <li>Enviar resultados</li>
+          </ul>
+        </li>
+      </div>
+        <li class="brder_decr"><a href=""><i class="fa-solid fa-clipboard"></i> Informes</a>
+          <ul class="submenu">
+            <li>Nuevo Informe</li>
+            <li>Informes Guardados</li>
+            <li>Reportes por fechas</li>
+          </ul>
+        </li>
       </ul>
+      <div class="logout" >
+      <a class="deslogueo" href="{{ url_for('main.logout') }}"><i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión</a>
+    </div>
     </nav>
-    
-  </header>|
+  </header>
   <div class="container">
     <h1>Bienvenid@ al Panel de Administración</h1>
-    
   </div>
-  <script src="{{ url_for('static', filename='script/script.js') }}" ></script>
+  <script src="{{ url_for('static', filename='script/script.js') }}"></script>
 </body>
 </html>

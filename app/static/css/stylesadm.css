@@ -8,20 +8,10 @@ h1 {
     text-align: center;
     color: #53577F;
 }
-
-.navbar {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    background-color: #e7e7e7;
-    height: 50px; 
-    width: 100%;
-    margin: 0;
-    top: 0;
-    left: 0;
-    color: #53577F;
-    border-top: #53577f5b 0.1px solid;
-    border-bottom: #53577f5b 0.1px solid;
+.img-nav{
+  top: 2%;
 }
+
 
 :root{
     --main-color:#fff;
@@ -39,20 +29,19 @@ h1 {
     position: absolute;
     left:0;
     top:0;
-    width: 200px;
+    width: 270px;
+    height: 100%;
     top:50px;
     height:calc(100vh - 50px);
     background:#53577F;
-    transform:translateX(-100%);
-    transition:.4s ease;
   }
   
-  .navigation li{
+  .brder_decr{
     list-style:none;
     width: 100%;
     border-bottom: 1px solid rgba(255,255,255,.5);
+    left: -10%;
   }
-  
   .navigation a{
     color:var(--main-color);
     display: block;
@@ -79,8 +68,8 @@ h1 {
     align-items: center;
     font-size:30px;
     position: absolute;
-    left:10px;
-    top:20px;
+    left: 1px;
+    top: 10px;
     cursor:pointer;
     padding:6.5px 15px;
     transition:.2s ease;
@@ -113,4 +102,43 @@ h1 {
 .fila2Animacion{
     opacity: 0;
     margin-left: -35px;
+}
+.submenu {
+  display: none;
+  top: 100%;
+  left: 0;
+  background-color: #e7e7e7;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  width: 228px;
+  border: 1px solid #ccc;
+}
+
+.submenu > li {
+  padding: 9px;
+  cursor: pointer;
+}
+
+.submenu > li:hover {
+  background-color: #d0d0d0;
+  width: 210px;
+}
+
+.navigation > li:hover .submenu {
+  display: block;
+}
+.logout{
+  display: flex;
+  justify-content: flex-end;
+}
+
+.brder_decr_2{
+ display: grid;
+ grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+}
+.deslogueo{
+  color:#fff;
+  text-decoration: none;
+  text-align:center ;
 }

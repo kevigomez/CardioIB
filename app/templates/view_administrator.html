@@ -19,8 +19,8 @@
     <nav>
       <ul class="navigation">
         
-        <li class="brder_decr"><a href=""><i class="fa-solid fa-table"></i> Table</a></li>
-        <li class="brder_decr"><a href=""><i class="fa-solid fa-user"></i> Mi cuenta</a>
+        <li class="brder_decr"><a class="nav_A" href=""><i class="fa-solid fa-table"></i> Table</a></li>
+        <li class="brder_decr"><a class="nav_A" href=""><i class="fa-solid fa-user"></i> Mi cuenta</a>
           <ul class="submenu">
             <li>Perfil</li>
             <li>Cambiar contraseña</li>
@@ -28,7 +28,7 @@
             <li>Invitaciones pendientes</li>
           </ul>
         </li>
-        <li class="brder_decr"><a href=""><i class="fa-regular fa-clipboard"></i> Planificación</a>
+        <li class="brder_decr"><a class="nav_A" href=""><i class="fa-regular fa-clipboard"></i> Planificación</a>
           <ul class="submenu">
             <li>Citas</li>
             <li>Mi Calendario</li>
@@ -36,7 +36,7 @@
             <li>Buscar Citas</li>
           </ul>
         </li>
-        <li class="brder_decr"><a href=""><i class="fa-solid fa-list-check"></i> Gestión de la aplicación</a>
+        <li class="brder_decr"><a class="nav_A" href=""><i class="fa-solid fa-list-check"></i> Gestión de la aplicación</a>
           <div class="brder_decr_2">
             <ul class="submenu">
             <li>Gestionar Citas</li>
@@ -49,7 +49,7 @@
             <li>Accesorios</li>
           </ul>
           <ul class="submenu">
-            <li>Usuarios</li>
+            <li><a class="li" href="{{ url_for('main.usuarios') }}">Usuarios</a></li>
             <li>Grupos</li>
             <li>Anuncios</li>
           </ul>
@@ -59,7 +59,7 @@
           </ul>
         </li>
       </div>
-        <li class="brder_decr"><a href=""><i class="fa-solid fa-clipboard"></i> Informes</a>
+        <li class="brder_decr"><a class="nav_A" href=""><i class="fa-solid fa-clipboard"></i> Informes</a>
           <ul class="submenu">
             <li>Nuevo Informe</li>
             <li>Informes Guardados</li>

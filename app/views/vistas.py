@@ -19,3 +19,8 @@ def logout():
 @main.route('/dashboard')
 def dashboard():
     return render_template('view_administrator.html')
+
+
+@main.route('/usuarios')
+def usuarios():
+    return render_template('form_registrousuarios.html')

@@ -1,0 +1,94 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+.calendar-container, .interval-selection, .hour-bar, .form-container {
+    max-width: 600px;
+    margin: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+#calendar {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#calendar div {
+    width: 14.28%;
+    border: 1px solid #ddd;
+    box-sizing: border-box;
+    text-align: center;
+    padding: 10px;
+    cursor: pointer;
+}
+
+#calendar div:hover {
+    background-color: #f0f0f0;
+}
+
+#hour-bar {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+#hour-bar div {
+    width: 14.28%;
+    border: 1px solid #ddd;
+    box-sizing: border-box;
+    text-align: center;
+    padding: 10px;
+    cursor: pointer;
+}
+
+#hour-bar div.selected {
+    background-color: #4CAF50;
+    color: white;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+/* Estilos previamente definidos */
+
+#hours {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+#hours div {
+    width: calc(100% / 24);
+    border: 1px solid #ddd;
+    box-sizing: border-box;
+    text-align: center;
+    padding: 10px;
+    cursor: pointer;
+}
+
+#hours div:hover {
+    background-color: #f0f0f0;
+}

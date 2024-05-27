@@ -24,3 +24,7 @@ def dashboard():
 @main.route('/usuarios')
 def usuarios():
     return render_template('form_registrousuarios.html')
+
+@main.route('/citas')
+def citas():
+    return render_template('calendariocitas.html')

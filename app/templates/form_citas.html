@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Registro de Citas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .form-container {
+            max-width: 600px;
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <h2>Formulario de Registro de Citas</h2>
+    <form>
+        <a href="#">ver disponibilidad</a>
+        <table>
+            <tr>
+                <th colspan="2">Detalles de la Cita</th>
+            </tr>
+            <tr>
+                <td>Fecha de inicio</td>
+                <td><input type="datetime-local" name="inicio" step="600" required></td>
+            </tr>
+            <tr>
+                <td>Fecha de fin</td>
+                <td><input type="datetime-local" name="fin" step="600" required></td>
+            </tr>
+                <tr>
+                    <td>Repetir</td>
+                    <td>
+                        <select name="repetir" required>
+                            <option value="no">No se repite</option>
+                           <option value="diario">Diario</option>
+                            <option value="semanal">Semanal</option>
+                            <option value="mensual">Mensual</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Recursos</td>
+                    <td>
+                        <select name="recursos" required>
+                            <option value="MESA BASCULANTE B">MESA BASCULANTE B</option>
+                            <option value="Otro">Otro</option>
+    
+                        </select>
+                        
+                    </td>
+                </tr>
+                <td>Título de la cita</td>
+                <td><input type="text" name="titulo" required></td>
+            </tr>
+            <tr>
+                <td>Descripción de la cita</td>
+  
+                <td><input type="text" name="descripcion" required></td>
+            </tr>
+            <tr>
+                <th colspan="2">Información del Paciente</th>
+            </tr>
+            <tr>
+                <td>Nombre o correo electrónico o Rut(CC)</td>
+                <td><input type="text" name="paciente" required></td>
+            </tr>
+            <tr>
+                <td>Edad del paciente</td>
+                <td><input type="number" name="edad" required></td>
+            </tr>
+            <tr>
+                <td>Estado de la cita</td>
+                <td>
+                    <select name="estado" required>
+                        <option value="pendiente">Pendiente</option>
+                        <option value="confirmada">Confirmada</option>
+                        <option value="cancelada">Cancelada</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Número de autorización</td>
+                <td><input type="text" name="autorizacion" required></td>
+            </tr>
+            <tr>
+                <td>El paciente requiere prioridad de atención</td>
+                <td>
+                    <select name="prioridad" required>
+                        <option value="no">No</option>
+                        <option value="si">Sí</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Registro en la llamada</td>
+                <td>
+                    <select name="registro_llamada" required>
+                        <option value="N">N</option>
+                        <option value="S">S</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>¿Cuál?</td>
+                <td><input type="text" name="cual" required></td>
+            </tr>
+            <tr>
+                <td colspan="2" style="text-align: center;">
+                    <button type="submit">Registrar Cita</button>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+</body>
+</html>

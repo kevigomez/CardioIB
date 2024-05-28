@@ -9,12 +9,30 @@
     <script src="{{ url_for('static', filename='script/script.js') }}" defer></script>
 </head>
 <body>
+    {% extends "base.html" %}
+    {% block content %}
+    <div  class="Info_cita">
+        <select >
+                    <option value="1">Cardiologia A</option>
+                    <option value="2">Cardiologia B</option>
+                    <option value="3" selected="selected">Cardiologia C</option>
+                    <option value="4">ECOCARDIOGRAMA TRANSTORACICO C</option>
+                    <option value="5">ECOCARDIOGRAMAS TRANSESOFAGICOS SIN Y CON CONTRASTE</option>
+                    <option value="6">ECOCARDIOGRAMAS TRANSTORACICOS</option>
+                    <option value="7">ELECTROCARDIOGRAMAS B</option>
+                    <option value="8">HOLTER ELECTROCARDIOGRAFO EKG</option>
+                    <option value="9">MESA BASCULANTE</option>
+                    <option value="10">MESA BASCULANTE B</option>
+                    <option value="11">MONITOREO PRESIÓN ARTERIAL</option>
+                    <option value="12">PRUEBAS DE ESFUERZO</option>
+        </select>
 
-<div class="calendar-container">
-    <h2>Selecciona un día</h2>
-    <div id="calendar"></div>
-</div>
-
+    </div>
+    <div class="calendar-container" style="display: none;">
+        <h2>Selecciona un día</h2>
+        <div id="calendar"></div>
+    </div>
+    
 <div class="interval-selection" style="display:none;">
     <h2>Selecciona un intervalo de tiempo</h2>
     <select id="time-slot" name="time-slot">
@@ -30,7 +48,7 @@
     <button id="select-interval">Seleccionar</button>
 </div>
 
-<div class="hour-selection" style="display:none;">
+<div class="hour-selection" style="display: none;">
     <h2>Selecciona una hora</h2>
     <table>
         <tr>
@@ -65,103 +83,82 @@
 
 <div class="form-container" style="display:none;">
     <h2>Formulario de Registro de Citas</h2>
-    <form id="appointment-form">
-        <table>
-            <tr>
-                <th colspan="2">Detalles de la Cita</th>
-            </tr>
-            <tr>
-                <td>Título de la cita</td>
-                <td><input type="text" name="titulo" required></td>
-            </tr>
-            <tr>
-                <td>Descripción de la cita</td>
-                <td><input type="text" name="descripcion" required></td>
-            </tr>
-            <tr>
-                <td>Fecha de inicio</td>
-                <td><input type="date" id="inicio-fecha" name="inicio" required> <input type="time" id="inicio-hora" name="inicio" required></td>
-            </tr>
-            <tr>
-                <td>Fecha de fin</td>
-                <td><input type="date" id="fin-fecha" name="fin" required> <input type="time" id="fin-hora" name="fin" required></td>
-            </tr>
-            <tr>
-                <td>Repetir</td>
-                <td>
-                    <select name="repetir" required>
-                        <option value="no">No se repite</option>
-                        <option value="diario">Diario</option>
-                        <option value="semanal">Semanal</option>
-                        <option value="mensual">Mensual</option>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td>Recursos</td>
-                <td>
+    <form >
+        <div id="appointment-form" >
+            <div>
+            <h3> Detalles de la Cita </h3>
+        
+            
+            <label>Título de la cita</label><br><br>
+            <input type="text" name="titulo" required><br>
+        
+            
+            <label>Descripción de la cita</label><br><br>
+            <input type="text" name="descripcion" required><br>
+        
+            
+            <label>Fecha de inicio</label><br><br>
+            <input type="date" id="inicio-fecha" name="inicio" required> <input type="time" id="inicio-hora" name="inicio" required><br>
+        
+            
+            <label>Fecha de fin</label><br><br>
+            <input type="date" id="fin-fecha" name="fin" required> <input type="time" id="fin-hora" name="fin" required><br>
+        
+            
+            <label>Repetir</label><br><br>
+                <select name="repetir" required>
+                    <option value="no">No se repite</option>
+                    <option value="diario">Diario</option>
+                    <option value="semanal">Semanal</option>
+                    <option value="mensual">Mensual</option>
+                </select><br>
+                
+        
+            
+            <label>Recursos</label><br><br>
                     <select name="recursos" required>
                         <option value="MESA BASCULANTE B">MESA BASCULANTE B</option>
                         <option value="Otro">Otro</option>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <th colspan="2">Información del Paciente</th>
-            </tr>
-            <tr>
-                <td>Nombre o correo electrónico o Rut(CC)</td>
-                <td><input type="text" name="paciente" required></td>
-            </tr>
-            <tr>
-                <td>Edad del paciente</td>
-                <td><input type="number" name="edad" required></td>
-            </tr>
-            <tr>
-                <td>Estado de la cita</td>
-                <td>
+                    </select><br>
+                </div>
+                    <div>
+                <h3>Información del Paciente</h3>
+                <label>Nombre o correo electrónico o Rut(CC)</label><br><br>
+            <input type="text" name="paciente" required><br>
+            
+            <label> Edad del paciente</label><br><br>
+            <input type="number" name="edad" required><br>
+            
+            <label> Estado de la cita</label><br><br>
                     <select name="estado" required>
                         <option value="pendiente">Pendiente</option>
                         <option value="confirmada">Confirmada</option>
                         <option value="cancelada">Cancelada</option>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td>Número de autorización</td>
-                <td><input type="text" name="autorizacion" required></td>
-            </tr>
-            <tr>
-                <td>El paciente requiere prioridad de atención</td>
-                <td>
+                    </select><br>
+                
+            
+            <label>Número de autorización</label><br><br>
+            <input type="text" name="autorizacion" required><br>
+
+            <label>El paciente requiere prioridad de atención</label><br><br>
                     <select name="prioridad" required>
                         <option value="no">No</option>
                         <option value="si">Sí</option>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td>Registro en la llamada</td>
-                <td>
-                    <select name="registro_llamada" required>
-                        <option value="N">N</option>
-                        <option value="S">S</option>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td>¿Cuál?</td>
-                <td><input type="text" name="cual" required></td>
-            </tr>
-            <tr>
-                <td colspan="2" style="text-align: center;">
-                    <button type="submit">Registrar Cita</button>
-                </td>
-            </tr>
-            <!-- Resto del formulario omitido por brevedad -->
-        </table>
+                    </select><br>
+                
+            
+            <label> Registro en la llamada</label><br><br>
+                <select name="registro_llamada" required>
+                    <option value="N">N</option>
+                    <option value="S">S</option>
+                </select><br>
+                
+            <label> ¿Cuál?</label><br><br>
+            <input type="text" name="cual" required><br>
+           </div>
+        </div>     
+           <input type="submit" value="Enviar" >
     </form>
-</div>
-
+{% endblock %}
 </body>
 </html>

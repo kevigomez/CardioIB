@@ -1,6 +1,7 @@
 body {
     font-family: Arial, sans-serif;
     margin: 20px;
+    color: #53577F;
 }
 
 .calendar-container, .interval-selection, .hour-bar, .form-container {
@@ -9,7 +10,6 @@ body {
 }
 
 table {
-    width: 100%;
     border-collapse: collapse;
 }
 
@@ -20,7 +20,8 @@ th, td {
 }
 
 th {
-    background-color: #f2f2f2;
+    background-color: #53577F;
+    color: #ffffff;
 }
 
 #calendar {
@@ -57,20 +58,21 @@ th {
 }
 
 #hour-bar div.selected {
-    background-color: #4CAF50;
+    background-color: #53577F;
     color: white;
 }
 
 button {
     padding: 10px 20px;
-    background-color: #4CAF50;
+    background-color: #53577F;
     color: white;
     border: none;
     cursor: pointer;
 }
 
 button:hover {
-    background-color: #45a049;
+    background-color: #5a5d77bd;
+    transition-duration: 0.2s;
 }
 /* Estilos previamente definidos */
 
@@ -92,3 +94,72 @@ button:hover {
 #hours div:hover {
     background-color: #f0f0f0;
 }
+.hour-selection{
+    margin-left: 20%;
+}
+.Info_cita {
+    display: flex;
+    justify-content: center;
+    align-items: center;   
+}
+#appointment-form{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+      
+}
+form {
+    background-color: #fff;
+    padding: 4px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    height: 620px;
+    width: 800px;
+    padding-left: 2%;
+    padding-right: 2%;
+    padding-bottom: 2%;
+    margin-top: 4%;
+    margin-left: 50px auto;
+    margin-right: 50px auto;
+    margin-bottom: 50px auto; /* Center the form vertically */
+    color: #53577F;
+}
+input[type="submit"] {
+    background-color: #53577F;
+    color: white;
+    border: none;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 15px 0; /* Adjusted for spacing */
+    cursor: pointer;
+    width: 100%; /* Same width as input fields */
+    top: 90%;
+}
+
+input[type="submit"]:hover {
+    background-color: #616380;
+    transition-duration: 0.2s;
+}
+input[type="text"], input[type="password"], input[type="number"], input[type="email"], textarea {
+    width: 95%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    display: flex;
+    align-content: center;
+    height: 5%;
+    color: #838383;
+}
+
+.titulo{
+    display: none;
+}
+    input[type="date"],input[type="time"]{
+        width: 45.5%;
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 2px;
+        height: 5%;
+        color: #838383;
+    }

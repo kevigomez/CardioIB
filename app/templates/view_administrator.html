@@ -11,7 +11,7 @@
   <header class="main-header">
     <label for="btn-nav" class="btn-nav">
       <div class="menuBarra">
-        <li class="brder_decr"><img class ="img-nav" src="{{ url_for('static', filename='img/custom-logo.png') }}"/></li>
+        <li class="brder_decr"><img class ="img-nav" src="{{ url_for('static', filename='img/custom-logo.png') }}" href="{{ url_for('main.dashboard') }}"/></li>
       </div>
     </label>
     <input type="checkbox" id="btn-nav">
@@ -28,15 +28,15 @@
             <li>Invitaciones pendientes</li>
           </ul>
         </li>
-        <li class="brder_decr"><a class="nav_A" href=""><i class="fa-regular fa-clipboard"></i> Planificación</a>
+        <li class="brder_decr"><a class="nav_A" href="{{ url_for('main.dashboard') }}"><i class="fa-regular fa-clipboard"></i> Planificación</a>
           <ul class="submenu">
             <li><a class="li" href="{{ url_for('main.citas') }}">Citas</a></li>
-            <li>Mi Calendario</li>
+            <li><a class="li" href="{{ url_for('main.calendario') }}">Mi Calendario</a></li>
             <li>Calendario de recursos</li>
             <li>Buscar Citas</li>
           </ul>
         </li>
-        <li class="brder_decr"><a class="nav_A" href=""><i class="fa-solid fa-list-check"></i> Gestión de la aplicación</a>
+        <li class="brder_decr"><a class="nav_A" href="{{ url_for('main.dashboard') }}"><i class="fa-solid fa-list-check"></i> Gestión de la aplicación</a>
           <div class="brder_decr_2">
             <ul class="submenu">
             <li>Gestionar Citas</li>
@@ -59,7 +59,7 @@
           </ul>
         </li>
       </div>
-        <li class="brder_decr"><a class="nav_A" href=""><i class="fa-solid fa-clipboard"></i> Informes</a>
+        <li class="brder_decr"><a class="nav_A" href="{{ url_for('main.dashboard') }}"><i class="fa-solid fa-clipboard"></i> Informes</a>
           <ul class="submenu">
             <li>Nuevo Informe</li>
             <li>Informes Guardados</li>

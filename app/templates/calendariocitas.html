@@ -29,8 +29,9 @@
 
     </div>
     <div class="calendar-container" style="display: none;">
-        <h2>Selecciona un día</h2>
+        <button id="prev-btn"><i class="fa-solid fa-arrow-left"></i></button>
         <div id="calendar"></div>
+        <button id="next-btn"><i class="fa-solid fa-arrow-right"></i></button>
     </div>
     
 <div class="interval-selection" style="display:none;">
@@ -106,7 +107,7 @@
         
             
             <label>Repetir</label><br><br>
-                <select name="repetir" required>
+                <select name="repetir" class="selecc" required>
                     <option value="no">No se repite</option>
                     <option value="diario">Diario</option>
                     <option value="semanal">Semanal</option>
@@ -116,7 +117,7 @@
         
             
             <label>Recursos</label><br><br>
-                    <select name="recursos" required>
+                    <select name="recursos" class="selecc" required>
                         <option value="MESA BASCULANTE B">MESA BASCULANTE B</option>
                         <option value="Otro">Otro</option>
                     </select><br>
@@ -124,31 +125,31 @@
                     <div>
                 <h3>Información del Paciente</h3>
                 <label>Nombre o correo electrónico o Rut(CC)</label><br><br>
-            <input type="text" name="paciente" required><br>
+            <input type="text" name="paciente" class="selecc" required><br>
             
             <label> Edad del paciente</label><br><br>
             <input type="number" name="edad" required><br>
             
             <label> Estado de la cita</label><br><br>
-                    <select name="estado" required>
+                    <select name="estado" class="selecc" required>
                         <option value="pendiente">Pendiente</option>
                         <option value="confirmada">Confirmada</option>
                         <option value="cancelada">Cancelada</option>
-                    </select><br>
+                    </select>
                 
             
             <label>Número de autorización</label><br><br>
-            <input type="text" name="autorizacion" required><br>
+            <input type="text" name="autorizacion" required>
 
             <label>El paciente requiere prioridad de atención</label><br><br>
-                    <select name="prioridad" required>
+                    <select name="prioridad" class="selecc" required>
                         <option value="no">No</option>
                         <option value="si">Sí</option>
                     </select><br>
                 
             
             <label> Registro en la llamada</label><br><br>
-                <select name="registro_llamada" required>
+                <select name="registro_llamada" class="selecc" required>
                     <option value="N">N</option>
                     <option value="S">S</option>
                 </select><br>

@@ -2,6 +2,8 @@ body {
     font-family: Arial, sans-serif;
     margin: 20px;
     color: #53577F;
+    margin-left: 20%;
+    
 }
 
 .calendar-container, .interval-selection, .hour-bar, .form-container {
@@ -22,24 +24,6 @@ th, td {
 th {
     background-color: #53577F;
     color: #ffffff;
-}
-
-#calendar {
-    display: flex;
-    flex-wrap: wrap;
-}
-
-#calendar div {
-    width: 14.28%;
-    border: 1px solid #ddd;
-    box-sizing: border-box;
-    text-align: center;
-    padding: 10px;
-    cursor: pointer;
-}
-
-#calendar div:hover {
-    background-color: #f0f0f0;
 }
 
 #hour-bar {
@@ -105,6 +89,7 @@ button:hover {
 #appointment-form{
     display: grid;
     grid-template-columns: 1fr 1fr;
+    margin-bottom: 15%;
       
 }
 form {
@@ -112,7 +97,7 @@ form {
     padding: 4px;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    height: 620px;
+    height: 750px;
     width: 800px;
     padding-left: 2%;
     padding-right: 2%;
@@ -127,14 +112,10 @@ input[type="submit"] {
     background-color: #53577F;
     color: white;
     border: none;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
+    height: 40px;
     font-size: 16px;
-    margin: 15px 0; /* Adjusted for spacing */
     cursor: pointer;
-    width: 100%; /* Same width as input fields */
-    top: 90%;
+    width:99%; /* Same width as input fields */
 }
 
 input[type="submit"]:hover {
@@ -163,3 +144,63 @@ input[type="text"], input[type="password"], input[type="number"], input[type="em
         height: 5%;
         color: #838383;
     }
+.selecc{
+    width: 98%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    display: flex;
+    align-content: center;
+    height: 7%;
+    color: #838383;
+}
+
+.calendar-container {
+    display: flex;
+    align-items: center;
+}
+
+#prev-btn, #next-btn {
+    margin: 0 10px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+#calendar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.month {
+    background: #fff;
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+
+.month-name {
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.weekdays, .days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    text-align: center;
+}
+
+.weekday {
+    font-weight: bold;
+}
+
+.day {
+    padding: 5px;
+    border: 1px solid #ddd;
+}
+
+.empty {
+    background: none;
+    border: none;
+}

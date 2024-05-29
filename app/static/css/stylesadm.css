@@ -31,7 +31,6 @@ h1 {
     left:0;
     top:0;
     width: 270px;
-    height: 10px;
     top:50px;
     height:calc(100vh - 50px);
     background:#53577F;
@@ -39,6 +38,7 @@ h1 {
     flex-direction: column; 
     justify-content: space-between;
     z-index: 2;
+    height: 100%;
   }
   
   .brder_decr{

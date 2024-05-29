@@ -28,3 +28,6 @@ def usuarios():
 @main.route('/citas')
 def citas():
     return render_template('calendariocitas.html')
+@main.route('/calendario')
+def calendario():
+    return render_template('calendario.html')

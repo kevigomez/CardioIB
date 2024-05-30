@@ -84,7 +84,7 @@ button:hover {
 .Info_cita {
     display: flex;
     justify-content: center;
-    align-items: center;   
+    align-items: center;  
 }
 #appointment-form{
     display: grid;
@@ -97,7 +97,7 @@ form {
     padding: 4px;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    height: 750px;
+    height: 800px;
     width: 800px;
     padding-left: 2%;
     padding-right: 2%;
@@ -203,4 +203,13 @@ input[type="text"], input[type="password"], input[type="number"], input[type="em
 .empty {
     background: none;
     border: none;
+}
+.cita{
+    width: 40%;
+    text-align: center;
+    margin-top: 4%;
+    border-radius:2px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-left: 20%;
 }

@@ -32,13 +32,11 @@ h1 {
     top:0;
     width: 270px;
     top:50px;
-    height:calc(100vh - 50px);
+    height:100%;
     background:#53577F;
-    display: flex; 
-    flex-direction: column; 
-    justify-content: space-between;
+
     z-index: 2;
-    height: 100%;
+
   }
   
   .brder_decr{

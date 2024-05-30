@@ -12,7 +12,7 @@
     {% extends "base.html" %}
     {% block content %}
     <div  class="Info_cita">
-        <select >
+        <select class="cita">
                     <option value="1">Cardiologia A</option>
                     <option value="2">Cardiologia B</option>
                     <option value="3" selected="selected">Cardiologia C</option>
@@ -99,11 +99,10 @@
         
             
             <label>Fecha de inicio</label><br><br>
-            <input type="date" id="inicio-fecha" name="inicio" required> <input type="time" id="inicio-hora" name="inicio" required><br>
-        
+            <input type="date" id="inicio-fecha" name="inicio" required> <input type="time" id="inicio-hora" name="inicio" required><br><br>
             
             <label>Fecha de fin</label><br><br>
-            <input type="date" id="fin-fecha" name="fin" required> <input type="time" id="fin-hora" name="fin" required><br>
+            <input type="date" id="fin-fecha" name="fin" required> <input type="time" id="fin-hora" name="fin" required><br><br>
         
             
             <label>Repetir</label><br><br>
@@ -135,11 +134,11 @@
                         <option value="pendiente">Pendiente</option>
                         <option value="confirmada">Confirmada</option>
                         <option value="cancelada">Cancelada</option>
-                    </select>
+                    </select><br>
                 
             
             <label>Número de autorización</label><br><br>
-            <input type="text" name="autorizacion" required>
+            <input type="text" name="autorizacion" required><br>
 
             <label>El paciente requiere prioridad de atención</label><br><br>
                     <select name="prioridad" class="selecc" required>

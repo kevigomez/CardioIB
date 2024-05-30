@@ -23,7 +23,7 @@ def dashboard():
 
 @main.route('/usuarios')
 def usuarios():
-    return render_template('form_registrousuarios.html')
+    return render_template('usuarios.html')
 
 @main.route('/citas')
 def citas():
@@ -31,3 +31,7 @@ def citas():
 @main.route('/calendario')
 def calendario():
     return render_template('calendario.html')
+
+@main.route('/reg_usuarios')
+def reg_usuarios():
+    return render_template('form_registrousuarios.html')

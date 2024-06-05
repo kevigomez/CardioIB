@@ -213,3 +213,8 @@ input[type="text"], input[type="password"], input[type="number"], input[type="em
     padding-bottom: 5px;
     margin-left: 20%;
 }
+.hour-column{
+    display: flex;
+    flex-direction: row;
+}
+  

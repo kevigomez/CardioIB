@@ -102,7 +102,7 @@ $(document).ready(function() {
             for (let i = 0; i < totalIntervals; i++) {
                 const minutes = i * interval;
                 const formattedHour = hour.toString().padStart(2, '0') + ':' + minutes.toString().padStart(2, '0');
-                $('.hour-column').eq(hour - startHour).append('<div data-hour="' + formattedHour + '">' + formattedHour + '</div>');
+                $('.hour-column').eq(hour - startHour).append('   <div style="border-right: 1px solid #53577F;" display="none" data-hour="' + formattedHour + '">' + formattedHour + '</div>');
             }
         }
     });

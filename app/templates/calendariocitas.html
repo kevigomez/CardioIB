@@ -13,12 +13,12 @@
     {% block content %}
     <div  class="Info_cita">
         <select class="cita">
-                    <option value="1">Cardiologia A</option>
                     <option value="2">Cardiologia B</option>
-                    <option value="3" selected="selected">Cardiologia C</option>
-                    <option value="4">ECOCARDIOGRAMA TRANSTORACICO C</option>
-                    <option value="5">ECOCARDIOGRAMAS TRANSESOFAGICOS SIN Y CON CONTRASTE</option>
-                    <option value="6">ECOCARDIOGRAMAS TRANSTORACICOS</option>
+                    <option value="1">Cardiologia B</option>
+                    <option value="21" selected="selected">Cardiologia C</option>
+                    <option value="22">ECOCARDIOGRAMA TRANSTORACICO C</option>
+                    <option value="3">ECOCARDIOGRAMAS TRANSESOFAGICOS SIN Y CON CONTRASTE</option>
+                    <option value="4">ECOCARDIOGRAMAS TRANSTORACICOS</option>
                     <option value="7">ELECTROCARDIOGRAMAS B</option>
                     <option value="8">HOLTER ELECTROCARDIOGRAFO EKG</option>
                     <option value="9">MESA BASCULANTE</option>
@@ -36,7 +36,7 @@
     
 <div class="interval-selection" style="display:none;">
     <h2>Selecciona un intervalo de tiempo</h2>
-    <select id="time-slot" name="time-slot">
+    <select id="time-slot" name="time-slot" >
         <option value="5">5 minutos</option>
         <option value="10">10 minutos</option>
         <option value="15">15 minutos</option>
@@ -63,20 +63,18 @@
             <th>02:00</th>
             <th>03:00</th>
             <th>04:00</th>
-            <th>05:00</th>
         </tr>
-        <tr>
-            <td><div class="hour-column"></div></td>
-            <td><div class="hour-column"></div></td>
-            <td><div class="hour-column"></div></td>
-            <td><div class="hour-column"></div></td>
-            <td><div class="hour-column"></div></td>
-            <td><div class="hour-column"></div></td>
-            <td><div class="hour-column"></div></td>
-            <td><div class="hour-column"></div></td>
-            <td><div class="hour-column"></div></td>
-            <td><div class="hour-column"></div></td>
-            <td><div class="hour-column"></div></td>
+        <tr >
+            <td class="intervalo"><div class="hour-column"></div></td>
+            <td class="intervalo"><div class="hour-column"></div></td>
+            <td class="intervalo"><div class="hour-column"></div></td>
+            <td class="intervalo"><div class="hour-column"></div></td>
+            <td class="intervalo"><div class="hour-column"></div></td>
+            <td class="intervalo"><div class="hour-column"></div></td>
+            <td class="intervalo"><div class="hour-column"></div></td>
+            <td class="intervalo"><div class="hour-column"></div></td>
+            <td class="intervalo"><div class="hour-column"></div></td>
+            <td class="intervalo"><div class="hour-column"></div></td>
         </tr>
     </table>
 </div>

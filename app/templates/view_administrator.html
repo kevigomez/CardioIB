@@ -6,6 +6,7 @@
     <title>Administrador</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/stylesadm.css') }}">
     <script src="https://kit.fontawesome.com/6131ecdde6.js" crossorigin="anonymous"></script>
+    
 </head>
 <body>
   <header class="main-header">
@@ -22,7 +23,7 @@
         <li class="brder_decr"><a class="nav_A" href=""><i class="fa-solid fa-table"></i> Table</a></li>
         <li class="brder_decr"><a class="nav_A" href=""><i class="fa-solid fa-user"></i> Mi cuenta</a>
           <ul class="submenu">
-            <li>Perfil</li>
+            <li class="li" href="{{ url_for('main.citas') }}">Perfil</li>
             <li>Cambiar contraseña</li>
             <li>Preferencias de notificación</li>
             <li>Invitaciones pendientes</li>
@@ -30,7 +31,6 @@
         </li>
         <li class="brder_decr"><a class="nav_A" href="{{ url_for('main.dashboard') }}"><i class="fa-regular fa-clipboard"></i> Planificación</a>
           <ul class="submenu">
-            <li><a class="li" href="{{ url_for('main.citas') }}">Citas</a></li>
             <li><a class="li" href="{{ url_for('main.calendario') }}">Mi Calendario</a></li>
             <li>Calendario de recursos</li>
             <li>Buscar Citas</li>
@@ -75,6 +75,5 @@
   <div class="container">
     <h1 class="titulo">Bienvenid@ al Panel de Administración</h1>
   </div>
-  <script src="{{ url_for('static', filename='script/script.js') }}"></script>
 </body>
 </html>

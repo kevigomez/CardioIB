@@ -1,29 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Usuarios</title>
+    <title>Lista de Usuarios</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tablas_usuarios.css') }}">
 </head>
 <body>
-    <table>
-        <a href="{{ url_for('main.reg_usuarios') }}" >Crear usuario</a>
-        <tr>
-            <th>Nombre</th>
-            <th>Nombre de usuarios</th>
-            <th>Correo</th>
-            <th>Teléfono</th>
-            <th>Rut-CC</th>
-            <th>Sucursal</th>
-            <th>Creado</th>
-            <th>Ultimo inicio de sesion</th>
-            <th>Estado</th>
-            <th>Accion</th>
-        </tr>
-        <tr>
-            <td></td>
-        </tr>
-        
-    </table>
+    <nav class="navbar">
+        <img src="{{ url_for('static', filename='img/custom-logo.png') }}" alt="Logo"/>
+        <h1>CARDIOIB</h1>
+    </nav>
+    <h1>Lista de Usuarios</h1>
+    <a href="{{ url_for('main.reg_usuarios') }}">Registrar pacientes</a>
+    <div class="container">
+      <table  id="user-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre de Usuario</th>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Correo</th>
+                    <th>Teléfono</th>
+                    <th>Sucursal</th>
+                    <th>RUT</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for usuario in usuarios %}
+                <tr>
+                    <td>{{ usuario.id }}</td>
+                    <td>{{ usuario.username }}</td>
+                    <td>{{ usuario.tname }}</td>
+                    <td>{{ usuario.lastname }}</td>
+                    <td>{{ usuario.email }}</td>
+                    <td>{{ usuario.phone }}</td>
+                    <td>{{ usuario.branch }}</td>
+                    <td>{{ usuario.rut_cc }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>
+

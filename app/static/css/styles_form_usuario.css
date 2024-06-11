@@ -38,7 +38,6 @@ form {
     padding: 4px;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    height: 720px;
     width: 800px;
     padding-left: 2%;
     padding-right: 2%;
@@ -81,8 +80,7 @@ input[type="submit"] {
     font-size: 16px;
     margin: 20px 0; /* Adjusted for spacing */
     cursor: pointer;
-    width: 100%; /* Same width as input fields */
-    top: 90%;
+    width: 100%; /* Same width as input fields */    
 }
 
 input[type="submit"]:hover {

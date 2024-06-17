@@ -1,3 +1,4 @@
+#app/vistas.py
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash, jsonify
 from app.controllers.controler import registrar_paciente, obtener_pacientes, db, Appointment
 from app.models.modelo import Paciente, Appointment

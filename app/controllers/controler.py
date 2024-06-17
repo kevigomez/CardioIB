@@ -1,3 +1,4 @@
+#app/controllers/controler.py
 from flask import render_template, request, redirect, url_for, flash
 from app import db
 from app.models.modelo import Paciente, Appointment

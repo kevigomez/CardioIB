@@ -1,9 +1,5 @@
-#app/models/modelo.py
 from app import db
-from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-
-db = SQLAlchemy()
 
 class Paciente(db.Model):
     __tablename__ = 'pacientes'
@@ -18,7 +14,7 @@ class Paciente(db.Model):
     rut_cc = db.Column(db.String(50), nullable=False)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
 
-    def __init__(self, username, tname, phone, branch, document_type, email, lastname, rut_cc ):
+    def __init__(self, username, tname, phone, branch, document_type, email, lastname, rut_cc):
         self.username = username
         self.tname = tname
         self.phone = phone
@@ -37,4 +33,3 @@ class Appointment(db.Model):
     description = db.Column(db.String(200))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-

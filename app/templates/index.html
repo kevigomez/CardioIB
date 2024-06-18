@@ -4,31 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio de sesion</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
-  <nav class="navbar" ><img src="{{ url_for('static', filename='img/custom-logo.png') }}"/><h1>CARDIOIB</h1></nav>
-  <div class="container">
-    
-        <form action="{{ url_for('main.index') }}" method="POST">
-          <img class="image-form" src="{{ url_for('static', filename='img/custom-logo.png') }}" alt="Logo"><br>
-          <h1>Iniciar Sesión</h1>
-        <label for="name">Usuario</label><br>
+
+<nav class="navbar"><img src="{{ url_for('static', filename='img/custom-logo.png') }}"/><h1>CARDIOIB</h1></nav>
+<div class="container mt-5">
+    <!-- Mostrar mensajes flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form action="{{ url_for('main.index') }}" method="POST">
+        <img class="image-form" src="{{ url_for('static', filename='img/custom-logo.png') }}" alt="Logo"><br>
+        <h1>Iniciar Sesión</h1>
+        <label for="username">Usuario:</label>
+        <input type="text" id="username" name="username" required>
         <br>
-        <input type="text" placeholder="Nombre de usuario" id="username"><br><br>
+        <label for="password">Contraseña:</label>
+        <input type="password" id="password" name="password" required>
         <br>
-        <label for="Clave">Clave</label><br>
-        <input type="password" placeholder="Contraseña" id="password"><br><br>
-        
-        <input type="submit"  value="Enviar"> 
+        <input type="submit" class="btn btn-primary" value="Enviar">
     </form>
-  </div>
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-      {% for category, message in messages %}
-        <div class="flash-{{ category }}">{{ message }}</div>
-      {% endfor %}
-    {% endif %}
-  {% endwith %}
+</div>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

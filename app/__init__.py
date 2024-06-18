@@ -1,25 +1,28 @@
+import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-import os
 
-# Improved Database URI Handling
-DATABASE_URL = os.getenv('DATABASE_URL', 'mysql+pymysql://root@localhost/arcposbpocardio02')  # Default to sqlite
-
+# Crear la aplicación Flask
 app = Flask(__name__)
 
-# Set Database URI Using Environment Variable
+# Configuración de la base de datos
+DATABASE_URL = os.getenv('DATABASE_URL', 'mysql+pymysql://root@localhost/arcposbpocardio02')
 app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
-
-# Recommended Configuration for Performance
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+# Configuración de la clave secreta
+app.config['SECRET_KEY'] = os.urandom(24)
+
+# Inicializar la base de datos y las migraciones
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-# Import Blueprints After App and Database Setup
-from app.views.vistas import main
-app.register_blueprint(main)
+# Registrar Blueprints
+from app.views.vistas import main as main_blueprint
+app.register_blueprint(main_blueprint)
 
+# Ejecutar la aplicación en modo de depuración si este archivo es el principal
 if __name__ == '__main__':
     app.run(debug=True)
+

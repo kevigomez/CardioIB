@@ -2,27 +2,50 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash, jsonify
 from app.controllers.controler import registrar_paciente, obtener_pacientes, db, Appointment
 from app.models.modelo import Paciente, Appointment
-from app import db
 from datetime import datetime
+from app.models.inicioSes import User, db
+from flask_bcrypt import bcrypt
 
 main = Blueprint('main', __name__)
+
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
-        # Sin verificación de credenciales por ahora
-        return redirect(url_for('main.dashboard'))
-    return render_template('index.html')
+        username = request.form['username']
+        password = request.form['password']
+        User = username.query.filter_by(password=password).first()
+        if User:
+            # Si la contraseña no está cifrada, verifica sin cifrar
+         if User.password == password and User.username==username or (User.username and bcrypt.check_password_hash(User.username, username)):
+                session['user_id'] = User.user_id
+                flash('Inicio de sesión exitoso!', 'success')
+                return redirect(url_for('main.dashboard')) 
+         return render_template("credencialesError.html")
+    # If the request is GET or the login was unsuccessful, render the login page.
+    return render_template("index.html")
 
-@main.route('/logout')
-def logout():
-    session.pop('logged_in', None)
-    flash('Sesión cerrada', 'success')
-    return redirect(url_for('main.index'))
-
+# Ejemplo de función para el dashboard (debes definir esta función)
 @main.route('/dashboard')
 def dashboard():
-    return render_template('view_administrator.html')
+    # Aquí puedes implementar la lógica para obtener datos del usuario
+    # Asegúrate de verificar si el usuario tiene una sesión activa
+    if 'username' in session:
+        username = session['username']
+        # Renderiza la plantilla del dashboard con los datos del usuario
+        return render_template('view_administrator.html', username=username)
+    else:
+        # Si el usuario no tiene una sesión activa, redirige al inicio de sesión
+        flash('Acceso no autorizado. Inicia sesión primero.', 'warning')
+        return redirect(url_for('main.index'))
+
+# Ejemplo de función para cerrar sesión
+@main.route('/logout')
+def logout():
+    # Elimina el nombre de usuario de la sesión
+    session.pop('username', None)
+    flash('Has cerrado sesión exitosamente', 'info')
+    return redirect(url_for('main.index'))
 
 @main.route('/usuarios')
 def usuarios():
@@ -45,7 +68,7 @@ def reg_usuarios():
         form_data = request.form
         registrar_paciente(form_data)
         flash('Usuario registrado exitosamente', 'success')
-        return redirect(url_for('main.reg_usuarios'))
+        return redirect(url_for('main.usuarios'))
 
     usuarios = obtener_pacientes()
     return render_template('form_registrousuarios.html', usuarios=usuarios)

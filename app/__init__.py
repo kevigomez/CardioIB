@@ -2,27 +2,36 @@ import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_bcrypt import Bcrypt
 
-# Crear la aplicación Flask
-app = Flask(__name__)
+# Crear las instancias de SQLAlchemy y Bcrypt fuera de la función create_app
+db = SQLAlchemy()
+migrate = Migrate()
+bcrypt = Bcrypt()
 
-# Configuración de la base de datos
-DATABASE_URL = os.getenv('DATABASE_URL', 'mysql+pymysql://root@localhost/arcposbpocardio02')
-app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+def create_app():
+    app = Flask(__name__)
 
-# Configuración de la clave secreta
-app.config['SECRET_KEY'] = os.urandom(24)
+    # Configuración de la base de datos
+    DATABASE_URL = os.getenv('DATABASE_URL', 'mysql+pymysql://root@localhost/arcposbpocardio02')
+    app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Inicializar la base de datos y las migraciones
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
+    # Configuración de la clave secreta
+    app.config['SECRET_KEY'] = os.urandom(24)
 
-# Registrar Blueprints
-from app.views.vistas import main as main_blueprint
-app.register_blueprint(main_blueprint)
+    # Inicializar la base de datos, migraciones y bcrypt con la aplicación
+    db.init_app(app)
+    migrate.init_app(app, db)
+    bcrypt.init_app(app)
+
+    # Registrar Blueprints
+    from app.views.vistas import main as main_blueprint
+    app.register_blueprint(main_blueprint)
+
+    return app
 
 # Ejecutar la aplicación en modo de depuración si este archivo es el principal
 if __name__ == '__main__':
+    app = create_app()
     app.run(debug=True)
-

@@ -1,7 +1,7 @@
 #app/controllers/controler.py
 from flask import render_template, request, redirect, url_for, flash
 from app import db
-from app.models.modelo import Paciente, Appointment
+from app.models.modelo import Paciente, Appointment, User
 
 def registrar_paciente(form_data):
     username = form_data['username']

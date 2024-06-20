@@ -1,8 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash, jsonify
 from app.controllers.controler import registrar_paciente, obtener_pacientes
-from app.models.modelo import Paciente, Appointment
+from app.models.modelo import Paciente, Appointment, User
 from datetime import datetime
-from app.models.inicioSes import User
 from app import db, bcrypt  # Importa db y bcrypt desde tu aplicación principal
 
 main = Blueprint('main', __name__)

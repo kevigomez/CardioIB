@@ -3,8 +3,28 @@ from app.controllers.controler import registrar_paciente, obtener_pacientes
 from app.models.modelo import Paciente, Appointment, User
 from datetime import datetime
 from app import db, bcrypt  # Importa db y bcrypt desde tu aplicación principal
+import hashlib
+import logging
 
 main = Blueprint('main', __name__)
+
+logging.basicConfig(level=logging.DEBUG)
+
+def is_bcrypt_hash(hash_string):
+    # Verifica si el hash tiene el formato típico de bcrypt
+    return hash_string.startswith('$2b$') or hash_string.startswith('$2a$') or hash_string.startswith('$2y$')
+
+def verify_password_sha1(stored_password, provided_password):
+    hashed_provided_password = hashlib.sha1(provided_password.encode()).hexdigest()
+    logging.debug(f"Hashed provided password: {hashed_provided_password}")
+    logging.debug(f"Stored password: {stored_password}")
+    return stored_password == hashed_provided_password
+
+def migrate_password_to_bcrypt(user, provided_password):
+    hashed_bcrypt_password = bcrypt.generate_password_hash(provided_password).decode('utf-8')
+    user.password = hashed_bcrypt_password
+    db.session.commit()
+    logging.debug(f"Password for user {user.username} migrated to bcrypt.")
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
@@ -15,15 +35,35 @@ def index():
         # Realizar la consulta utilizando el modelo User
         user = User.query.filter_by(username=username).first()
         
-        if user and bcrypt.check_password_hash(user.password, password):
-            session['user_id'] = user.user_id
-            flash('Inicio de sesión exitoso!', 'success')
-            return redirect(url_for('main.dashboard'))
+        if user:
+            logging.debug(f"User {username} found in database.")
+            if is_bcrypt_hash(user.password):
+                logging.debug(f"User {username} has a bcrypt password hash.")
+                # Intentar verificar con bcrypt
+                if bcrypt.check_password_hash(user.password, password):
+                    logging.debug(f"Password for user {username} verified using bcrypt.")
+                    session['user_id'] = user.user_id
+                    flash('Inicio de sesión exitoso!', 'success')
+                    return redirect(url_for('main.dashboard'))
+            else:
+                logging.debug(f"User {username} has a SHA-1 password hash.")
+                # Verificar usando SHA-1 y migrar a bcrypt si es exitoso
+                if verify_password_sha1(user.password, password):
+                    logging.debug(f"Password for user {username} verified using SHA-1.")
+                    migrate_password_to_bcrypt(user, password)
+                    session['user_id'] = user.user_id
+                    flash('Inicio de sesión exitoso! Contraseña migrada a bcrypt.', 'success')
+                    return redirect(url_for('main.dashboard'))
+                else:
+                    logging.debug(f"Password for user {username} could not be verified using SHA-1.")
         
+        logging.debug(f"User {username} login failed.")
+        # Si la verificación falla, renderizar la página de error de credenciales
         return render_template("credencialesError.html")
     
     # Si la solicitud es GET o el inicio de sesión no tuvo éxito, renderizar la página de inicio de sesión.
     return render_template("index.html")
+
 
 @main.route('/dashboard')
 def dashboard():

@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash, jsonify
-from app.controllers.controler import registrar_paciente, obtener_pacientes
+from app.controllers.controler import registrar_paciente, obtener_usuarios
 from app.models.modelo import Paciente, Appointment, User
 from datetime import datetime
 from app import db, bcrypt  # Importa db y bcrypt desde tu aplicación principal
@@ -82,7 +82,7 @@ def logout():
 
 @main.route('/usuarios')
 def usuarios():
-    usuarios = obtener_pacientes()
+    usuarios = obtener_usuarios()
     return render_template('usuarios.html', usuarios=usuarios)
 
 @main.route('/citas')
@@ -101,7 +101,7 @@ def reg_usuarios():
         flash('Usuario registrado exitosamente', 'success')
         return redirect(url_for('main.usuarios'))
 
-    usuarios = obtener_pacientes()
+    usuarios = obtener_usuarios()
     return render_template('form_registrousuarios.html', usuarios=usuarios)
 
 @main.route('/get_appointments', methods=['GET'])

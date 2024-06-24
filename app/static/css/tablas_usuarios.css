@@ -44,6 +44,10 @@ td{
     border: 1px solid gray;
 }
 .container{
-    max-height: 800px; /* Altura máxima del contenedor */
+    top: 10%;
+    max-height: 600px; /* Altura máxima del contenedor */
     overflow-y: auto; /* Desbordamiento vertical con barra de desplazamiento */
+}
+.accion{
+    justify-content: space-between;
 }

@@ -28,13 +28,13 @@ def registrar_paciente(form_data):
 
     return nuevo_paciente
 
-def obtener_pacientes():
+def obtener_usuarios():
     try:
-        pacientes = Paciente.query.all()
-        print(f"Pacientes obtenidos: {pacientes}")
-        return pacientes
+        Usuarios = User.query.all()
+        print(f"Usuarios obtenidos: {Usuarios}")
+        return Usuarios
     except Exception as e:
-        print(f"Error al obtener pacientes: {e}")
+        print(f"Error al obtener Usuarios: {e}")
         return []
 
 

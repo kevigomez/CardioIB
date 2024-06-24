@@ -86,3 +86,25 @@ class User(db.Model):
        self.default_schedule_id = default_schedule_id
        self.credit_count = credit_count
        self.terms_date_accepted = terms_date_accepted
+
+class groups(db.Model):
+    __tablename__='groups'
+    group_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(85), nullable=True)
+    admin_group_id = db.Column(db.String(85), nullable=True)
+    legacyid = db.Column(db.String(16), nullable=True)
+    isdefault = db.Column(db.String(16), nullable=True)
+
+    def __init__(self, group_id,name,admin_group_id,legacyid,isdefault):
+        self.group_id = group_id
+        self.name = name
+        self.admin_group_id = admin_group_id
+        self.legacyid = legacyid
+        self.isdefault = isdefault
+
+
+class User_groups(db.Model):
+    __tablename__ = 'user_groups'
+    user_id = db.Column(db.Integer)
+    user_id = db.Column(db.Integer)
+

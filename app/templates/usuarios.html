@@ -19,7 +19,7 @@
     <h1>Lista de Usuarios</h1>
     <a href="{{ url_for('main.reg_usuarios') }}">Registrar pacientes</a>
     <div class="container">
-      <table class="table table-striped" id="user-table">
+        <table class="table table-striped" id="user-table">
             <thead>
                 <tr>
                     <th scope="col">ID</th>
@@ -34,22 +34,34 @@
                 </tr>
             </thead>
             <tbody>
-                {% for usuario in usuarios %}
+                {% for usuario in users.items %}
                 <tr>
-                    <th scope="row">{{ usuario.id }}</th>
+                    <th scope="row">{{ usuario.user_id }}</th>
                     <td>{{ usuario.username }}</td>
-                    <td>{{ usuario.tname }}</td>
-                    <td>{{ usuario.lastname }}</td>
+                    <td>{{ usuario.fname }}</td>
+                    <td>{{ usuario.lname }}</td>
                     <td>{{ usuario.email }}</td>
                     <td>{{ usuario.phone }}</td>
-                    <td>{{ usuario.branch }}</td>
-                    <td>{{ usuario.rut_cc }}</td>
+                    <td>{{ usuario.organization }}</td>
+                    <td>{{ usuario.legacyid }}</td>
                     <td class="accion"><i class="fa-solid fa-pen-to-square"></i><i class="fa-solid fa-trash" style="color: #ee2b2b;"></i></td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
+        <div>
+            {% if users.has_prev %}
+                <a href="{{ url_for('main.usuarios', page=1) }}"><i class="fa-solid fa-angles-left"></i></a>
+                <a href="{{ url_for('main.usuarios', page=users.prev_num) }}"><i class="fa-solid fa-arrow-left"></i></a>
+            {% endif %}
+            
+            Página {{ users.page }} de {{ users.pages }}
+            
+            {% if users.has_next %}
+                <a href="{{ url_for('main.usuarios', page=users.next_num) }}"><i class="fa-solid fa-arrow-right"></i></a>
+                <a href="{{ url_for('main.usuarios', page=users.pages) }}"><i class="fa-solid fa-angles-right"></i></a>
+            {% endif %}
+        </div>
     </div>
 </body>
 </html>
-

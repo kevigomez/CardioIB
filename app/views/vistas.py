@@ -1,8 +1,9 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash, jsonify
-from app.controllers.controler import registrar_paciente, obtener_usuarios
+from app.controllers.controler import registrar_usuarios, obtener_usuarios_paginados
 from app.models.modelo import Paciente, Appointment, User
 from datetime import datetime
 from app import db, bcrypt  # Importa db y bcrypt desde tu aplicación principal
+from flask_paginate import Pagination, get_page_parameter
 import hashlib
 import logging
 
@@ -82,8 +83,13 @@ def logout():
 
 @main.route('/usuarios')
 def usuarios():
-    usuarios = obtener_usuarios()
-    return render_template('usuarios.html', usuarios=usuarios)
+    page = request.args.get('page', 1, type=int)
+    per_page = 10
+    paginated_users = obtener_usuarios_paginados(page, per_page)
+    if paginated_users:
+        return render_template('usuarios.html', users=paginated_users)
+    else:
+        return render_template('usuarios.html', users=[])
 
 @main.route('/citas')
 def citas():
@@ -95,14 +101,15 @@ def calendario():
 
 @main.route('/reg_usuarios', methods=['GET', 'POST'])
 def reg_usuarios():
+    logging.debug(f"Formulario de datos recibidos: {request.form}")
     if request.method == 'POST':
         form_data = request.form
-        registrar_paciente(form_data)
+        registrar_usuarios(form_data)
         flash('Usuario registrado exitosamente', 'success')
         return redirect(url_for('main.usuarios'))
+    return render_template('form_registrousuarios.html')
+    
 
-    usuarios = obtener_usuarios()
-    return render_template('form_registrousuarios.html', usuarios=usuarios)
 
 @main.route('/get_appointments', methods=['GET'])
 def get_appointments():

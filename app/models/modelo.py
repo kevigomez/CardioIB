@@ -61,8 +61,9 @@ class User(db.Model):
     default_schedule_id = db.Column(db.Integer, nullable=True)
     credit_count = db.Column(db.Numeric(7, 2), default=0.00)
     terms_date_accepted = db.Column(db.DateTime, nullable=True)
+    document_type = db.Column(db.String(50))
 
-    def __init__(self, fname,lname,username,email,password,salt,organization, position, phone, timezone, lenguage,homepageid,date_created,last_modified,lastlogin,status_id,legacyid,legacypassword,public_id,allow_calendar_subscription,default_schedule_id,credit_count,terms_date_accepted,):
+    def __init__(self, fname,lname,username,email,password,salt,organization, position, phone, timezone, lenguage,homepageid,date_created,last_modified,lastlogin,status_id,legacyid,legacypassword,public_id,allow_calendar_subscription,default_schedule_id,credit_count,terms_date_accepted,document_type):
        self.fname = fname
        self.lname = lname
        self.username = username
@@ -86,6 +87,7 @@ class User(db.Model):
        self.default_schedule_id = default_schedule_id
        self.credit_count = credit_count
        self.terms_date_accepted = terms_date_accepted
+       self.document_type = document_type
 
 class groups(db.Model):
     __tablename__='groups'
@@ -105,6 +107,9 @@ class groups(db.Model):
 
 class User_groups(db.Model):
     __tablename__ = 'user_groups'
-    user_id = db.Column(db.Integer)
-    user_id = db.Column(db.Integer)
+    user_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    group_id = db.Column(db.Integer)
 
+    def __init__(self, user_id, group_id):
+        self.user_id = user_id
+        self.group_id = group_id

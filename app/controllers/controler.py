@@ -3,9 +3,9 @@ from flask import render_template, request, redirect, url_for, flash
 from app import db
 from app.models.modelo import Paciente, Appointment, User
 
-def registrar_paciente(form_data):
+def registrar_usuarios(form_data):
     username = form_data['username']
-    tname = form_data['tname']
+    fname = form_data['fname']
     phone = form_data['phone']
     branch = form_data['branch']  # Valor predeterminado de la sucursal
     document_type = form_data['document_type']
@@ -13,9 +13,9 @@ def registrar_paciente(form_data):
     lastname = form_data['lastname']
     rut_cc = form_data['rut_cc']
 
-    nuevo_paciente = Paciente(
+    nuevo_usuario = User(
         username=username,
-        tname=tname,
+        fname=fname,
         phone=phone,
         branch=branch,
         document_type=document_type,
@@ -23,19 +23,18 @@ def registrar_paciente(form_data):
         lastname=lastname,
         rut_cc=rut_cc,
     )
-    db.session.add(nuevo_paciente)
+    db.session.add(nuevo_usuario)
     db.session.commit()
 
-    return nuevo_paciente
+    return nuevo_usuario
 
-def obtener_usuarios():
+def obtener_usuarios_paginados(page, per_page):
     try:
-        Usuarios = User.query.all()
-        print(f"Usuarios obtenidos: {Usuarios}")
-        return Usuarios
+        users = User.query.paginate(page=page, per_page=per_page, error_out=False)
+        return users
     except Exception as e:
         print(f"Error al obtener Usuarios: {e}")
-        return []
+        return None
 
 
 
@@ -58,3 +57,14 @@ def registrar_cita(form_data):
 
 def obtener_citas():
     return Appointment.query.all()
+
+
+
+def upgrade():
+    op.create_table('user_groups',
+        sa.Column('group_id', sa.Integer(), primary_key=True, autoincrement=True),
+        sa.Column('user_id', sa.Integer(), nullable=False),  # Asegúrate de que autoincrement no esté aquí
+        sa.Column('additional_column', sa.String(50), nullable=False),  # columna adicional de ejemplo
+        # Añade cualquier otra columna que necesites
+    )
+    # Añade cualquier otra operación de migración que necesites

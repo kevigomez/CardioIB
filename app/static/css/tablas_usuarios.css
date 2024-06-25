@@ -32,22 +32,40 @@ h1 {
     border-top: #53577f5b 0.1px solid;
     border-bottom: #53577f5b 0.1px solid;
 }
-table{
-    border: 1px solid gray;
-}
 thead{
     background-color:#53577F ;
     color: white;
-    border: 1px solid gray;
 }
-td{
-    border: 1px solid gray;
-}
+
 .container{
     top: 10%;
-    max-height: 600px; /* Altura máxima del contenedor */
-    overflow-y: auto; /* Desbordamiento vertical con barra de desplazamiento */
 }
 .accion{
     justify-content: space-between;
 }
+
+.pagination-wrapper {
+    text-align: center;
+}
+
+.pagination {
+    display: inline-block;
+    padding: 0;
+    margin: 20px 0;
+}
+
+.pagination li {
+    display: inline;
+}
+
+.pagination li a, .pagination li span {
+    color: #333;
+    float: left;
+    padding: 8px 16px;
+    text-decoration: none;
+}
+
+.pagination li a:hover, .pagination li span:hover {
+    background-color: #ddd;
+}
+

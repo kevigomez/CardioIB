@@ -1,23 +1,55 @@
-{% extends 'view_administrator.html' %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css" rel="stylesheet">
+    <style>
+        #calendar-container {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        #schedule-container {
+            display: none;
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="calendar-container">
+        <div id="calendar"></div>
+    </div>
+    <div id="schedule-container">
+        <h2 id="selected-date">Citas para el día: </h2>
+        <table id="schedule-table">
+            <thead>
+                <tr>
+                    <th>Hora</th>
+                    <th>Cita</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Filas de horas y citas -->
+            </tbody>
+        </table>
+    </div>
 
-{% block content %}
-<div id="calendar"></div>
-
-<div id="appointments" style="display: none;">
-    <h3>Appointments for <span id="selected-date"></span></h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Time</th>
-                <th>Description</th>
-            </tr>
-        </thead>
-        <tbody id="appointments-list">
-        </tbody>
-    </table>
-    <button onclick="addAppointment()">Add Appointment</button>
-</div>
-<script src="{{ url_for('static', filename='script/calendarioInt.js') }}"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-{% endblock %}
- 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='script/agenda.js') }}"></script>
+</body>
+</html>

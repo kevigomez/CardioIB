@@ -1,27 +1,38 @@
 #app/controllers/controler.py
-from flask import render_template, request, redirect, url_for, flash
+from flask import render_template, request, flash, redirect, url_for
 from app import db
 from app.models.modelo import Paciente, Appointment, User
+from flask_sqlalchemy import SQLAlchemy
 
 def registrar_usuarios(form_data):
     username = form_data['username']
     fname = form_data['fname']
-    phone = form_data['phone']
-    branch = form_data['branch']  # Valor predeterminado de la sucursal
-    document_type = form_data['document_type']
+    lname = form_data['lname']
     email = form_data['email']
-    lastname = form_data['lastname']
-    rut_cc = form_data['rut_cc']
+    password = 'password'  # Asegúrate de manejar correctamente el hash del password
+    salt = 'salt_value'  # Asegúrate de manejar correctamente el salt
+    organization = form_data['organization']
+    position = form_data.get('position', 'Cardio IB IPS')  # Valor predeterminado
+    phone = form_data['phone']
+    timezone = 'UTC'  # Ejemplo: Ajusta según necesites
+    language = 'es'  # Ejemplo: Ajusta según necesites
+    status_id = 1  # Ejemplo: Ajusta según necesites
+    document_type = form_data['document_type']
 
     nuevo_usuario = User(
-        username=username,
         fname=fname,
-        phone=phone,
-        branch=branch,
-        document_type=document_type,
+        lname=lname,
+        username=username,
         email=email,
-        lastname=lastname,
-        rut_cc=rut_cc,
+        password=password,
+        salt=salt,
+        organization=organization,
+        position=position,
+        phone=phone,
+        timezone=timezone,
+        language=language,
+        status_id=status_id,
+        document_type=document_type,
     )
     db.session.add(nuevo_usuario)
     db.session.commit()
@@ -59,12 +70,3 @@ def obtener_citas():
     return Appointment.query.all()
 
 
-
-def upgrade():
-    op.create_table('user_groups',
-        sa.Column('group_id', sa.Integer(), primary_key=True, autoincrement=True),
-        sa.Column('user_id', sa.Integer(), nullable=False),  # Asegúrate de que autoincrement no esté aquí
-        sa.Column('additional_column', sa.String(50), nullable=False),  # columna adicional de ejemplo
-        # Añade cualquier otra columna que necesites
-    )
-    # Añade cualquier otra operación de migración que necesites

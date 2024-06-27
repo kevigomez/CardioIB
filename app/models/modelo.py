@@ -1,5 +1,7 @@
+#app/models/modelo.py
 from app import db
 from datetime import datetime
+from flask_sqlalchemy import SQLAlchemy
 
 class Paciente(db.Model):
     __tablename__ = 'pacientes'
@@ -35,6 +37,7 @@ class Appointment(db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 
+
 class User(db.Model):
     __tablename__ = 'users'
     user_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -47,13 +50,13 @@ class User(db.Model):
     organization = db.Column(db.String(85), nullable=True)
     position = db.Column(db.String(85), default='Cardio IB IPS')
     phone = db.Column(db.String(85), nullable=True)
-    timezone = db.Column(db.String(85), nullable=False)
-    language = db.Column(db.String(10), nullable=False)
+    timezone = db.Column(db.String(85), nullable=False, default='UTC')
+    language = db.Column(db.String(10), nullable=False, default='es')
     homepageid = db.Column(db.Integer, default=1)
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
     last_modified = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     lastlogin = db.Column(db.DateTime, nullable=True)
-    status_id = db.Column(db.Integer, nullable=False)
+    status_id = db.Column(db.Integer, nullable=False, default=1)
     legacyid = db.Column(db.String(16), nullable=True)
     legacypassword = db.Column(db.String(32), nullable=True)
     public_id = db.Column(db.String(20), nullable=True)
@@ -63,7 +66,7 @@ class User(db.Model):
     terms_date_accepted = db.Column(db.DateTime, nullable=True)
     document_type = db.Column(db.String(50))
 
-    def __init__(self, fname,lname,username,email,password,salt,organization, position, phone, timezone, lenguage,homepageid,date_created,last_modified,lastlogin,status_id,legacyid,legacypassword,public_id,allow_calendar_subscription,default_schedule_id,credit_count,terms_date_accepted,document_type):
+    def __init__(self, fname, lname, username, email, password, salt, organization, position, phone, timezone, language, homepageid=1, lastlogin=None, status_id=1, legacyid=None, legacypassword=None, public_id=None, allow_calendar_subscription=False, default_schedule_id=None, credit_count=0.00, terms_date_accepted=None, document_type=None):
        self.fname = fname
        self.lname = lname
        self.username = username
@@ -72,12 +75,10 @@ class User(db.Model):
        self.salt = salt
        self.organization = organization
        self.position = position
-       self.position = phone
+       self.phone = phone
        self.timezone = timezone
-       self.lenguage = lenguage 
+       self.language = language
        self.homepageid = homepageid
-       self.date_created = date_created 
-       self.last_modified = last_modified
        self.lastlogin = lastlogin
        self.status_id = status_id
        self.legacyid = legacyid
@@ -89,11 +90,12 @@ class User(db.Model):
        self.terms_date_accepted = terms_date_accepted
        self.document_type = document_type
 
+
 class groups(db.Model):
     __tablename__='groups'
     group_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(85), nullable=True)
-    admin_group_id = db.Column(db.String(85), nullable=True)
+    admin_group_id = db.Column(db.Integer,  nullable=True)
     legacyid = db.Column(db.String(16), nullable=True)
     isdefault = db.Column(db.String(16), nullable=True)
 
@@ -103,13 +105,40 @@ class groups(db.Model):
         self.admin_group_id = admin_group_id
         self.legacyid = legacyid
         self.isdefault = isdefault
-
-
+ 
 class User_groups(db.Model):
     __tablename__ = 'user_groups'
-    user_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    group_id = db.Column(db.Integer)
+    user_id = db.Column(db.Integer, primary_key=True)
+    group_id = db.Column(db.Integer, primary_key=True)
 
     def __init__(self, user_id, group_id):
         self.user_id = user_id
-        self.group_id = group_id
+        self.group_id = group_id   
+
+class Cita(db.Model):
+    __tablename__ = 'citas'
+    cita_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    series_id = db.Column(db.Integer, nullable=False)
+    date_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    last_modified = db.Column(db.DateTime, nullable=True, onupdate=datetime.utcnow)
+    title = db.Column(db.String(300), nullable=True)
+    description = db.Column(db.Text, nullable=True)
+    type_id = db.Column(db.Integer, nullable=False)
+    status_id = db.Column(db.Integer, nullable=False)
+    owner_id = db.Column(db.Integer, nullable=False)
+    last_action_by = db.Column(db.Integer, nullable=True)
+    type_label = db.Column(db.String(85), nullable=True)
+    status_label = db.Column(db.String(85), nullable=True)
+
+    def __init__(self, series_id, title=None, description=None, type_id=None, status_id=None, owner_id=None, last_action_by=None, type_label=None, status_label=None):
+        self.series_id = series_id
+        self.title = title
+        self.description = description
+        self.type_id = type_id
+        self.status_id = status_id
+        self.owner_id = owner_id
+        self.last_action_by = last_action_by
+        self.type_label = type_label
+        self.status_label = status_label
+
+

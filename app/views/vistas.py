@@ -1,8 +1,7 @@
 #app/views/vistas.py
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash, jsonify
-from app.controllers.controler import registrar_usuarios, obtener_usuarios_paginados
+from app.controllers.controler import registrar_usuarios, obtener_usuarios_paginados, register_cita
 from app.models.modelo import Paciente, Appointment, User
-from datetime import datetime
 from app import db
 from flask_paginate import Pagination, get_page_parameter
 import hashlib
@@ -94,15 +93,15 @@ def reg_usuarios():
         return redirect(url_for('main.usuarios'))
     return render_template('form_registrousuarios.html')
 
+
 @main.route('/reg_citas', methods=['GET', 'POST'])
 def reg_citas():
-    logging.debug(f"Formulario de datos recibidos: {request.form}")
     if request.method == 'POST':
         form_data = request.form
-        registrar_usuarios(form_data)
-        flash('Usuario registrado exitosamente', 'success')
-        return redirect(url_for('main.usuarios'))
-    return render_template('form_registrousuarios.html')
+        nueva_cita = register_cita(form_data)
+        flash('Cita registrada exitosamente', 'success')
+        return redirect(url_for('main.reg_citas'))
+    return render_template('citas.html')
     
 
 @main.route('/appointments/<date>', methods=['GET'])

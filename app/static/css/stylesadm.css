@@ -148,8 +148,3 @@ h1 {
   text-decoration: none;
   text-align:center ;
 }
-.Info_cita, .calendar-container, .interval-selection, .days-table-container, .form-container{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}

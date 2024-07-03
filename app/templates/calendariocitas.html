@@ -82,7 +82,7 @@
 
 <div class="form-container" style="display:none;">
     <h2>Formulario de Registro de Citas</h2>
-    <form >
+    <form method="post" action="{{ url_for('main.reg_citas') }}">
         <div id="appointment-form" >
             <div>
             <h3> Detalles de la Cita </h3>

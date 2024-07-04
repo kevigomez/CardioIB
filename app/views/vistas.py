@@ -8,6 +8,7 @@ import hashlib
 import logging
 from passlib.hash import pbkdf2_sha256
 from flask_cors import CORS
+from datetime import datetime
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -96,12 +97,18 @@ def reg_usuarios():
 
 @main.route('/reg_citas', methods=['GET', 'POST'])
 def reg_citas():
+    logging.debug(f"Formulario de datos recibidos: {request.form}")
     if request.method == 'POST':
-        form_data = request.form
+        form_data = request.form.to_dict()
         nueva_cita = register_cita(form_data)
-        flash('Cita registrada exitosamente', 'success')
+        if nueva_cita:
+            flash('Cita registrada exitosamente', 'success')
+        else:
+            flash('Error al registrar la cita', 'danger')
         return redirect(url_for('main.reg_citas'))
     return render_template('citas.html')
+
+
     
 
 @main.route('/appointments/<date>', methods=['GET'])

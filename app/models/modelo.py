@@ -117,28 +117,30 @@ class User_groups(db.Model):
 
 class Cita(db.Model):
     __tablename__ = 'citas'
+
     cita_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     series_id = db.Column(db.Integer, nullable=False)
-    date_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    last_modified = db.Column(db.DateTime, nullable=True, onupdate=datetime.utcnow)
-    title = db.Column(db.String(300), nullable=True)
-    description = db.Column(db.Text, nullable=True)
+    date_created = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    last_modified = db.Column(db.DateTime, onupdate=datetime.utcnow)
+    start = db.Column(db.DateTime, nullable=False)
+    end = db.Column(db.DateTime)
+    title = db.Column(db.String(300))
+    description = db.Column(db.Text)
     type_id = db.Column(db.Integer, nullable=False)
     status_id = db.Column(db.Integer, nullable=False)
     owner_id = db.Column(db.Integer, nullable=False)
-    last_action_by = db.Column(db.Integer, nullable=True)
-    type_label = db.Column(db.String(85), nullable=True)
-    status_label = db.Column(db.String(85), nullable=True)
+    last_action_by = db.Column(db.Integer)
+    type_label = db.Column(db.String(85))
+    status_label = db.Column(db.String(85))
 
-    def __init__(self, series_id, title=None, description=None, type_id=None, status_id=None, owner_id=None, last_action_by=None, type_label=None, status_label=None):
+    def __init__(self, series_id, start, end, title, description, type_id, status_id, owner_id, type_label, status_label):
         self.series_id = series_id
+        self.start = start
+        self.end = end
         self.title = title
         self.description = description
         self.type_id = type_id
         self.status_id = status_id
         self.owner_id = owner_id
-        self.last_action_by = last_action_by
         self.type_label = type_label
         self.status_label = status_label
-
-

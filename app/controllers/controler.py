@@ -4,6 +4,7 @@ from app import db
 from app.models.modelo import Paciente, Appointment, User, Cita
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+import logging
 
 def registrar_usuarios(form_data):
     username = form_data['username']
@@ -58,12 +59,14 @@ def obtener_citas():
 
 
 def register_cita(form_data):
+    logging.debug(f"Datos recibidos en register_cita: {form_data}")
+
     title = form_data.get('title')
     description = form_data.get('description')
-    inicio_fecha = form_data.get('inicio-fecha')
-    inicio_hora = form_data.get('inicio-hora')
-    fin_fecha = form_data.get('fin-fecha')
-    fin_hora = form_data.get('fin-hora')
+    inicio_fecha = form_data.get('inicio_fecha')
+    inicio_hora = form_data.get('inicio_hora')
+    fin_fecha = form_data.get('fin_fecha')
+    fin_hora = form_data.get('fin_hora')
     repetir = form_data.get('repetir')
     recursos = form_data.get('recursos')
     paciente = form_data.get('paciente')
@@ -74,21 +77,29 @@ def register_cita(form_data):
     registro_llamada = form_data.get('registro_llamada')
     cual = form_data.get('cual')
 
-    inicio_datetime = datetime.strptime(f"{inicio_fecha} {inicio_hora}", '%Y-%m-%d %H:%M')
-    fin_datetime = datetime.strptime(f"{fin_fecha} {fin_hora}", '%Y-%m-%d %H:%M') if fin_fecha and fin_hora else None
+    logging.debug(f"Inicio Fecha: {inicio_fecha}, Inicio Hora: {inicio_hora}")
+    logging.debug(f"Fin Fecha: {fin_fecha}, Fin Hora: {fin_hora}")
+
+    if not all([inicio_fecha, inicio_hora]):
+        logging.error('Fecha y hora de inicio son requeridas.')
+        return None
+
+    try:
+        inicio_datetime = datetime.strptime(f"{inicio_fecha} {inicio_hora}", '%Y-%m-%d %H:%M')
+        fin_datetime = datetime.strptime(f"{fin_fecha} {fin_hora}", '%Y-%m-%d %H:%M') if fin_fecha and fin_hora else None
+    except ValueError as e:
+        logging.error(f"Error al convertir fechas: {e}")
+        return None
 
     nueva_cita = Cita(
         series_id=1,  # Ajustar este valor según la lógica de series
-        date_created=datetime.utcnow(),
-        last_modified=datetime.utcnow(),
         start=inicio_datetime,
         end=fin_datetime,
         title=title,
         description=description,
         type_id=1,  # Ajustar según la lógica de tipo
-        status_id=estado,  # Suponiendo que 'estado' corresponde a 'status_id'
-        owner_id=paciente,  # Suponiendo que 'paciente' corresponde a 'owner_id'
-        last_action_by=None,
+        status_id=int(estado),  # Asegurándonos de que 'estado' sea un entero
+        owner_id=int(paciente),  # Asegurándonos de que 'paciente' sea un entero
         type_label=repetir,
         status_label=autorizacion
     )

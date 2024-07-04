@@ -83,80 +83,64 @@
 <div class="form-container" style="display:none;">
     <h2>Formulario de Registro de Citas</h2>
     <form method="post" action="{{ url_for('main.reg_citas') }}">
-        <div id="appointment-form" >
+        <div id="appointment-form">
             <div>
-            <h3> Detalles de la Cita </h3>
-        
-            
-            <label>Título de la cita</label><br><br>
-            <input type="text" id="title" name="title" required><br>
-        
-            
-            <label>Descripción de la cita</label><br><br>
-            <input type="text" id="description" name="description" required><br>
-        
-            
-            <label>Fecha de inicio</label><br><br>
-            <input type="date" id="inicio-fecha" name="inicio" required> <input type="time" id="inicio-hora" name="inicio" required><br><br>
-            
-            <label>Fecha de fin</label><br><br>
-            <input type="date" id="fin-fecha" name="fin" required> <input type="time" id="fin-hora" name="fin" required><br><br>
-        
-            
-            <label>Repetir</label><br><br>
+                <h3> Detalles de la Cita </h3>
+                <label>Título de la cita</label><br><br>
+                <input type="text" id="title" name="title" required><br>
+                <label>Descripción de la cita</label><br><br>
+                <input type="text" id="description" name="description" required><br>
+                <label>Fecha de inicio</label><br><br>
+                <input type="date" id="inicio-fecha" name="inicio_fecha" required>
+                <input type="time" id="inicio-hora" name="inicio_hora" required><br><br>
+                <label>Fecha de fin</label><br><br>
+                <input type="date" id="fin-fecha" name="fin_fecha" required>
+                <input type="time" id="fin-hora" name="fin_hora" required><br><br>
+                <label>Repetir</label><br><br>
                 <select name="repetir" class="selecc" required>
                     <option value="no">No se repite</option>
                     <option value="diario">Diario</option>
                     <option value="semanal">Semanal</option>
                     <option value="mensual">Mensual</option>
                 </select><br>
-                
-        
-            
-            <label>Recursos</label><br><br>
-                    <select name="recursos" class="selecc" required>
-                        <option value="MESA BASCULANTE B">MESA BASCULANTE B</option>
-                        <option value="Otro">Otro</option>
-                    </select><br>
-                </div>
-                    <div>
+                <label>Recursos</label><br><br>
+                <select name="recursos" class="selecc" required>
+                    <option value="MESA BASCULANTE B">MESA BASCULANTE B</option>
+                    <option value="Otro">Otro</option>
+                </select><br>
+            </div>
+            <div>
                 <h3>Información del Paciente</h3>
                 <label>Nombre o correo electrónico o Rut(CC)</label><br><br>
-            <input type="text" name="paciente" class="selecc" required><br>
-            
-            <label> Edad del paciente</label><br><br>
-            <input type="number" name="edad" required><br>
-            
-            <label> Estado de la cita</label><br><br>
-                    <select name="estado" class="selecc" required>
-                        <option value="pendiente">Pendiente</option>
-                        <option value="confirmada">Confirmada</option>
-                        <option value="cancelada">Cancelada</option>
-                    </select><br>
-                
-            
-            <label>Número de autorización</label><br><br>
-            <input type="text" name="autorizacion" required><br>
-
-            <label>El paciente requiere prioridad de atención</label><br><br>
-                    <select name="prioridad" class="selecc" required>
-                        <option value="no">No</option>
-                        <option value="si">Sí</option>
-                    </select><br>
-                
-            
-            <label> Registro en la llamada</label><br><br>
+                <input type="text" name="paciente" class="selecc" required><br>
+                <label>Edad del paciente</label><br><br>
+                <input type="number" name="edad" required><br>
+                <label>Estado de la cita</label><br><br>
+                <select name="estado" class="selecc" required>
+                    <option value="1">Pendiente</option>
+                    <option value="2">Confirmada</option>
+                    <option value="3">Cancelada</option>
+                </select><br>
+                <label>Número de autorización</label><br><br>
+                <input type="text" name="autorizacion" required><br>
+                <label>El paciente requiere prioridad de atención</label><br><br>
+                <select name="prioridad" class="selecc" required>
+                    <option value="no">No</option>
+                    <option value="si">Sí</option>
+                </select><br>
+                <label>Registro en la llamada</label><br><br>
                 <select name="registro_llamada" class="selecc" required>
                     <option value="N">N</option>
                     <option value="S">S</option>
                 </select><br>
-                
-            <label> ¿Cuál?</label><br><br>
-            <input type="text" name="cual" required><br>
-           </div>
-        </div>     
-           <input type="submit" value="Enviar" >
+                <label>¿Cuál?</label><br><br>
+                <input type="text" name="cual" required><br>
+            </div>
+        </div>
+        <input type="submit" value="Enviar">
     </form>
+    
+</div>
 {% endblock %}
 </body>
 </html>

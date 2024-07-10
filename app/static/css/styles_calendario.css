@@ -215,6 +215,6 @@ input[type="text"], input[type="password"], input[type="number"], input[type="em
 }
 .hour-column{
     display: flex;
-    flex-direction: row;
+    flex-direction: row-reverse;
 }
   

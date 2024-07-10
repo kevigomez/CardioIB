@@ -49,8 +49,13 @@ def obtener_usuarios_paginados(page, per_page):
         print(f"Error al obtener Usuarios: {e}")
         return None
 
-
-
+def obtenerCitas_paginas(page, per_page):
+    try:
+        citas = Cita.query.paginate(page=page, per_page=per_page, error_out=False)
+        return citas
+    except Exception as e:
+        print(f"Error al obtener Citas: {e}")
+        return None
 
     
 

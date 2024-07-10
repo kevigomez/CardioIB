@@ -1,6 +1,6 @@
 #app/views/vistas.py
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash, jsonify
-from app.controllers.controler import registrar_usuarios, obtener_usuarios_paginados, register_cita
+from app.controllers.controler import registrar_usuarios, obtener_usuarios_paginados, register_cita, obtenerCitas_paginas
 from app.models.modelo import Paciente, Appointment, User
 from app import db
 from flask_paginate import Pagination, get_page_parameter
@@ -79,7 +79,7 @@ def usuarios():
 @main.route('/citas')
 def citas():
     return render_template('calendariocitas.html')
-
+          
 @main.route('/calendario')
 def calendario():
     return render_template('calendario.html')
@@ -106,7 +106,44 @@ def reg_citas():
         else:
             flash('Error al registrar la cita', 'danger')
         return redirect(url_for('main.reg_citas'))
-    return render_template('citas.html')
+    return render_template('view_administrator.html')
+
+@main.route('/search_user')
+def search_user():
+    query = request.args.get('query')
+    if query:
+        users = User.query.filter(User.rut_cc.like(f"%{query}%")).all()
+        results = [
+            {'fname': user.fname, 'lname': user.lname, 'email': user.email, 'rut_cc': user.rut_cc}
+            for user in users
+        ]
+        return jsonify(results=results)
+    return jsonify(results=[])
+
+
+
+
+@main.route('/Consul_citas')
+def Con_Citas():
+    page = request.args.get('page', 1, type=int)
+    per_page = 10
+
+    paginated_appointments = obtenerCitas_paginas(page, per_page)
+    
+    if paginated_appointments:
+        no_canceladas = [cita for cita in paginated_appointments.items if cita.status_id != 2]
+        canceladas = [cita for cita in paginated_appointments.items if cita.status_id == 2]
+        citas_ordenadas = no_canceladas + canceladas
+
+        paginated_appointments.items = citas_ordenadas
+
+        return render_template('citas.html', citas=paginated_appointments)
+    else:
+        return render_template('citas.html', citas=[])
+
+
+
+
 
 
     

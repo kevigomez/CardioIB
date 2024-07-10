@@ -69,3 +69,17 @@ thead{
     background-color: #ddd;
 }
 
+.titulo{
+    display: none;
+}
+.tabla_us{
+    font-size: smaller;
+    margin-left:113px ;
+}
+.butt_acc{
+    display: grid;
+    grid-template-columns: 20% 80%;
+    margin-left: 15px;
+}
+
+

@@ -1,0 +1,16 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 0;
+}
+.container{
+    margin-left:115px ;
+    font-size: smaller;
+    width: 120%;
+
+}
+
+.registrar{
+    margin-left: 20%;
+}

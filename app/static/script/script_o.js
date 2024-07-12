@@ -1,4 +1,45 @@
 $(document).ready(function() {
+    // Función para generar intervalos de tiempo
+    function generateTimeSlots(start, end, interval) {
+        let slots = [];
+        let startTime = new Date();
+        startTime.setHours(start.split(':')[0], start.split(':')[1], 0, 0);
+        let endTime = new Date();
+        endTime.setHours(end.split(':')[0], end.split(':')[1], 0, 0);
+
+        while (startTime < endTime) {
+            let endTimeSlot = new Date(startTime.getTime() + interval * 60000);
+            slots.push(`${startTime.getHours().toString().padStart(2, '0')}:${startTime.getMinutes().toString().padStart(2, '0')} - ${endTimeSlot.getHours().toString().padStart(2, '0')}:${endTimeSlot.getMinutes().toString().padStart(2, '0')}`);
+            startTime = endTimeSlot;
+        }
+        return slots;
+    }
+
+    // Función para generar la tabla de horarios
+    function generateTable(interval) {
+        let start = "07:00";
+        let end = "17:00";
+        let slots = generateTimeSlots(start, end, interval);
+        let days = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
+
+        let tableHead = `<tr><th>Día</th>${slots.map(slot => `<th>${slot}</th>`).join('')}</tr>`;
+        let tableBody = days.map(day => `<tr><td>${day}</td>${slots.map(slot => `<td class="hour-column"></td>`).join('')}</tr>`).join('');
+
+        $('#schedule-table thead').html(tableHead);
+        $('#schedule-table tbody').html(tableBody);
+    }
+
+    // Obtener el intervalo de tiempo desde el servidor y generar la tabla
+    $.getJSON("{{ url_for('main.get_time_interval') }}", function(data) {
+        generateTable(parseInt(data.interval));
+
+        // Adjuntar el evento de clic a las celdas de la columna de horas
+        $('.hour-column').on('click', function() {
+            $('.form-container').show();
+        });
+    });
+
+    // Código para el calendario
     const calendarContainer = document.getElementById('calendar');
     const prevBtn = document.getElementById('prev-btn');
     const nextBtn = document.getElementById('next-btn');
@@ -79,54 +120,6 @@ $(document).ready(function() {
     });
 
     renderCalendar();
-
-    $('.Info_cita select').change(function() {
-        const selectedOption = $(this).find('option:selected').text();
-        $('#appointment-form input[name="titulo"]').val(selectedOption);
-        $('.Info_cita').hide();
-        $('.calendar-container').show();
-    });
-
-    $('#select-interval').click(function() {
-        $('.interval-selection').hide();
-        $('.hour-selection').show();
-
-        const interval = parseInt($('#time-slot').val());
-        const startHour = 7;
-        const endHour = 17;
-        const totalIntervals = 60 / interval;
-
-        $('.hour-column').empty();
-
-        for (let hour = startHour; hour < endHour; hour++) {
-            for (let i = 0; i < totalIntervals; i++) {
-                const minutes = i * interval;
-                const formattedHour = hour.toString().padStart(2, '0') + ':' + minutes.toString().padStart(2, '0');
-                $('.hour-column').eq(hour - startHour).append('   <div style="border-right: 1px solid #53577F;" display="none" data-hour="' + formattedHour + '">' + formattedHour + '</div>');
-            }
-        }
-    });
-
-    $('.hour-column').on('click', 'div', function() {
-        const selectedHour = $(this).attr('data-hour');
-        $('.hour-selection').hide();
-        $('.form-container').show();
-
-        const interval = parseInt($('#time-slot').val());
-
-        if (selectedDate) {
-            const selectedDateParts = selectedDate.split('/');
-            const formattedDate = `${selectedDateParts[2]}-${selectedDateParts[1].padStart(2, '0')}-${selectedDateParts[0].padStart(2, '0')}`;
-
-            const startTime = new Date(`${formattedDate}T${selectedHour}:00`);
-            const endTime = new Date(startTime.getTime() + interval * 60000);
-
-            $('#inicio-fecha').val(startTime.toISOString().slice(0, 10));
-            $('#inicio-hora').val(startTime.toISOString().slice(11, 16));
-            $('#fin-fecha').val(endTime.toISOString().slice(0, 10));
-            $('#fin-hora').val(endTime.toISOString().slice(11, 16));
-        } 
-    });
 
     $('#appointment-form').submit(function(event) {
         event.preventDefault();

@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sellect_interval.css') }}">
+    
     <title>Administrador</title>
 </head>
 {% extends "base.html" %}
@@ -10,8 +12,10 @@
 <body>
     
     <div class="content">
-    <form method="POST">
+    <div class="content_form">
+    <form method="POST" class="form_interval">
         <label for="time-interval">Selecciona un intervalo de tiempo:</label>
+        <br>
         <select id="time-interval" name="time-interval">
             <option value="5" {% if intervalo == 5 %}selected{% endif %}>5 minutos</option>
             <option value="10" {% if intervalo == 10 %}selected{% endif %}>10 minutos</option>
@@ -22,8 +26,10 @@
             <option value="35" {% if intervalo == 35 %}selected{% endif %}>35 minutos</option>
             <option value="40" {% if intervalo == 40 %}selected{% endif %}>40 minutos</option>
         </select>
+        <br>
         <button type="submit">Actualizar Intervalo</button>
     </form>
+</div>
     </div>
 </body>
 {% endblock %}

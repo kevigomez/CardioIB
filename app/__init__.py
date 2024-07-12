@@ -3,8 +3,12 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
+from dotenv import load_dotenv
 
-# Crear las instancias de SQLAlchemy y Bcrypt fuera de la función create_app
+# Cargar las variables de entorno
+load_dotenv()
+
+# Crear instancias de extensiones
 db = SQLAlchemy()
 migrate = Migrate()
 bcrypt = Bcrypt()
@@ -20,18 +24,29 @@ def create_app():
     # Configuración de la clave secreta
     app.config['SECRET_KEY'] = os.urandom(24)
 
-    # Inicializar la base de datos, migraciones y bcrypt con la aplicación
+    # Inicializar las extensiones con la aplicación
     db.init_app(app)
     migrate.init_app(app, db)
     bcrypt.init_app(app)
 
-    # Registrar Blueprints
+    # Registrar blueprints
     from app.views.vistas import main as main_blueprint
     app.register_blueprint(main_blueprint)
 
+    # Inicializar configuraciones antes de la primera solicitud
+    with app.app_context():
+        initialize_settings()
+
     return app
 
-# Ejecutar la aplicación en modo de depuración si este archivo es el principal
+def initialize_settings():
+    from app.models.modelo import Settings
+    if not Settings.query.filter_by(name='time_interval').first():
+        default_setting = Settings(name='time_interval', value='15')
+        db.session.add(default_setting)
+        db.session.commit()
+
+
 if __name__ == '__main__':
     app = create_app()
     app.run(debug=True)

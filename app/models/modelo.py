@@ -234,3 +234,10 @@ class Resource(db.Model):
         self.date_created = date_created
         self.last_modified = last_modified
         self.additional_properties = additional_properties
+
+        
+class Settings(db.Model):
+    __tablename__ = 'settings'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255), unique=True, nullable=False)
+    value = db.Column(db.String(255), nullable=False)

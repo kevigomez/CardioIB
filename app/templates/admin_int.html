@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrador</title>
+</head>
+{% extends "base.html" %}
+    {% block content %}
+<body>
+    
+    <div class="content">
+    <form method="POST">
+        <label for="time-interval">Selecciona un intervalo de tiempo:</label>
+        <select id="time-interval" name="time-interval">
+            <option value="5" {% if intervalo == 5 %}selected{% endif %}>5 minutos</option>
+            <option value="10" {% if intervalo == 10 %}selected{% endif %}>10 minutos</option>
+            <option value="15" {% if intervalo == 15 %}selected{% endif %}>15 minutos</option>
+            <option value="20" {% if intervalo == 20 %}selected{% endif %}>20 minutos</option>
+            <option value="25" {% if intervalo == 25 %}selected{% endif %}>25 minutos</option>
+            <option value="30" {% if intervalo == 30 %}selected{% endif %}>30 minutos</option>
+            <option value="35" {% if intervalo == 35 %}selected{% endif %}>35 minutos</option>
+            <option value="40" {% if intervalo == 40 %}selected{% endif %}>40 minutos</option>
+        </select>
+        <button type="submit">Actualizar Intervalo</button>
+    </form>
+    </div>
+</body>
+{% endblock %}
+</html>

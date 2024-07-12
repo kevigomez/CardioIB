@@ -1,7 +1,7 @@
 #app/controllers/controler.py
 from flask import render_template, request, flash, redirect, url_for
 from app import db
-from app.models.modelo import Paciente, Appointment, User, Cita
+from app.models.modelo import Paciente, Appointment, User, Cita, Settings
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import logging
@@ -56,6 +56,18 @@ def obtenerCitas_paginas(page, per_page):
     except Exception as e:
         print(f"Error al obtener Citas: {e}")
         return None
+def obtener_intervalo():
+    setting = Settings.query.filter_by(name='time_interval').first()
+    return int(setting.value) if setting else 15
+
+def actualizar_intervalo(nuevo_intervalo):
+    setting = Settings.query.filter_by(name='time_interval').first()
+    if setting:
+        setting.value = str(nuevo_intervalo)
+    else:
+        setting = Settings(name='time_interval', value=str(nuevo_intervalo))
+        db.session.add(setting)
+    db.session.commit()
 
     
 
@@ -113,3 +125,17 @@ def register_cita(form_data):
     db.session.commit()
 
     return nueva_cita
+
+def obtener_intervalo():
+    setting = db.session.query(Settings).filter_by(name='time_interval').first()
+    return int(setting.value) if setting else 15
+
+def actualizar_intervalo(nuevo_intervalo):
+    setting = db.session.query(Settings).filter_by(name='time_interval').first()
+    if setting:
+        setting.value = str(nuevo_intervalo)
+    else:
+        setting = Settings(name='time_interval', value=str(nuevo_intervalo))
+        db.session.add(setting)
+    db.session.commit()
+

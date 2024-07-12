@@ -1,6 +1,6 @@
 #app/views/vistas.py
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash, jsonify
-from app.controllers.controler import registrar_usuarios, obtener_usuarios_paginados, register_cita, obtenerCitas_paginas
+from app.controllers.controler import registrar_usuarios, obtener_usuarios_paginados, register_cita, obtenerCitas_paginas, obtener_intervalo, actualizar_intervalo
 from app.models.modelo import Paciente, Appointment, User
 from app import db
 from flask_paginate import Pagination, get_page_parameter
@@ -9,6 +9,7 @@ import logging
 from passlib.hash import pbkdf2_sha256
 from flask_cors import CORS
 from datetime import datetime
+from app.models.modelo import db, Settings
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -165,5 +166,22 @@ def save_appointment():
     
     return jsonify(success=True)
 
+
+
+@main.route('/admin', methods=['GET', 'POST'])
+def admin():
+    if request.method == 'POST':
+        nuevo_intervalo = request.form['time-interval']
+        actualizar_intervalo(nuevo_intervalo)
+        flash('Intervalo de tiempo actualizado con éxito', 'success')
+        return redirect(url_for('main.admin'))
+
+    intervalo = obtener_intervalo()
+    return render_template('admin_int.html', intervalo=intervalo)
+
+@main.route('/get_time_interval')
+def get_time_interval():
+    intervalo = obtener_intervalo()
+    return jsonify(interval=intervalo)
 
 

@@ -1,102 +1,66 @@
-{% extends "base.html" %}
 
-{% block content %}
-<div class="Info_cita">
-    <select class="cita">
-        <option value="1">Opción 1</option>
-        <option value="2">Opción 2</option>
-        <!-- Más opciones aquí -->
-    </select>
-</div>
-<div class="calendar-container" style="display: none;">
-    <button id="prev-btn"><i class="fa-solid fa-arrow-left"></i> Anterior</button>
-    <div id="calendar"></div>
-    <button id="next-btn"><i class="fa-solid fa-arrow-right"></i> Siguiente</button>
-</div>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendario de Citas</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles_intervalos.css') }}">
+    <link>
 
-<div class="interval-selection" style="display:none;">
-    <h2>Selecciona un intervalo de tiempo</h2>
-    <select id="time-slot" name="time-slot">
-        <option value="15">15 minutos</option>
-        <option value="30">30 minutos</option>
-        <!-- Más opciones aquí -->
-    </select>
-    <button id="select-interval">Seleccionar</button>
-</div>
+</head>
+<body>
+    {% extends "base.html" %}
 
-<div class="days-table-container" style="display:none;"></div>
+    {% block content %}
+    <table id="schedule-table" border="1" class="table_citas">
+        <thead>
+            <tr>
+                <th>Día</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Las filas se generarán aquí -->
+        </tbody>
+    </table>
 
-<div class="form-container" style="display:none;">
-    <h2>Formulario de Registro de Citas</h2>
-    <form class="form" id="appointment-form">
-        <label for="title">Título:</label>
-        <input type="text" id="title" name="title">
-        
-        <label for="description">Descripción:</label>
-        <textarea id="description" name="description"></textarea>
-        
-        <label for="inicio-fecha">Fecha de inicio:</label>
-        <input type="date" id="inicio-fecha" name="inicio-fecha">
-        
-        <label for="inicio-hora">Hora de inicio:</label>
-        <input type="time" id="inicio-hora" name="inicio-hora">
-        
-        <label for="fin-fecha">Fecha de fin:</label>
-        <input type="date" id="fin-fecha" name="fin-fecha">
-        
-        <label for="fin-hora">Hora de fin:</label>
-        <input type="time" id="fin-hora" name="fin-hora">
-        
-        <label for="repetir">Repetir:</label>
-        <select id="repetir" name="repetir">
-            <option value="none">Ninguno</option>
-            <option value="daily">Diariamente</option>
-            <!-- Más opciones aquí -->
-        </select>
-        
-        <label for="recursos">Recursos:</label>
-        <select id="recursos" name="recursos">
-            <option value="resource1">Recurso 1</option>
-            <!-- Más opciones aquí -->
-        </select>
-        
-        <label for="paciente">Paciente:</label>
-        <input type="text" id="paciente" name="paciente">
-        
-        <label for="edad">Edad:</label>
-        <input type="number" id="edad" name="edad">
-        
-        <label for="estado">Estado:</label>
-        <select id="estado" name="estado">
-            <option value="confirmed">Confirmado</option>
-            <option value="pending">Pendiente</option>
-            <!-- Más opciones aquí -->
-        </select>
-        
-        <label for="autorizacion">Autorización:</label>
-        <input type="text" id="autorizacion" name="autorizacion">
-        
-        <label for="prioridad">Prioridad:</label>
-        <select id="prioridad" name="prioridad">
-            <option value="low">Baja</option>
-            <option value="medium">Media</option>
-            <option value="high">Alta</option>
-        </select>
-        
-        <label for="registro_llamada">Registro de llamada:</label>
-        <select id="registro_llamada" name="registro_llamada">
-            <option value="yes">Sí</option>
-            <option value="no">No</option>
-        </select>
-        
-        <label for="cual">¿Cuál?:</label>
-        <input type="text" id="cual" name="cual">
-        
-        <input type="submit" value="Enviar">
-    </form>
-</div>
+    <script>
+        $(document).ready(function() {
+            function generateTimeSlots(start, end, interval) {
+                let slots = [];
+                let startTime = new Date();
+                startTime.setHours(start.split(':')[0], start.split(':')[1], 0, 0);
+                let endTime = new Date();
+                endTime.setHours(end.split(':')[0], end.split(':')[1], 0, 0);
 
-<!-- Incluir jQuery y el script agenda.js -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="{{ url_for('static', filename='script/agenda.js') }}" defer></script>
+                while (startTime < endTime) {
+                    let endTimeSlot = new Date(startTime.getTime() + interval * 60000);
+                    slots.push(`${startTime.getHours().toString().padStart(2, '0')}:${startTime.getMinutes().toString().padStart(2, '0')} - ${endTimeSlot.getHours().toString().padStart(2, '0')}:${endTimeSlot.getMinutes().toString().padStart(2, '0')}`);
+                    startTime = endTimeSlot;
+                }
+                return slots;
+            }
+
+            function generateTable(interval) {
+                let start = "07:00";
+                let end = "17:00";
+                let slots = generateTimeSlots(start, end, interval);
+                let days = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
+
+                let tableHead = `<tr><th>Día</th>${slots.map(slot => `<th>${slot}</th>`).join('')}</tr>`;
+                let tableBody = days.map(day => `<tr><td>${day}</td>${slots.map(slot => `<td></td>`).join('')}</tr>`).join('');
+
+                $('#schedule-table thead').html(tableHead);
+                $('#schedule-table tbody').html(tableBody);
+            }
+
+            $.getJSON("{{ url_for('main.get_time_interval') }}", function(data) {
+                generateTable(parseInt(data.interval));
+            });
+        });
+    </script>
+</body>
+</html>
+
 {% endblock %}

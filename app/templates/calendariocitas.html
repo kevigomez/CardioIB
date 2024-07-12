@@ -35,49 +35,19 @@
         <button id="next-btn"><i class="fa-solid fa-arrow-right"></i></button>
     </div>
     
-<div class="interval-selection" style="display:none;">
-    <h2>Selecciona un intervalo de tiempo</h2>
-    <select id="time-slot" name="time-slot" >
-        <option value="5">5 minutos</option>
-        <option value="10">10 minutos</option>
-        <option value="15">15 minutos</option>
-        <option value="20">20 minutos</option>
-        <option value="25">25 minutos</option>
-        <option value="30">30 minutos</option>
-        <option value="35">35 minutos</option>
-        <option value="40">40 minutos</option>
-    </select>
-    <button id="select-interval">Seleccionar</button>
-</div>
-
-<div class="hour-selection" style="display: none;">
+<div class="hour-selection" >
     <h2>Selecciona una hora</h2>
-    <table>
-        <tr>
-            <th>07:00</th>
-            <th>08:00</th>
-            <th>09:00</th>
-            <th>10:00</th>
-            <th>11:00</th>
-            <th>12:00</th>
-            <th>01:00</th>
-            <th>02:00</th>
-            <th>03:00</th>
-            <th>04:00</th>
-        </tr>
-        <tr >
-            <td class="intervalo"><div class="hour-column"></div></td>
-            <td class="intervalo"><div class="hour-column"></div></td>
-            <td class="intervalo"><div class="hour-column"></div></td>
-            <td class="intervalo"><div class="hour-column"></div></td>
-            <td class="intervalo"><div class="hour-column"></div></td>
-            <td class="intervalo"><div class="hour-column"></div></td>
-            <td class="intervalo"><div class="hour-column"></div></td>
-            <td class="intervalo"><div class="hour-column"></div></td>
-            <td class="intervalo"><div class="hour-column"></div></td>
-            <td class="intervalo"><div class="hour-column"></div></td>
-        </tr>
+    <table id="schedule-table" border="1" class="table_citas">
+        <thead>
+            <tr>
+                <th>Día</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Las filas se generarán aquí -->
+        </tbody>
     </table>
+
 </div>
 
 
@@ -192,6 +162,41 @@
             } else {
                 $('#resultsTable').hide();
             }
+        });
+    });
+</script>
+<script>
+    $(document).ready(function() {
+        function generateTimeSlots(start, end, interval) {
+            let slots = [];
+            let startTime = new Date();
+            startTime.setHours(start.split(':')[0], start.split(':')[1], 0, 0);
+            let endTime = new Date();
+            endTime.setHours(end.split(':')[0], end.split(':')[1], 0, 0);
+
+            while (startTime < endTime) {
+                let endTimeSlot = new Date(startTime.getTime() + interval * 60000);
+                slots.push(`${startTime.getHours().toString().padStart(2, '0')}:${startTime.getMinutes().toString().padStart(2, '0')} - ${endTimeSlot.getHours().toString().padStart(2, '0')}:${endTimeSlot.getMinutes().toString().padStart(2, '0')}`);
+                startTime = endTimeSlot;
+            }
+            return slots;
+        }
+
+        function generateTable(interval) {
+            let start = "07:00";
+            let end = "17:00";
+            let slots = generateTimeSlots(start, end, interval);
+            let days = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
+
+            let tableHead = `<tr><th>Día</th>${slots.map(slot => `<th>${slot}</th>`).join('')}</tr>`;
+            let tableBody = days.map(day => `<tr><td>${day}</td>${slots.map(slot => `<td></td>`).join('')}</tr>`).join('');
+
+            $('#schedule-table thead').html(tableHead);
+            $('#schedule-table tbody').html(tableBody);
+        }
+
+        $.getJSON("{{ url_for('main.get_time_interval') }}", function(data) {
+            generateTable(parseInt(data.interval));
         });
     });
 </script>

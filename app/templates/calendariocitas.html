@@ -13,18 +13,18 @@
     {% block content %}
     <div class="Info_cita">
         <select class="cita">
-            <option value="2"  id="cita" >Cardiologia B</option>
-            <option value="1"  id="cita" >Cardiologia B</option>
-            <option value="21" id="cita"  selected="selected">Cardiologia C</option>
-            <option value="22" id="cita" >ECOCARDIOGRAMA TRANSTORACICO C</option>
-            <option value="3"  id="cita" > ECOCARDIOGRAMAS TRANSESOFAGICOS SIN Y CON CONTRASTE</option>
-            <option value="4"  id="cita" > ECOCARDIOGRAMAS TRANSTORACICOS</option>
-            <option value="7"  id="cita" > ELECTROCARDIOGRAMAS B</option>
-            <option value="8"  id="cita" > HOLTER ELECTROCARDIOGRAFO EKG</option>
-            <option value="9"  id="cita" > MESA BASCULANTE</option>
-            <option value="10" id="cita" >MESA BASCULANTE B</option>
-            <option value="11" id="cita" >MONITOREO PRESIÓN ARTERIAL</option>
-            <option value="12" id="cita" >PRUEBAS DE ESFUERZO</option>
+            <option value="2">Cardiologia B</option>
+            <option value="1">Cardiologia B</option>
+            <option value="21" selected="selected">Cardiologia C</option>
+            <option value="22">ECOCARDIOGRAMA TRANSTORACICO C</option>
+            <option value="3"> ECOCARDIOGRAMAS TRANSESOFAGICOS SIN Y CON CONTRASTE</option>
+            <option value="4"> ECOCARDIOGRAMAS TRANSTORACICOS</option>
+            <option value="7"> ELECTROCARDIOGRAMAS B</option>
+            <option value="8"> HOLTER ELECTROCARDIOGRAFO EKG</option>
+            <option value="9"> MESA BASCULANTE</option>
+            <option value="10">MESA BASCULANTE B</option>
+            <option value="11">MONITOREO PRESIÓN ARTERIAL</option>
+            <option value="12">PRUEBAS DE ESFUERZO</option>
         </select>
     </div>
     <br><br>
@@ -39,7 +39,7 @@
         <table id="schedule-table" border="1" class="table_citas">
             <thead>
                 <tr>
-                    <th>Día</th>
+                    <th>Día y Fecha</th>
                 </tr>
             </thead>
             <tbody>
@@ -57,7 +57,7 @@
                     <label>Título de la cita</label><br><br>
                     <input type="text" id="title" name="title" readonly required><br>
                     <label>Descripción de la cita</label><br><br>
-                    <input type="text" id="description" name="description" readonly required><br>
+                    <input type="text" id="description" name="description" required><br>
                     <label>Fecha de inicio</label><br><br>
                     <input type="date" id="inicio-fecha" name="inicio_fecha" readonly required>
                     <input type="time" id="inicio-hora" name="inicio_hora" readonly required><br><br>
@@ -65,14 +65,14 @@
                     <input type="date" id="fin-fecha" name="fin_fecha" readonly required>
                     <input type="time" id="fin-hora" name="fin_hora" readonly required><br><br>
                     <label>Repetir</label><br><br>
-                    <select name="repetir" class="selecc" readonly required>
+                    <select name="repetir" class="selecc"  required>
                         <option value="no">No se repite</option>
                         <option value="diario">Diario</option>
                         <option value="semanal">Semanal</option>
                         <option value="mensual">Mensual</option>
                     </select><br>
                     <label>Recursos</label><br><br>
-                    <select name="recursos" class="selecc" readonly required>
+                    <select name="recursos" class="selecc"  required>
                         <option value="MESA BASCULANTE B">MESA BASCULANTE B</option>
                         <option value="Otro">Otro</option>
                     </select><br>
@@ -165,145 +165,172 @@
 
     <script>
         $(document).ready(function() {
-            function generateTimeSlots(start, end, interval) {
-                let slots = [];
-                let startTime = new Date();
-                startTime.setHours(start.split(':')[0], start.split(':')[1], 0, 0);
-                let endTime = new Date();
-                endTime.setHours(end.split(':')[0], end.split(':')[1], 0, 0);
+    // Función para generar los intervalos de tiempo
+    function generateTimeSlots(start, end, interval) {
+        let slots = [];
+        let startTime = new Date();
+        startTime.setHours(start.split(':')[0], start.split(':')[1], 0, 0);
+        let endTime = new Date();
+        endTime.setHours(end.split(':')[0], end.split(':')[1], 0, 0);
 
-                while (startTime < endTime) {
-                    let endTimeSlot = new Date(startTime.getTime() + interval * 60000);
-                    slots.push(`${startTime.getHours().toString().padStart(2, '0')}:${startTime.getMinutes().toString().padStart(2, '0')} - ${endTimeSlot.getHours().toString().padStart(2, '0')}:${endTimeSlot.getMinutes().toString().padStart(2, '0')}`);
-                    startTime = endTimeSlot;
-                }
-                return slots;
-            }
+        while (startTime < endTime) {
+            let endTimeSlot = new Date(startTime.getTime() + interval * 60000);
+            slots.push(`${startTime.getHours().toString().padStart(2, '0')}:${startTime.getMinutes().toString().padStart(2, '0')} - ${endTimeSlot.getHours().toString().padStart(2, '0')}:${endTimeSlot.getMinutes().toString().padStart(2, '0')}`);
+            startTime = endTimeSlot;
+        }
+        return slots;
+    }
 
-            function generateTable(interval) {
-                let start = "07:00";
-                let end = "17:00";
-                let slots = generateTimeSlots(start, end, interval);
-                let days = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
+    // Función para generar la tabla de horarios
+    function generateTable(startDate, interval) {
+        let start = "07:00";
+        let end = "17:00";
+        let slots = generateTimeSlots(start, end, interval);
 
-                let tableHead = `<tr><th>Día</th>${slots.map(slot => `<th>${slot}</th>`).join('')}</tr>`;
-                let tableBody = days.map(day => `<tr><td>${day}</td>${slots.map(slot => `<td class="hour-column" data-day="${day}" data-time="${slot}"></td>`).join('')}</tr>`).join('');
+        let tableHead = `<tr><th>Día y Fecha</th>${slots.map(slot => `<th>${slot}</th>`).join('')}</tr>`;
+        let tableBody = '';
 
-                $('#schedule-table thead').html(tableHead);
-                $('#schedule-table tbody').html(tableBody);
-            }
+        // Encuentra el lunes de la semana de la fecha seleccionada
+        let dayOfWeek = startDate.getDay();
+        let monday = new Date(startDate);
+        monday.setDate(startDate.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
 
-            // Obtener el intervalo de tiempo desde el servidor y generar la tabla
-            $.getJSON("{{ url_for('main.get_time_interval') }}", function(data) {
-                generateTable(parseInt(data.interval));
+        for (let i = 0; i < 7; i++) {
+            let currentDay = new Date(monday);
+            currentDay.setDate(monday.getDate() + i);
 
-                // Adjuntar el evento de clic a las celdas de la columna de horas
-                $('.hour-column').on('click', function() {
-                    const cita = document.getElementById('cita');
-                    let time = $(this).data('time');
-                    let [start, end] = time.split(' - ');
+            let dayOfWeekStr = currentDay.toLocaleString('es-ES', { weekday: 'long' });
+            let date = currentDay.toLocaleDateString('es-ES');
 
-                    $('#title').val(`Cita - ${cita}`);
-                    $('#description').val(`Cita el ${cita} a las ${start}`);
-                    $('#inicio-fecha').val(selectedDate);
-                    $('#inicio-hora').val(start);
-                    $('#fin-fecha').val(selectedDate);
-                    $('#fin-hora').val(end);
+            tableBody += `<tr><td>${dayOfWeekStr}, ${date}</td>${slots.map(slot => `<td class="hour-column" data-date="${date}" data-time="${slot}"></td>`).join('')}</tr>`;
+        }
 
-                    $('#title, #description, #inicio-fecha, #inicio-hora, #fin-fecha, #fin-hora').prop('readonly', true);
-                    $('.selecc').prop('readonly', true);
+        $('#schedule-table thead').html(tableHead);
+        $('#schedule-table tbody').html(tableBody);
 
-                    $('.form-container').show();
-                });
+        // Adjuntar el evento de clic a las celdas de la columna de horas
+        $('.hour-column').on('click', function() {
+            const cita = $('.cita option:selected').text();
+            let date = $(this).data('date');
+            let time = $(this).data('time');
+            let [start, end] = time.split(' - ');
+
+            $('#title').val(`Cita - ${cita}`);
+            $('#inicio-fecha').val(date);
+            $('#inicio-hora').val(start);
+            $('#fin-fecha').val(date);
+            $('#fin-hora').val(end);
+
+            // Mostrar el formulario y ocultar otros elementos
+            $('#title, #inicio-fecha, #inicio-hora, #fin-fecha, #fin-hora').prop('readonly', true);
+            $('.selecc').prop('readonly', true);
+            $('.Info_cita').hide();
+            $('.calendar-container').hide();
+            $('.hour-selection').hide();
+            $('.form-container').show();
+        });
+        
+    }
+
+    // Lógica para el calendario y la tabla al cargar la página
+    const calendarContainer = document.getElementById('calendar');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    let selectedDate = new Date(); // Fecha actual predeterminada
+    let currentYear = selectedDate.getFullYear();
+    let currentMonth = selectedDate.getMonth();
+
+    function getMonthsArray(year, startMonth) {
+        return Array.from({ length: 3 }, (_, i) => new Date(year, startMonth + i));
+    }
+
+
+    function renderCalendar() {
+        calendarContainer.innerHTML = '';
+        const months = getMonthsArray(currentYear, currentMonth);
+        months.forEach(date => {
+            const monthDiv = document.createElement('div');
+            monthDiv.className = 'month';
+
+            const monthNameDiv = document.createElement('div');
+            monthNameDiv.className = 'month-name';
+            monthNameDiv.textContent = date.toLocaleString('es-ES', { month: 'long', year: 'numeric' });
+            monthDiv.appendChild(monthNameDiv);
+
+            const weekdaysDiv = document.createElement('div');
+            weekdaysDiv.className = 'weekdays';
+            ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].forEach(day => {
+                const weekdayDiv = document.createElement('div');
+                weekdayDiv.className = 'weekday';
+                weekdayDiv.textContent = day;
+                weekdaysDiv.appendChild(weekdayDiv);
             });
+            monthDiv.appendChild(weekdaysDiv);
 
-            const calendarContainer = document.getElementById('calendar');
-            const prevBtn = document.getElementById('prev-btn');
-            const nextBtn = document.getElementById('next-btn');
-            let selectedDate;
-            let currentYear = new Date().getFullYear();
-            let currentMonth = new Date().getMonth();
+            const daysDiv = document.createElement('div');
+            daysDiv.className = 'days';
+            const firstDay = new Date(date.getFullYear(), date.getMonth(), 1).getDay() || 7;
+            const daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
 
-            function getMonthsArray(year, startMonth) {
-                return Array.from({ length: 3 }, (_, i) => new Date(year, startMonth + i));
+            for (let i = 1; i < firstDay; i++) {
+                const emptyDiv = document.createElement('div');
+                emptyDiv.className = 'day empty';
+                daysDiv.appendChild(emptyDiv);
             }
 
-            function renderCalendar() {
-                calendarContainer.innerHTML = '';
-                const months = getMonthsArray(currentYear, currentMonth);
-                months.forEach(date => {
-                    const monthDiv = document.createElement('div');
-                    monthDiv.className = 'month';
-
-                    const monthNameDiv = document.createElement('div');
-                    monthNameDiv.className = 'month-name';
-                    monthNameDiv.textContent = date.toLocaleString('es-ES', { month: 'long', year: 'numeric' });
-                    monthDiv.appendChild(monthNameDiv);
-
-                    const weekdaysDiv = document.createElement('div');
-                    weekdaysDiv.className = 'weekdays';
-                    ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].forEach(day => {
-                        const weekdayDiv = document.createElement('div');
-                        weekdayDiv.className = 'weekday';
-                        weekdayDiv.textContent = day;
-                        weekdaysDiv.appendChild(weekdayDiv);
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayDiv = document.createElement('div');
+                dayDiv.className = 'day';
+                dayDiv.textContent = day;
+                dayDiv.addEventListener('click', () => {
+                    selectedDate = new Date(date.getFullYear(), date.getMonth(), day);
+                    $.getJSON("{{ url_for('main.get_time_interval') }}", function(data) {
+                        generateTable(selectedDate, parseInt(data.interval));
                     });
-                    monthDiv.appendChild(weekdaysDiv);
-
-                    const daysDiv = document.createElement('div');
-                    daysDiv.className = 'days';
-                    const firstDay = new Date(date.getFullYear(), date.getMonth(), 1).getDay() || 7;
-                    const daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
-
-                    for (let i = 1; i < firstDay; i++) {
-                        const emptyDiv = document.createElement('div');
-                        emptyDiv.className = 'day empty';
-                        daysDiv.appendChild(emptyDiv);
-                    }
-
-                    for (let day = 1; day <= daysInMonth; day++) {
-                        const dayDiv = document.createElement('div');
-                        dayDiv.className = 'day';
-                        dayDiv.textContent = day;
-                        dayDiv.addEventListener('click', () => {
-                            selectedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
-                            $('.calendar-container').hide();
-                            $('.hour-selection').show();
-                        });
-                        daysDiv.appendChild(dayDiv);
-                    }
-
-                    monthDiv.appendChild(daysDiv);
-                    calendarContainer.appendChild(monthDiv);
                 });
+                daysDiv.appendChild(dayDiv);
             }
 
-            prevBtn.addEventListener('click', () => {
-                currentMonth -= 3;
-                if (currentMonth < 0) {
-                    currentMonth += 12;
-                    currentYear -= 1;
-                }
-                renderCalendar();
-            });
+            monthDiv.appendChild(daysDiv);
+            calendarContainer.appendChild(monthDiv);
+        });
+    }
 
-            nextBtn.addEventListener('click', () => {
-                currentMonth += 3;
-                if (currentMonth > 11) {
-                    currentMonth -= 12;
-                    currentYear += 1;
-                }
-                renderCalendar();
-            });
+    prevBtn.addEventListener('click', () => {
+        currentMonth -= 3;
+        if (currentMonth < 0) {
+            currentMonth += 12;
+            currentYear -= 1;
+        }
+        renderCalendar();
+    });
 
-            renderCalendar();
+    nextBtn.addEventListener('click', () => {
+        currentMonth += 3;
+        if (currentMonth > 11) {
+            currentMonth -= 12;
+            currentYear += 1;
+        }
+        renderCalendar();
+    });
 
-            $('#appointment-form').submit(function(event) {
-                event.preventDefault();
-                alert('Cita registrada con éxito');
-                // Aquí puedes agregar la lógica para enviar el formulario al servidor
+    renderCalendar();
+
+    // Generar la tabla con la fecha actual al cargar la página
+    $.getJSON("{{ url_for('main.get_time_interval') }}", function(data) {
+        generateTable(selectedDate, parseInt(data.interval));
+    });
+
+});
+$(document).ready(function() {
+            $('.time-slot').on('click', function() {
+                let selectedDate = $(this).data('date');
+                $('#inicio-fecha').val(selectedDate);
+                $('#fin-fecha').val(selectedDate);
+                $('.form-container').show();
             });
         });
+
     </script>
 
     {% endblock %}

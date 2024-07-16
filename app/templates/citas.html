@@ -48,11 +48,11 @@
                     <td>{{ cita.end }}</td>
                     <td>
                         {% if cita.status_id == 1 %}
-                            Pendiente
+                            Reprogramada
                         {% elif cita.status_id == 2 %}
-                            Cancelada
+                            Asignada
                         {% elif cita.status_id == 3 %}
-                            Confirmada
+                            Cancelada
                         {% else %}
                             Desconocido
                         {% endif %}

@@ -109,19 +109,19 @@ def reg_citas():
         return redirect(url_for('main.reg_citas'))
     return render_template('view_administrator.html')
 
+
+
 @main.route('/search_user')
 def search_user():
     query = request.args.get('query')
     if query:
-        users = User.query.filter(User.rut_cc.like(f"%{query}%")).all()
+        users = User.query.filter(User.organization.like(f"%{query}%")).all()
         results = [
-            {'fname': user.fname, 'lname': user.lname, 'email': user.email, 'rut_cc': user.rut_cc}
+            {'fname': user.fname, 'lname': user.lname, 'email': user.email, 'organization': user.organization}
             for user in users
         ]
         return jsonify(results=results)
     return jsonify(results=[])
-
-
 
 
 @main.route('/Consul_citas')

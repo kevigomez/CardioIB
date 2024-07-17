@@ -80,21 +80,14 @@
                 <div>
                     <h3>Información del Paciente</h3>
                     <label>Nombre o Rut(CC)</label><br><br>
-                    <input type="text" name="paciente" class="selecc" required><br>
+                    <input type="text" id="paciente" name="paciente" required><br>
                     <table id="resultsTable" style="display:none;">
-                        <thead>
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Correo Electrónico</th>
-                                <th>Rut</th>
-                            </tr>
-                        </thead>
                         <tbody>
                             <!-- Los resultados se mostrarán aquí -->
                         </tbody>
                     </table>
                     <label>Edad del paciente</label><br><br>
-                    <input type="number" name="edad" required><br>
+                    <input type="number" name="edad" min="18" max="100" required><br>
                     <label>Estado de la cita</label><br><br>
                     <select name="estado" class="selecc" required>
                         <option value="1">Reprogramada</option>
@@ -125,12 +118,14 @@
         $(document).ready(function(){
             $('#paciente').on('input', function(){
                 let query = $(this).val();
+                console.log('Input:', query); // Verifica el valor del input
                 if(query.length > 2) {
                     $.ajax({
-                        url: "{{ url_for('main.search_user') }}",
+                        url: "{{ url_for('main.search_user') }}", // Asegúrate de que la URL es correcta
                         method: "GET",
                         data: { query: query },
                         success: function(data) {
+                            console.log('Response:', data); // Verifica la respuesta del servidor
                             let results = data.results;
                             let tableBody = $('#resultsTable tbody');
                             tableBody.empty();
@@ -139,9 +134,7 @@
                                 $('#resultsTable').show();
                                 results.forEach(function(user) {
                                     let row = `<tr class="selectable">
-                                        <td>${user.fname} ${user.lname}</td>
-                                        <td>${user.email}</td>
-                                        <td>${user.rut_cc}</td>
+                                        <td>${user.fname} ${user.lname} (${user.organization})</td>   
                                     </tr>`;
                                     tableBody.append(row);
                                 });
@@ -154,6 +147,9 @@
                             } else {
                                 $('#resultsTable').hide();
                             }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Error:', error); // Verifica si hay algún error en la solicitud AJAX
                         }
                     });
                 } else {
@@ -162,9 +158,20 @@
             });
         });
     </script>
-
     <script>
         $(document).ready(function() {
+    function formatDate(date) {
+        let day = String(date.getDate()).padStart(2, '0');
+        let month = String(date.getMonth() + 1).padStart(2, '0');
+        let year = date.getFullYear();
+        return `${year}-${month}-${day}`;
+    }
+
+    function formatTime(time) {
+        let [hours, minutes] = time.split(':');
+        return `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}`;
+    }
+
     // Función para generar los intervalos de tiempo
     function generateTimeSlots(start, end, interval) {
         let slots = [];
@@ -202,7 +209,7 @@
             let dayOfWeekStr = currentDay.toLocaleString('es-ES', { weekday: 'long' });
             let date = currentDay.toLocaleDateString('es-ES');
 
-            tableBody += `<tr><td>${dayOfWeekStr}, ${date}</td>${slots.map(slot => `<td class="hour-column" data-date="${date}" data-time="${slot}"></td>`).join('')}</tr>`;
+            tableBody += `<tr><td>${dayOfWeekStr}, ${date}</td>${slots.map(slot => `<td class="hour-column" data-date="${currentDay}" data-time="${slot}"></td>`).join('')}</tr>`;
         }
 
         $('#schedule-table thead').html(tableHead);
@@ -211,15 +218,15 @@
         // Adjuntar el evento de clic a las celdas de la columna de horas
         $('.hour-column').on('click', function() {
             const cita = $('.cita option:selected').text();
-            let date = $(this).data('date');
+            let date = new Date($(this).data('date'));
             let time = $(this).data('time');
             let [start, end] = time.split(' - ');
 
             $('#title').val(`Cita - ${cita}`);
-            $('#inicio-fecha').val(date);
-            $('#inicio-hora').val(start);
-            $('#fin-fecha').val(date);
-            $('#fin-hora').val(end);
+            $('#inicio-fecha').val(formatDate(date));
+            $('#inicio-hora').val(formatTime(start));
+            $('#fin-fecha').val(formatDate(date));
+            $('#fin-hora').val(formatTime(end));
 
             // Mostrar el formulario y ocultar otros elementos
             $('#title, #inicio-fecha, #inicio-hora, #fin-fecha, #fin-hora').prop('readonly', true);
@@ -229,7 +236,6 @@
             $('.hour-selection').hide();
             $('.form-container').show();
         });
-        
     }
 
     // Lógica para el calendario y la tabla al cargar la página
@@ -243,7 +249,6 @@
     function getMonthsArray(year, startMonth) {
         return Array.from({ length: 3 }, (_, i) => new Date(year, startMonth + i));
     }
-
 
     function renderCalendar() {
         calendarContainer.innerHTML = '';
@@ -320,16 +325,7 @@
     $.getJSON("{{ url_for('main.get_time_interval') }}", function(data) {
         generateTable(selectedDate, parseInt(data.interval));
     });
-
 });
-$(document).ready(function() {
-            $('.time-slot').on('click', function() {
-                let selectedDate = $(this).data('date');
-                $('#inicio-fecha').val(selectedDate);
-                $('#fin-fecha').val(selectedDate);
-                $('.form-container').show();
-            });
-        });
 
     </script>
 

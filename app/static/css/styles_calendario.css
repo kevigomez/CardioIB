@@ -219,6 +219,37 @@ input[type="text"], input[type="password"], input[type="number"], input[type="em
     
 }
   
-.resultsTable{
-    z-index: 9999;
+/* Añadir estilos para asegurar que la tabla no deforme el formulario */
+#resultsTable {
+    width: 100%;
+    max-height: 150px; /* Controla la altura máxima de la tabla */
+    overflow-y: auto; /* Añade barra de desplazamiento si es necesario */
+    border-collapse: collapse;
+}
+
+#resultsTable tbody tr {
+    cursor: pointer;
+}
+
+#resultsTable td {
+    padding: 8px;
+    border: 1px solid #ccc; /* Añade borde a las celdas de la tabla */
+}
+
+.form-container {
+    width: 100%;
+    max-width: 600px; /* Controla el tamaño máximo del contenedor del formulario */
+    margin: 0 auto; /* Centra el formulario */
+}
+
+#paciente-container {
+    position: relative;
+}
+
+#resultsTable {
+    position: absolute;
+    width: 100%;
+    z-index: 1;
+    background-color: white;
+    border: 1px solid #ccc;
 }

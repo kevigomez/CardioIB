@@ -108,6 +108,14 @@ def register_cita(form_data):
         logging.error(f"Error al convertir fechas: {e}")
         return None
 
+    try:
+        # Extraer el ID del paciente de la cadena
+        paciente_id = paciente.split('(')[-1].strip(')')
+        paciente_id = int(paciente_id)
+    except (ValueError, IndexError) as e:
+        logging.error(f"Error al extraer el ID del paciente: {e}")
+        return None
+
     nueva_cita = Cita(
         series_id=1,  # Ajustar este valor según la lógica de series
         start=inicio_datetime,
@@ -116,7 +124,7 @@ def register_cita(form_data):
         description=description,
         type_id=1,  # Ajustar según la lógica de tipo
         status_id=int(estado),  # Asegurándonos de que 'estado' sea un entero
-        owner_id=int(paciente),  # Asegurándonos de que 'paciente' sea un entero
+        owner_id=paciente_id,  # Usar el ID extraído del paciente
         type_label=repetir,
         status_label=autorizacion
     )

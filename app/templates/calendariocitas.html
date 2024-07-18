@@ -60,10 +60,11 @@
                     <input type="text" id="description" name="description" required><br>
                     <label>Fecha de inicio</label><br><br>
                     <input type="date" id="inicio-fecha" name="inicio_fecha" readonly required>
-                    <input type="time" id="inicio-hora" name="inicio_hora" readonly required><br><br>
+                    <input type="time" id="inicio-hora" name="inicio_hora" required><br><br>
                     <label>Fecha de fin</label><br><br>
                     <input type="date" id="fin-fecha" name="fin_fecha" readonly required>
-                    <input type="time" id="fin-hora" name="fin_hora" readonly required><br><br>
+                    <input type="time" id="fin-hora" name="fin_hora" required>
+                    <p id="duracion">0 horas 0 minutos</p>                    
                     <label>Repetir</label><br><br>
                     <select name="repetir" class="selecc"  required>
                         <option value="no">No se repite</option>
@@ -140,7 +141,7 @@
                                 });
 
                                 $('.selectable').on('click', function() {
-                                    let selectedText = $(this).find('td').eq(2).text(); // Assuming Rut(CC) is in the third column
+                                    let selectedText = $(this).find('td').text(); // Assuming Rut(CC) is in the third column
                                     $('#paciente').val(selectedText);
                                     $('#resultsTable').hide();
                                 });
@@ -148,185 +149,208 @@
                                 $('#resultsTable').hide();
                             }
                         },
-                        error: function(xhr, status, error) {
-                            console.error('Error:', error); // Verifica si hay algún error en la solicitud AJAX
+                        error: function(error) {
+                            console.log('Error:', error);
                         }
                     });
                 } else {
                     $('#resultsTable').hide();
                 }
             });
+
+            $('#citaForm').on('submit', function(event) {
+                event.preventDefault(); // Evitar el envío del formulario estándar
+                let paciente = $('#paciente').val(); // Obtener el valor del campo del paciente
+                
+                $.ajax({
+                    url: "{{ url_for('main.reg_citas') }}",
+                    method: "POST",
+                    data: { paciente: paciente },
+                    success: function(response) {
+                        console.log('Formulario enviado exitosamente', response);
+                        // Puedes agregar lógica adicional aquí, como mostrar un mensaje de éxito
+                    },
+                    error: function(error) {
+                        console.log('Error al enviar el formulario', error);
+                        // Puedes agregar lógica adicional aquí, como mostrar un mensaje de error
+                    }
+                });
+            });
         });
     </script>
     <script>
-        $(document).ready(function() {
-    function formatDate(date) {
-        let day = String(date.getDate()).padStart(2, '0');
-        let month = String(date.getMonth() + 1).padStart(2, '0');
-        let year = date.getFullYear();
-        return `${year}-${month}-${day}`;
-    }
-
-    function formatTime(time) {
-        let [hours, minutes] = time.split(':');
-        return `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}`;
-    }
-
-    // Función para generar los intervalos de tiempo
-    function generateTimeSlots(start, end, interval) {
-        let slots = [];
-        let startTime = new Date();
-        startTime.setHours(start.split(':')[0], start.split(':')[1], 0, 0);
-        let endTime = new Date();
-        endTime.setHours(end.split(':')[0], end.split(':')[1], 0, 0);
-
-        while (startTime < endTime) {
-            let endTimeSlot = new Date(startTime.getTime() + interval * 60000);
-            slots.push(`${startTime.getHours().toString().padStart(2, '0')}:${startTime.getMinutes().toString().padStart(2, '0')} - ${endTimeSlot.getHours().toString().padStart(2, '0')}:${endTimeSlot.getMinutes().toString().padStart(2, '0')}`);
-            startTime = endTimeSlot;
-        }
-        return slots;
-    }
-
-    // Función para generar la tabla de horarios
-    function generateTable(startDate, interval) {
-        let start = "07:00";
-        let end = "17:00";
-        let slots = generateTimeSlots(start, end, interval);
-
-        let tableHead = `<tr><th>Día y Fecha</th>${slots.map(slot => `<th>${slot}</th>`).join('')}</tr>`;
-        let tableBody = '';
-
-        // Encuentra el lunes de la semana de la fecha seleccionada
-        let dayOfWeek = startDate.getDay();
-        let monday = new Date(startDate);
-        monday.setDate(startDate.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
-
-        for (let i = 0; i < 7; i++) {
-            let currentDay = new Date(monday);
-            currentDay.setDate(monday.getDate() + i);
-
-            let dayOfWeekStr = currentDay.toLocaleString('es-ES', { weekday: 'long' });
-            let date = currentDay.toLocaleDateString('es-ES');
-
-            tableBody += `<tr><td>${dayOfWeekStr}, ${date}</td>${slots.map(slot => `<td class="hour-column" data-date="${currentDay}" data-time="${slot}"></td>`).join('')}</tr>`;
-        }
-
-        $('#schedule-table thead').html(tableHead);
-        $('#schedule-table tbody').html(tableBody);
-
-        // Adjuntar el evento de clic a las celdas de la columna de horas
-        $('.hour-column').on('click', function() {
-            const cita = $('.cita option:selected').text();
-            let date = new Date($(this).data('date'));
-            let time = $(this).data('time');
-            let [start, end] = time.split(' - ');
-
-            $('#title').val(`Cita - ${cita}`);
-            $('#inicio-fecha').val(formatDate(date));
-            $('#inicio-hora').val(formatTime(start));
-            $('#fin-fecha').val(formatDate(date));
-            $('#fin-hora').val(formatTime(end));
-
-            // Mostrar el formulario y ocultar otros elementos
-            $('#title, #inicio-fecha, #inicio-hora, #fin-fecha, #fin-hora').prop('readonly', true);
-            $('.selecc').prop('readonly', true);
-            $('.Info_cita').hide();
-            $('.calendar-container').hide();
-            $('.hour-selection').hide();
-            $('.form-container').show();
-        });
-    }
-
-    // Lógica para el calendario y la tabla al cargar la página
-    const calendarContainer = document.getElementById('calendar');
-    const prevBtn = document.getElementById('prev-btn');
-    const nextBtn = document.getElementById('next-btn');
-    let selectedDate = new Date(); // Fecha actual predeterminada
-    let currentYear = selectedDate.getFullYear();
-    let currentMonth = selectedDate.getMonth();
-
-    function getMonthsArray(year, startMonth) {
-        return Array.from({ length: 3 }, (_, i) => new Date(year, startMonth + i));
-    }
-
-    function renderCalendar() {
-        calendarContainer.innerHTML = '';
-        const months = getMonthsArray(currentYear, currentMonth);
-        months.forEach(date => {
-            const monthDiv = document.createElement('div');
-            monthDiv.className = 'month';
-
-            const monthNameDiv = document.createElement('div');
-            monthNameDiv.className = 'month-name';
-            monthNameDiv.textContent = date.toLocaleString('es-ES', { month: 'long', year: 'numeric' });
-            monthDiv.appendChild(monthNameDiv);
-
-            const weekdaysDiv = document.createElement('div');
-            weekdaysDiv.className = 'weekdays';
-            ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].forEach(day => {
-                const weekdayDiv = document.createElement('div');
-                weekdayDiv.className = 'weekday';
-                weekdayDiv.textContent = day;
-                weekdaysDiv.appendChild(weekdayDiv);
-            });
-            monthDiv.appendChild(weekdaysDiv);
-
-            const daysDiv = document.createElement('div');
-            daysDiv.className = 'days';
-            const firstDay = new Date(date.getFullYear(), date.getMonth(), 1).getDay() || 7;
-            const daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
-
-            for (let i = 1; i < firstDay; i++) {
-                const emptyDiv = document.createElement('div');
-                emptyDiv.className = 'day empty';
-                daysDiv.appendChild(emptyDiv);
+       $(document).ready(function() {
+            function formatDate(date) {
+                let day = String(date.getDate()).padStart(2, '0');
+                let month = String(date.getMonth() + 1).padStart(2, '0');
+                let year = date.getFullYear();
+                return `${year}-${month}-${day}`;
             }
 
-            for (let day = 1; day <= daysInMonth; day++) {
-                const dayDiv = document.createElement('div');
-                dayDiv.className = 'day';
-                dayDiv.textContent = day;
-                dayDiv.addEventListener('click', () => {
-                    selectedDate = new Date(date.getFullYear(), date.getMonth(), day);
-                    $.getJSON("{{ url_for('main.get_time_interval') }}", function(data) {
-                        generateTable(selectedDate, parseInt(data.interval));
-                    });
+            function formatTime(time) {
+                let [hours, minutes] = time.split(':');
+                return `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}`;
+            }
+
+            function calculateDuration(start, end) {
+                let startTime = new Date(`1970-01-01T${start}:00`);
+                let endTime = new Date(`1970-01-01T${end}:00`);
+                let duration = (endTime - startTime) / 60000; // duración en minutos
+                let hours = Math.floor(duration / 60);
+                let minutes = duration % 60;
+                return `${hours} horas ${minutes} minutos`;
+            }
+
+            function generateTimeSlots(start, end, interval) {
+                let slots = [];
+                let startTime = new Date();
+                startTime.setHours(start.split(':')[0], start.split(':')[1], 0, 0);
+                let endTime = new Date();
+                endTime.setHours(end.split(':')[0], end.split(':')[1], 0, 0);
+
+                while (startTime < endTime) {
+                    let endTimeSlot = new Date(startTime.getTime() + interval * 60000);
+                    slots.push(`${startTime.getHours().toString().padStart(2, '0')}:${startTime.getMinutes().toString().padStart(2, '0')} - ${endTimeSlot.getHours().toString().padStart(2, '0')}:${endTimeSlot.getMinutes().toString().padStart(2, '0')}`);
+                    startTime = endTimeSlot;
+                }
+                return slots;
+            }
+
+            function generateTable(startDate, interval) {
+                let start = "07:00";
+                let end = "17:00";
+                let slots = generateTimeSlots(start, end, interval);
+
+                let tableHead = `<tr><th>Día y Fecha</th>${slots.map(slot => `<th>${slot}</th>`).join('')}</tr>`;
+                let tableBody = '';
+
+                let dayOfWeek = startDate.getDay();
+                let monday = new Date(startDate);
+                monday.setDate(startDate.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
+
+                for (let i = 0; i < 7; i++) {
+                    let currentDay = new Date(monday);
+                    currentDay.setDate(monday.getDate() + i);
+
+                    let dayOfWeekStr = currentDay.toLocaleString('es-ES', { weekday: 'long' });
+                    let date = currentDay.toLocaleDateString('es-ES');
+
+                    tableBody += `<tr><td>${dayOfWeekStr}, ${date}</td>${slots.map(slot => `<td class="hour-column" data-date="${currentDay}" data-time="${slot}"></td>`).join('')}</tr>`;
+                }
+
+                $('#schedule-table thead').html(tableHead);
+                $('#schedule-table tbody').html(tableBody);
+
+                $('.hour-column').on('click', function() {
+                    const cita = $('.cita option:selected').text();
+                    let date = new Date($(this).data('date'));
+                    let time = $(this).data('time');
+                    let [start, end] = time.split(' - ');
+
+                    let duracion = calculateDuration(start, end);
+                    $('#duracion').text(duracion);
+
+                    $('#title').val(`Cita - ${cita}`);
+                    $('#inicio-fecha').val(formatDate(date));
+                    $('#inicio-hora').val(formatTime(start));
+                    $('#fin-fecha').val(formatDate(date));
+                    $('#fin-hora').val(formatTime(end));
+
+                    $('#title, #inicio-fecha, #fin-fecha').prop('readonly', true);
+                    $('.selecc').prop('readonly', true);
+                    $('.Info_cita').hide();
+                    $('.calendar-container').hide();
+                    $('.hour-selection').hide();
+                    $('.form-container').show();
                 });
-                daysDiv.appendChild(dayDiv);
             }
 
-            monthDiv.appendChild(daysDiv);
-            calendarContainer.appendChild(monthDiv);
+            const calendarContainer = document.getElementById('calendar');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            let selectedDate = new Date();
+            let currentYear = selectedDate.getFullYear();
+            let currentMonth = selectedDate.getMonth();
+
+            function getMonthsArray(year, startMonth) {
+                return Array.from({ length: 3 }, (_, i) => new Date(year, startMonth + i));
+            }
+
+            function renderCalendar() {
+                calendarContainer.innerHTML = '';
+                const months = getMonthsArray(currentYear, currentMonth);
+                months.forEach(date => {
+                    const monthDiv = document.createElement('div');
+                    monthDiv.className = 'month';
+
+                    const monthNameDiv = document.createElement('div');
+                    monthNameDiv.className = 'month-name';
+                    monthNameDiv.textContent = date.toLocaleString('es-ES', { month: 'long', year: 'numeric' });
+                    monthDiv.appendChild(monthNameDiv);
+
+                    const weekdaysDiv = document.createElement('div');
+                    weekdaysDiv.className = 'weekdays';
+                    ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].forEach(day => {
+                        const weekdayDiv = document.createElement('div');
+                        weekdayDiv.className = 'weekday';
+                        weekdayDiv.textContent = day;
+                        weekdaysDiv.appendChild(weekdayDiv);
+                    });
+                    monthDiv.appendChild(weekdaysDiv);
+
+                    const daysDiv = document.createElement('div');
+                    daysDiv.className = 'days';
+                    const firstDay = new Date(date.getFullYear(), date.getMonth(), 1).getDay() || 7;
+                    const daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+
+                    for (let i = 1; i < firstDay; i++) {
+                        const emptyDiv = document.createElement('div');
+                        emptyDiv.className = 'day empty';
+                        daysDiv.appendChild(emptyDiv);
+                    }
+
+                    for (let day = 1; day <= daysInMonth; day++) {
+                        const dayDiv = document.createElement('div');
+                        dayDiv.className = 'day';
+                        dayDiv.textContent = day;
+                        dayDiv.addEventListener('click', () => {
+                            selectedDate = new Date(date.getFullYear(), date.getMonth(), day);
+                            $.getJSON("{{ url_for('main.get_time_interval') }}", function(data) {
+                                generateTable(selectedDate, parseInt(data.interval));
+                            });
+                        });
+                        daysDiv.appendChild(dayDiv);
+                    }
+
+                    monthDiv.appendChild(daysDiv);
+                    calendarContainer.appendChild(monthDiv);
+                });
+            }
+
+            prevBtn.addEventListener('click', () => {
+                currentMonth -= 3;
+                if (currentMonth < 0) {
+                    currentMonth += 12;
+                    currentYear -= 1;
+                }
+                renderCalendar();
+            });
+
+            nextBtn.addEventListener('click', () => {
+                currentMonth += 3;
+                if (currentMonth > 11) {
+                    currentMonth -= 12;
+                    currentYear += 1;
+                }
+                renderCalendar();
+            });
+
+            renderCalendar();
+
+            $.getJSON("{{ url_for('main.get_time_interval') }}", function(data) {
+                generateTable(selectedDate, parseInt(data.interval));
+            });
         });
-    }
-
-    prevBtn.addEventListener('click', () => {
-        currentMonth -= 3;
-        if (currentMonth < 0) {
-            currentMonth += 12;
-            currentYear -= 1;
-        }
-        renderCalendar();
-    });
-
-    nextBtn.addEventListener('click', () => {
-        currentMonth += 3;
-        if (currentMonth > 11) {
-            currentMonth -= 12;
-            currentYear += 1;
-        }
-        renderCalendar();
-    });
-
-    renderCalendar();
-
-    // Generar la tabla con la fecha actual al cargar la página
-    $.getJSON("{{ url_for('main.get_time_interval') }}", function(data) {
-        generateTable(selectedDate, parseInt(data.interval));
-    });
-});
-
     </script>
 
     {% endblock %}

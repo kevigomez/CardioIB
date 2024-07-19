@@ -20,7 +20,6 @@
             <thead>
                 <tr>
                     <th scope="col">ID</th>
-                    <th scope="col">SERIES ID</th>
                     <th scope="col">Fecha de Creación</th>
                     <th scope="col">Última Modificación</th>
                     <th scope="col">Título de la Cita</th>
@@ -37,7 +36,6 @@
                 {% for cita in citas.items %}
                 <tr>
                     <th scope="row">{{ cita.cita_id }}</th>
-                    <td>{{ cita.series_id }}</td>
                     <td>{{ cita.date_created }}</td>
                     <td>{{ cita.last_modified }}</td>
                     <td>{{ cita.title }}</td>

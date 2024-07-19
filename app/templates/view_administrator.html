@@ -9,71 +9,126 @@
     
 </head>
 <body>
-  <header class="main-header">
+  <!--<header class="main-header">
     <label for="btn-nav" class="btn-nav">
       <div class="menuBarra">
-        <li class="brder_decr"><img class ="img-nav" src="{{ url_for('static', filename='img/custom-logo.png') }}" href="{{ url_for('main.dashboard') }}"/></li>
+        <img class="img-nav" src="{{ url_for('static', filename='img/custom-logo.png') }}" href="{{ url_for('main.dashboard') }}" />
       </div>
     </label>
-    <input type="checkbox" id="btn-nav">
-    
-    <nav>
-      <ul class="navigation">
-        
-        <li class="brder_decr"><a class="nav_A" href=""><i class="fa-solid fa-table"></i> Table</a></li>
-        <li class="brder_decr"><a class="nav_A" href=""><i class="fa-solid fa-user"></i> Mi cuenta</a>
-          <ul class="submenu">
-            <li class="li" href="{{ url_for('main.citas') }}">Perfil</li>
-            <li>Cambiar contraseña</li>
-            <li>Preferencias de notificación</li>
-            <li>Invitaciones pendientes</li>
+  </header>
+    <input type="checkbox" id="btn-nav">-->
+    <nav class="nav">
+      <ul class="list">
+        <li class="list_item">
+          <div class="list_button">
+            <i class="fa-solid fa-table"></i>
+            <a class="nav_link" href="">Table</a>
+          </div>
+        </li>
+        <li class="list_item">
+          <div class="list_button link_button--click">
+            <i class="fa-solid fa-user"></i>
+            <a class="nav_link" href="">Mi cuenta</a>
+          </div>
+          <ul class="list_show">
+            <li class="list_inside"><a href="{{ url_for('main.citas') }}">Perfil</a>
+            </li>
+            <li class="list_inside">
+              <a class="nav_link nav_link--inside">Cambiar contraseña</a>
+            </li>
+            <li class="list_inside">
+              <a class="nav_link nav_link--inside">Preferencias de notificación</a>
+            </li>
+            <li class="list_inside">
+              <a class="nav_link nav_link--inside">Invitaciones pendientes</a>
+            </li>
           </ul>
         </li>
-        <li class="brder_decr"><a class="nav_A" href="{{ url_for('main.dashboard') }}"><i class="fa-regular fa-clipboard"></i> Planificación</a>
-          <ul class="submenu">
-            <li><a class="li" href="{{ url_for('main.citas') }}">Mi Calendario</a></li>
-            <li><a class="li" href="{{ url_for('main.calendario') }}">Calendario de recursos</a></li>
-            <li>Buscar Citas</li>
+        <li class="list_item">
+          <div class="list_button link_button--click">
+          <i class="fa-regular fa-clipboard"></i> 
+          <a class="nav_link" href="{{ url_for('main.dashboard') }}">Planificación</a>
+          </div>
+          <ul class="list_show">
+            <li class="list_inside">
+              <a class="li" href="{{ url_for('main.citas') }}">Mi Calendario</a>
+            </li>
+            <li class="list_inside">
+              <a class="li" href="{{ url_for('main.calendario') }}">Calendario de recursos</a>
+            </li>
+            <li class="list_inside">
+              <a class="nav_link nav_link--inside">Buscar Citas</a>
+            </li>
           </ul>
         </li>
-        <li class="brder_decr"><a class="nav_A" href="{{ url_for('main.dashboard') }}"><i class="fa-solid fa-list-check"></i> Gestión de la aplicación</a>
-          <div class="brder_decr_2">
-            <ul class="submenu">
-            <li><a class="li" href="{{ url_for('main.Con_Citas') }}">Gestionar Citas</a></li>
-            <li>Agenda de no disponibilidad</li>
-            <li>Cuotas</li>
-          </ul>
-          <ul class="submenu">
-            <li><a class="li" href="{{ url_for('main.admin') }}">Planificaciones</a></li>
-            <li>Recursos</li>
-            <li>Accesorios</li>
-          </ul>
-          <ul class="submenu">
-            <li><a class="li" href="{{ url_for('main.usuarios') }}">Usuarios</a></li>
-            <li>Grupos</li>
-            <li>Anuncios</li>
-          </ul>
-          <ul class="submenu" >
-            <li>Personalizar atributos</li>
-            <li>Enviar resultados</li>
+        <li class="list_item">
+          <div class="list_button link_button--click">
+            <i class="fa-solid fa-list-check"></i> 
+            <a class="nav_link" href="{{ url_for('main.dashboard') }}">Gestión de la aplicación</a>
+          </div>
+            <ul class="list_show">
+              <li class="list_inside">
+                <a class="li" href="{{ url_for('main.Con_Citas') }}">Gestionar Citas</a>
+              </li>
+              <li class="list_inside">
+                <a class="nav_link nav_link--inside">Agenda de no disponibilidad</a>
+              </li>
+              <li class="list_inside">
+                <a class="nav_link nav_link--inside">Cuotas</a>
+              </li>
+              <li class="list_inside">
+                <a class="li" href="{{ url_for('main.admin') }}">Planificaciones</a>
+              </li>
+              <li class="list_inside">
+                <a class="nav_link nav_link--inside">Recursos</a>
+              </li>
+              <li class="list_inside">
+                <a class="nav_link nav_link--inside">Accesorios</a>
+              </li>
+              <li class="list_inside">
+                <a class="li" href="{{ url_for('main.usuarios') }}">Usuarios</a>
+              </li>
+              <li class="list_inside">
+                <a class="nav_link nav_link--inside">Grupos</a>
+              </li>
+              <li class="list_inside"> 
+                <a class="nav_link nav_link--inside">Anuncios</a>
+              </li>
+              <li class="list_inside">
+                <a class="nav_link nav_link--inside">Personalizar atributos</a>
+              </li>
+              <li class="list_inside">
+                <a class="nav_link nav_link--inside">Enviar resultados</a>
+              </li>
+            </ul>
+
+        </li>        
+        <li class="list_item">
+          <div class="list_button link_button--click">
+            <i class="fa-solid fa-clipboard"></i> 
+            <a class="nav_link" href="{{ url_for('main.dashboard') }}">Informes</a>
+          </div>
+          <ul class="list_show">
+            <li class="list_inside">
+              <a class="nav_link nav_link--inside">Nuevo Informe</a>
+            </li>
+            <li class="list_inside">
+              <a class="nav_link nav_link--inside">Informes Guardados</a>
+            </li>
+            <li class="list_inside">
+              <a class="nav_link nav_link--inside">Reportes por fechas</a>
+            </li>
           </ul>
         </li>
-      </div>
-        <li class="brder_decr"><a class="nav_A" href="{{ url_for('main.dashboard') }}"><i class="fa-solid fa-clipboard"></i> Informes</a>
-          <ul class="submenu">
-            <li>Nuevo Informe</li>
-            <li>Informes Guardados</li>
-            <li>Reportes por fechas</li>
-          </ul>
+        <li class="list_item">
+          <i class="fa-solid fa-right-from-bracket"></i> 
+          <a class="deslogueo" href="{{ url_for('main.logout') }}">Cerrar sesión</a>
         </li>
       </ul>
-      <div class="logout" >
-      <a class="deslogueo" href="{{ url_for('main.logout') }}"><i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión</a>
-    </div>
+      
     </nav>
-  </header>
-  <div class="container">
+  <!--<div class="container">
     <h1 class="titulo">Bienvenid@ al Panel de Administración</h1>
-  </div>
+  </div>-->
 </body>
 </html>

@@ -54,20 +54,7 @@ thead{
     margin: 20px 0;
 }
 
-.pagination li {
-    display: inline;
-}
 
-.pagination li a, .pagination li span {
-    color: #333;
-    float: left;
-    padding: 8px 16px;
-    text-decoration: none;
-}
-
-.pagination li a:hover, .pagination li span:hover {
-    background-color: #ddd;
-}
 
 .titulo{
     display: none;

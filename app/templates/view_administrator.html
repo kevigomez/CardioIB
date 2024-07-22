@@ -9,29 +9,30 @@
     
 </head>
 <body>
-  <!--<header class="main-header">
+<!--<header class="main-header">
     <label for="btn-nav" class="btn-nav">
       <div class="menuBarra">
-        <img class="img-nav" src="{{ url_for('static', filename='img/custom-logo.png') }}" href="{{ url_for('main.dashboard') }}" />
+        
       </div>
     </label>
   </header>
     <input type="checkbox" id="btn-nav">-->
     <nav class="nav">
+      <img class="img-nav" src="{{ url_for('static', filename='img/custom-logo.png') }}" href="{{ url_for('main.dashboard') }}" />
       <ul class="list">
-        <li class="list_item">
+        <li class="list_item list_item--click">
           <div class="list_button">
-            <i class="fa-solid fa-table"></i>
-            <a class="nav_link" href="">Table</a>
+            <i class="fa-solid fa-table"style="color: #ffffff;"></i><a class="nav_link"  href="" >Table</a>
           </div>
         </li>
-        <li class="list_item">
-          <div class="list_button link_button--click">
-            <i class="fa-solid fa-user"></i>
-            <a class="nav_link" href="">Mi cuenta</a>
+        <li class="list_item list_item--click">
+          <div class="list_button list_button--click">
+            <i class="fa-solid fa-user" style="color: #ffffff;"></i><a class="nav_link" style="color: #ffffff;">Mi cuenta</a>
+            <i class="fa-solid fa-arrow-right" style="color: #ffffff;" ></i>
           </div>
           <ul class="list_show">
-            <li class="list_inside"><a href="{{ url_for('main.citas') }}">Perfil</a>
+            <li class="list_inside">
+              <a class="nav_link nav_link--inside" href="{{ url_for('main.citas') }}" >Perfil</a>
             </li>
             <li class="list_inside">
               <a class="nav_link nav_link--inside">Cambiar contraseña</a>
@@ -44,49 +45,43 @@
             </li>
           </ul>
         </li>
-        <li class="list_item">
-          <div class="list_button link_button--click">
-          <i class="fa-regular fa-clipboard"></i> 
-          <a class="nav_link" href="{{ url_for('main.dashboard') }}">Planificación</a>
+        <li class="list_item list_item--click">
+          <div class="list_button list_button--click">
+          <i class="fa-regular fa-clipboard" style="color: #ffffff;"></i><a class="nav_link" style="color: #ffffff;">Planificación</a>
+          <i class="fa-solid fa-arrow-right" style="color: #ffffff;"></i>
           </div>
           <ul class="list_show">
             <li class="list_inside">
-              <a class="li" href="{{ url_for('main.citas') }}">Mi Calendario</a>
+              <a class="nav_link nav_link--inside" href="{{ url_for('main.citas') }}">Mi Calendario</a>
             </li>
             <li class="list_inside">
-              <a class="li" href="{{ url_for('main.calendario') }}">Calendario de recursos</a>
+              <a class="nav_link nav_link--inside" href="{{ url_for('main.calendario') }}">Calendario de recursos</a>
             </li>
             <li class="list_inside">
               <a class="nav_link nav_link--inside">Buscar Citas</a>
             </li>
           </ul>
         </li>
-        <li class="list_item">
-          <div class="list_button link_button--click">
-            <i class="fa-solid fa-list-check"></i> 
-            <a class="nav_link" href="{{ url_for('main.dashboard') }}">Gestión de la aplicación</a>
+        <li class="list_item list_item--click">
+          <div class="list_button list_button--click" >
+            <i class="fa-solid fa-list-check" style="color: #ffffff;"></i><a class="nav_link" style="color: #ffffff;">Gestión aplicación</a>
+            <i class="fa-solid fa-arrow-right" style="color: #ffffff;"></i>
           </div>
             <ul class="list_show">
               <li class="list_inside">
-                <a class="li" href="{{ url_for('main.Con_Citas') }}">Gestionar Citas</a>
+                <a class="nav_link nav_link--inside" href="{{ url_for('main.Con_Citas') }}">Gestionar Citas</a>
               </li>
               <li class="list_inside">
                 <a class="nav_link nav_link--inside">Agenda de no disponibilidad</a>
               </li>
               <li class="list_inside">
-                <a class="nav_link nav_link--inside">Cuotas</a>
-              </li>
-              <li class="list_inside">
-                <a class="li" href="{{ url_for('main.admin') }}">Planificaciones</a>
+                <a class="nav_link nav_link--inside" href="{{ url_for('main.admin') }}">Planificaciones</a>
               </li>
               <li class="list_inside">
                 <a class="nav_link nav_link--inside">Recursos</a>
               </li>
               <li class="list_inside">
-                <a class="nav_link nav_link--inside">Accesorios</a>
-              </li>
-              <li class="list_inside">
-                <a class="li" href="{{ url_for('main.usuarios') }}">Usuarios</a>
+                <a class="nav_link nav_link--inside" href="{{ url_for('main.usuarios') }}">Usuarios</a>
               </li>
               <li class="list_inside">
                 <a class="nav_link nav_link--inside">Grupos</a>
@@ -95,18 +90,15 @@
                 <a class="nav_link nav_link--inside">Anuncios</a>
               </li>
               <li class="list_inside">
-                <a class="nav_link nav_link--inside">Personalizar atributos</a>
-              </li>
-              <li class="list_inside">
                 <a class="nav_link nav_link--inside">Enviar resultados</a>
               </li>
             </ul>
 
         </li>        
-        <li class="list_item">
-          <div class="list_button link_button--click">
-            <i class="fa-solid fa-clipboard"></i> 
-            <a class="nav_link" href="{{ url_for('main.dashboard') }}">Informes</a>
+        <li class="list_item list_item--click">
+          <div class="list_button list_button--click ">
+            <i class="fa-solid fa-clipboard" style="color: #ffffff;"></i><a class="nav_link" style="color: #ffffff;">Informes</a>
+            <i class="fa-solid fa-arrow-right" style="color: #ffffff;"></i>
           </div>
           <ul class="list_show">
             <li class="list_inside">
@@ -120,15 +112,19 @@
             </li>
           </ul>
         </li>
-        <li class="list_item">
-          <i class="fa-solid fa-right-from-bracket"></i> 
-          <a class="deslogueo" href="{{ url_for('main.logout') }}">Cerrar sesión</a>
+        <li class="list_item list_item--click">
+          <div class="list_button list_button--click">
+          <i class="fa-solid fa-right-from-bracket" style="color: #ffffff;"></i> 
+          <a class="nav_link" href="{{ url_for('main.logout') }}">Cerrar sesión</a>
+        </div>
         </li>
       </ul>
       
     </nav>
-  <!--<div class="container">
+  
+    <div class="container">
     <h1 class="titulo">Bienvenid@ al Panel de Administración</h1>
-  </div>-->
+  </div>
+  <script src="{{ url_for('static', filename='script/main.js') }}" ></script>
 </body>
 </html>

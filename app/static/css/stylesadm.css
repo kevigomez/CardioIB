@@ -13,10 +13,6 @@ h1 {
     text-align: center;
     color: #53577F;
 }
-.img-nav{
-  top: 2%;
-  left: 6%;
-}
 :root{
     --main-color:#fff;
   }
@@ -31,6 +27,24 @@ h1 {
 .nav{
   width: 300px;
 } 
+.img-nav{
+  margin-top: 0;
+}
+.nav_link{
+  color: #ffffff;
+  display: block;
+  padding: 15px 0;
+  text-decoration: none;
+}
+.nav_link--inside{
+  border-radius: 6px;
+  padding-left: 20px;
+  text-align: left;
+
+}
+.nav_link--inside:hover{
+  background-color: #4a4e72;
+}
 .list{
   width: 100%;
   height: 100vh;
@@ -44,6 +58,32 @@ h1 {
   list-style-type:none ;
   width: 100%;
   text-align: center;
-
+  overflow: hidden;
 }
+.list_item--click{
+  cursor: pointer;
+}
+.list_button{
+  display: flex;
+  align-items: center;
+  gap: 1em;
+  width: 70%;
+  margin: 0 auto;
+}
+.arrow .fa-arrow-right{
+  transform: rotate(90deg);
+}
+.fa-arrow-right{
+  margin-left: auto;
+  transition: transform .3s;
+}
+.list_show{
+  width: 80%;
+  margin-left: auto;
+  border-left: 2px solid #ffffff;
+  list-style: none;
+  transition: height .4s;
+  height: 0;
+}
+
   

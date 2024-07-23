@@ -147,3 +147,31 @@ def actualizar_intervalo(nuevo_intervalo):
         db.session.add(setting)
     db.session.commit()
 
+def obtener_cita_por_id(cita_id):
+    return Cita.query.get(cita_id)
+
+def actualizar_cita(cita_id, form_data):
+    cita = obtener_cita_por_id(cita_id)
+    if cita:
+        title = form_data.get('title')
+        description = form_data.get('description')
+        inicio_fecha = form_data.get('inicio_fecha')
+        inicio_hora = form_data.get('inicio_hora')
+        fin_fecha = form_data.get('fin_fecha')
+        fin_hora = form_data.get('fin_hora')
+        type_label = form_data.get('repetir')
+        status_label = form_data.get('autorizacion')
+        status_id = int(form_data.get('estado'))
+        try:
+            cita.start = datetime.strptime(f"{inicio_fecha} {inicio_hora}", '%Y-%m-%d %H:%M')
+            if fin_fecha and fin_hora:
+                cita.end = datetime.strptime(f"{fin_fecha} {fin_hora}", '%Y-%m-%d %H:%M')
+            else:
+                cita.end = None
+            db.session.commit()
+            return cita
+        except ValueError as e:
+            logging.error(f"Error al convertir fechas: {e}")
+            return None
+    return None
+

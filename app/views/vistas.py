@@ -1,6 +1,6 @@
 #app/views/vistas.py
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash, jsonify
-from app.controllers.controler import registrar_usuarios, obtener_usuarios_paginados, register_cita, obtenerCitas_paginas, obtener_intervalo, actualizar_intervalo
+from app.controllers.controler import registrar_usuarios, obtener_usuarios_paginados, register_cita, obtenerCitas_paginas, obtener_intervalo, actualizar_intervalo, obtener_cita_por_id, actualizar_cita
 from app.models.modelo import Paciente, Appointment, User
 from app import db
 from flask_paginate import Pagination, get_page_parameter
@@ -184,4 +184,20 @@ def get_time_interval():
     intervalo = obtener_intervalo()
     return jsonify(interval=intervalo)
 
+@main.route('/update_citas/<int:cita_id>')
+def update_citas(cita_id):
+    cita = obtener_cita_por_id(cita_id)
+    if request.method == 'POST':
+        form_data = request.form.to_dict()
+        cita_actualizada = actualizar_cita(cita_id, form_data)
+        if cita_actualizada:
+            flash('Cita actualizada exitosamente', 'success')
+        else:
+            flash('Error al actualizar la cita', 'danger')
+        return redirect(url_for('main.Con_Citas'))
+    return render_template('update_citas.html', cita=cita)
+
+@main.route('/delete_citas')
+def delete_citas():
+    return
 

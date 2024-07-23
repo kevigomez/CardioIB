@@ -7,11 +7,12 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles_form_usuario.css') }}">
 </head>
 <body>
+  <div class="container">
   <nav class="navbar">
     <img src="{{ url_for('static', filename='img/custom-logo.png') }}" alt="Logo"/>
     <h1>CARDIOIB</h1>
   </nav>
-  <div class="container">
+  
     <form action="{{ url_for('main.reg_usuarios') }}" method="POST">
       <h1>Registro de Usuarios</h1>
       <div class="container_label">
@@ -47,7 +48,7 @@
       <input type="submit" value="Enviar">
     </form>
     
-  </div>
+  
   {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
       {% for category, message in messages %}
@@ -55,5 +56,6 @@
       {% endfor %}
     {% endif %}
   {% endwith %}
+</div>
 </body>
 </html>

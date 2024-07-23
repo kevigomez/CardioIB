@@ -12,10 +12,11 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/citas.css') }}">
 </head>
 <body>
-    {% extends "view_administrator.html" %}
+    {% extends "base.html" %}
     {% block content %}
-    <h1>Lista de Citas</h1>
-    <div class="container">
+    
+    <div class="container_citas">
+        <h1>Lista de Citas</h1>
         <table class="table table-striped" id="appointment-table">
             <thead>
                 <tr>
@@ -51,11 +52,13 @@
                             Asignada
                         {% elif cita.status_id == 3 %}
                             Cancelada
+                        {% elif cita.status_id == 4 %}
+                            eliminada
                         {% else %}
                             Desconocido
                         {% endif %}
                     </td>
-                    <td class="accion"><i class="fa-solid fa-pen-to-square"></i><i class="fa-solid fa-trash" style="color: #ee2b2b;"></i></td>
+                    <td class="accion"><a href="{{ url_for('main.update_citas', cita_id=cita.cita_id) }}"><i class="fa-solid fa-pen-to-square"></i></a><a href="#"><i class="fa-solid fa-trash" style="color: #ee2b2b;"></i></a></td>
                 </tr>
                 {% endfor %}
             </tbody>

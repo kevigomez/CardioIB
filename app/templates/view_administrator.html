@@ -18,8 +18,8 @@
   </header>
     <input type="checkbox" id="btn-nav">-->
     <nav class="nav">
-      <img class="img-nav" src="{{ url_for('static', filename='img/custom-logo.png') }}" href="{{ url_for('main.dashboard') }}" />
       <ul class="list">
+        <img class="img-nav" src="{{ url_for('static', filename='img/custom-logo.png') }}" href="{{ url_for('main.dashboard') }}" />
         <li class="list_item list_item--click">
           <div class="list_button">
             <i class="fa-solid fa-table"style="color: #ffffff;"></i><a class="nav_link"  href="" >Table</a>
@@ -122,9 +122,7 @@
       
     </nav>
   
-    <div class="container">
-    <h1 class="titulo">Bienvenid@ al Panel de Administración</h1>
-  </div>
+   
   <script src="{{ url_for('static', filename='script/main.js') }}" ></script>
 </body>
 </html>

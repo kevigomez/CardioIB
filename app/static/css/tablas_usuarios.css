@@ -5,68 +5,30 @@ body {
     padding: 0;
 }
 
-img {
-    width: 183px;
-    height: 45px;
-}
-
-.image-form {
-    display: block;
-    margin: 0 auto;
-    margin-left: 27%;
-}
 
 h1 {
     text-align: center;
     color: #53577F;
-}
-
-.navbar {
-    background-color: #e7e7e7;
-    height: 50px;
-    width: 100%;
-    margin: 0;
-    top: 0;
-    left: 0;
-    color: #53577F;
-    border-top: #53577f5b 0.1px solid;
-    border-bottom: #53577f5b 0.1px solid;
 }
 thead{
     background-color:#53577F ;
     color: white;
 }
 
-.container{
-    top: 10%;
-}
 .accion{
     justify-content: space-between;
 }
 
-.pagination-wrapper {
-    text-align: center;
-}
-
-.pagination {
-    display: inline-block;
-    padding: 0;
-    margin: 20px 0;
-}
-
-
-
 .titulo{
     display: none;
-}
+} 
 .tabla_us{
     font-size: smaller;
-    margin-left:113px ;
+    margin-bottom: auto;
 }
 .butt_acc{
     display: grid;
     grid-template-columns: 20% 80%;
-    margin-left: 15px;
 }
 
 

@@ -26,9 +26,13 @@ h1 {
   }
 .nav{
   width: 300px;
+  position: fixed;
 } 
 .img-nav{
-  margin-top: 0;
+  margin: 40px auto 10px auto ;
+  height: 50px;
+  width: 170px;
+  border-radius: 2px;
 }
 .nav_link{
   color: #ffffff;
@@ -49,7 +53,7 @@ h1 {
   width: 100%;
   height: 100vh;
   display: flex;
-  justify-content: center;
+  justify-content: start;
   flex-direction: column;
   border-radius: 0 16px 16px 0;
   background-color: #53577F;
@@ -84,6 +88,17 @@ h1 {
   list-style: none;
   transition: height .4s;
   height: 0;
+}
+.container {
+  flex: 1;
+  padding: 20px;
+  background-color: #f4f4f4;
+  display: flex;
+  justify-content: center;
+  margin-left: 300px;
+}
+.titulo {
+  text-align: center;
 }
 
   

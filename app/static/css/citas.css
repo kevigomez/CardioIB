@@ -4,13 +4,13 @@ body {
     margin: 0;
     padding: 0;
 }
-.container{
-    margin-left:115px ;
-    font-size: smaller;
-    width: 120%;
-
+h1{
+    text-align: center;
 }
-
+thead{
+    background-color:#53577F ;
+    color: white;
+}
 .registrar{
     margin-left: 20%;
 }

@@ -20,7 +20,6 @@
         <table class="table table-striped" id="appointment-table">
             <thead>
                 <tr>
-                    <th scope="col">ID</th>
                     <th scope="col">Fecha de Creación</th>
                     <th scope="col">Última Modificación</th>
                     <th scope="col">Título de la Cita</th>
@@ -36,7 +35,6 @@
             <tbody>
                 {% for cita in citas.items %}
                 <tr>
-                    <th scope="row">{{ cita.cita_id }}</th>
                     <td>{{ cita.date_created }}</td>
                     <td>{{ cita.last_modified }}</td>
                     <td>{{ cita.title }}</td>
@@ -58,7 +56,7 @@
                             Desconocido
                         {% endif %}
                     </td>
-                    <td class="accion"><a href="{{ url_for('main.update_citas', cita_id=cita.cita_id) }}"><i class="fa-solid fa-pen-to-square"></i></a><a href="#"><i class="fa-solid fa-trash" style="color: #ee2b2b;"></i></a></td>
+                    <td class="accion"><a href="{{ url_for('main.update_citas', cita_id=cita.cita_id) }}"><i class="fa-solid fa-pen-to-square"></i></a> <a href="{{ url_for('main.delete_citas', cita_id=cita.cita_id) }}"><i class="fa-solid fa-trash" style="color: #ee2b2b;"></i></a></td>
                 </tr>
                 {% endfor %}
             </tbody>

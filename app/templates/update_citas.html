@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles_calendario.css') }}">
     <title>Actualizar Citas</title>
+    
 </head>
 <body>
     <div class="container">
@@ -18,19 +20,19 @@
                         <input type="text" id="title" name="title" value="{{ cita.title }}" readonly required><br>
                         <label>Descripción de la cita</label><br><br>
                         <input type="text" id="description" name="description" value="{{ cita.description }}" required><br>
-                        <label>Fecha de inicio</label><br><br>
-                        <input type="date" id="inicio-fecha" name="inicio_fecha" value="{{ cita.inicio_fecha }}" readonly required>
-                        <input type="time" id="inicio-hora" name="inicio_hora" value="{{ cita.inicio_hora }}" required><br><br>
+                         <label>Fecha de inicio</label><br><br>
+                        <input type="date" id="inicio-fecha" name="inicio_fecha" value="{{ cita.start.strftime('%Y-%m-%d') }}" readonly required>
+                        <input type="time" id="inicio-hora" name="inicio_hora" value="{{ cita.start.strftime('%H:%M') }}" required><br><br>
                         <label>Fecha de fin</label><br><br>
-                        <input type="date" id="fin-fecha" name="fin_fecha" value="{{ cita.fin_fecha }}" readonly required>
-                        <input type="time" id="fin-hora" name="fin_hora" value="{{ cita.fin_hora }}" required>
+                        <input type="date" id="fin-fecha" name="fin_fecha" value="{{ cita.end.strftime('%Y-%m-%d') }}" readonly required>
+                        <input type="time" id="fin-hora" name="fin_hora" value="{{ cita.end.strftime('%H:%M') }}" required>
                         <p id="duracion">0 horas 0 minutos</p>
                         <label>Repetir</label><br><br>
                         <select name="repetir" class="selecc" required>
-                            <option value="no" {% if cita.repetir == 'no' %}selected{% endif %}>No se repite</option>
-                            <option value="diario" {% if cita.repetir == 'diario' %}selected{% endif %}>Diario</option>
-                            <option value="semanal" {% if cita.repetir == 'semanal' %}selected{% endif %}>Semanal</option>
-                            <option value="mensual" {% if cita.repetir == 'mensual' %}selected{% endif %}>Mensual</option>
+                            <option value="no" {% if cita.type_label == 'no' %}selected{% endif %}>No se repite</option>
+                            <option value="diario" {% if cita.type_label == 'diario' %}selected{% endif %}>Diario</option>
+                            <option value="semanal" {% if cita.type_label == 'semanal' %}selected{% endif %}>Semanal</option>
+                            <option value="mensual" {% if cita.type_label == 'mensual' %}selected{% endif %}>Mensual</option>
                         </select><br>
                         <label>Recursos</label><br><br>
                         <select name="recursos" class="selecc" required>
@@ -41,7 +43,7 @@
                     <div>
                         <h3>Información del Paciente</h3>
                         <label>Nombre o Rut(CC)</label><br><br>
-                        <input type="text" id="paciente" name="paciente" value="{{ cita.paciente }}" required><br>
+                        <input type="text" id="paciente" name="paciente" value="{{ cita.owner_id }}" required><br>
                         <table id="resultsTable" style="display:none;">
                             <tbody>
                                 <!-- Los resultados se mostrarán aquí -->
@@ -56,7 +58,7 @@
                             <option value="3" {% if cita.estado == 3 %}selected{% endif %}>Cancelada</option>
                         </select><br>
                         <label>Número de autorización</label><br><br>
-                        <input type="text" name="autorizacion" value="{{ cita.autorizacion }}" required><br>
+                        <input type="text" name="autorizacion" value="{{ cita.status_label }}" required><br>
                         <label>El paciente requiere prioridad de atención</label><br><br>
                         <select name="prioridad" class="selecc" required>
                             <option value="no" {% if cita.prioridad == 'no' %}selected{% endif %}>No</option>
@@ -74,11 +76,9 @@
                 <input type="submit" value="Actualizar">
             </div>
         </form>
-    </div> 
-            <input type="submit" value="Actualizar">
-        </form>
-    </div>    
+    </div>     
          <script>
+            console.log("{{ cita.start }}")
         $(document).ready(function(){
             $('#paciente').on('input', function(){
                 let query = $(this).val();

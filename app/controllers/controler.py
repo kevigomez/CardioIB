@@ -51,11 +51,12 @@ def obtener_usuarios_paginados(page, per_page):
 
 def obtenerCitas_paginas(page, per_page):
     try:
-        citas = Cita.query.paginate(page=page, per_page=per_page, error_out=False)
+        citas = Cita.query.filter(Cita.status_id != 4).paginate(page=page, per_page=per_page, error_out=False)
         return citas
     except Exception as e:
-        print(f"Error al obtener Citas: {e}")
+        logging.error(f"Error al obtener Citas: {e}")
         return None
+
 def obtener_intervalo():
     setting = Settings.query.filter_by(name='time_interval').first()
     return int(setting.value) if setting else 15
@@ -73,6 +74,7 @@ def actualizar_intervalo(nuevo_intervalo):
 
 def obtener_citas():
     return Appointment.query.all()
+
 
 
 def register_cita(form_data):
@@ -126,7 +128,11 @@ def register_cita(form_data):
         status_id=int(estado),  # Asegurándonos de que 'estado' sea un entero
         owner_id=paciente_id,  # Usar el ID extraído del paciente
         type_label=repetir,
-        status_label=autorizacion
+        status_label=autorizacion,
+        prioridad=prioridad,
+        registro_llamada=registro_llamada,
+        cual=cual,
+        edad=edad
     )
 
     db.session.add(nueva_cita)
@@ -146,6 +152,9 @@ def actualizar_intervalo(nuevo_intervalo):
         setting = Settings(name='time_interval', value=str(nuevo_intervalo))
         db.session.add(setting)
     db.session.commit()
+    
+def obtener_usuario_por_id(user_id):
+    return User.query.get(user_id)
 
 def obtener_cita_por_id(cita_id):
     return Cita.query.get(cita_id)
@@ -159,19 +168,32 @@ def actualizar_cita(cita_id, form_data):
         inicio_hora = form_data.get('inicio_hora')
         fin_fecha = form_data.get('fin_fecha')
         fin_hora = form_data.get('fin_hora')
-        type_label = form_data.get('repetir')
-        status_label = form_data.get('autorizacion')
-        status_id = int(form_data.get('estado'))
+        repetir = form_data.get('repetir')
+        estado = int(form_data.get('estado'))
+        edad = form_data.get('edad')
+        prioridad = form_data.get('prioridad')
+        registro_llamada = form_data.get('registro_llamada')
+        cual = form_data.get('cual')
+
         try:
             cita.start = datetime.strptime(f"{inicio_fecha} {inicio_hora}", '%Y-%m-%d %H:%M')
             if fin_fecha and fin_hora:
                 cita.end = datetime.strptime(f"{fin_fecha} {fin_hora}", '%Y-%m-%d %H:%M')
             else:
                 cita.end = None
+            cita.title = title
+            cita.description = description
+            cita.type_label = repetir
+            cita.status_id = estado
+            cita.edad = edad
+            cita.prioridad = prioridad
+            cita.registro_llamada = registro_llamada
+            cita.cual = cual
             db.session.commit()
             return cita
         except ValueError as e:
             logging.error(f"Error al convertir fechas: {e}")
             return None
     return None
+
 

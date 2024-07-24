@@ -137,8 +137,12 @@ class Cita(db.Model):
     last_action_by = db.Column(db.Integer)
     type_label = db.Column(db.String(85))
     status_label = db.Column(db.String(85))
+    prioridad=db.Column(db.String(85))
+    registro_llamada=db.Column(db.Integer, nullable=False)
+    cual=db.Column(db.Text)
+    edad=db.Column(db.Integer, nullable=False)
 
-    def __init__(self, series_id, start, end, title, description, type_id, status_id, owner_id, type_label, status_label):
+    def __init__(self, series_id, start, end, title, description, type_id, status_id, owner_id, type_label, status_label, prioridad, registro_llamada, cual, edad):
         self.series_id = series_id
         self.start = start
         self.end = end
@@ -149,6 +153,10 @@ class Cita(db.Model):
         self.owner_id = owner_id
         self.type_label = type_label
         self.status_label = status_label
+        self.prioridad=prioridad,
+        self.registro_llamada=registro_llamada,
+        self.cual=cual,
+        self.edad=edad
 
 
 

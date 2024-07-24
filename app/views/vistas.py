@@ -1,7 +1,7 @@
 #app/views/vistas.py
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash, jsonify
-from app.controllers.controler import registrar_usuarios, obtener_usuarios_paginados, register_cita, obtenerCitas_paginas, obtener_intervalo, actualizar_intervalo, obtener_cita_por_id, actualizar_cita
-from app.models.modelo import Paciente, Appointment, User
+from app.controllers.controler import registrar_usuarios, obtener_usuarios_paginados, register_cita, obtenerCitas_paginas, obtener_intervalo, actualizar_intervalo, obtener_cita_por_id, actualizar_cita, obtener_usuario_por_id
+from app.models.modelo import Paciente, Appointment, User, Cita
 from app import db
 from flask_paginate import Pagination, get_page_parameter
 import hashlib
@@ -147,6 +147,7 @@ def Con_Citas():
 
 
 
+
     
 
 @main.route('/appointments/<date>', methods=['GET'])
@@ -184,7 +185,23 @@ def get_time_interval():
     intervalo = obtener_intervalo()
     return jsonify(interval=intervalo)
 
-@main.route('/update_citas/<int:cita_id>')
+
+
+@main.route('/updateUsers/<int:user_id>', methods=['GET', 'POST'])
+def updateUsers(user_id):
+    cita = obtener_usuario_por_id(user_id)
+    if request.method == 'POST':
+        form_data = request.form.to_dict()
+        cita_actualizada = actualizar_cita(user_id, form_data)
+        if cita_actualizada:
+            flash('usuario actualizado exitosamente', 'success')
+        else:
+            flash('Error al actualizar la cita', 'danger')
+        return render_template('updateSucefull.html')
+    return render_template('updateUsers.html', cita=cita)
+
+
+@main.route('/update_citas/<int:cita_id>', methods=['GET', 'POST'])
 def update_citas(cita_id):
     cita = obtener_cita_por_id(cita_id)
     if request.method == 'POST':
@@ -194,10 +211,20 @@ def update_citas(cita_id):
             flash('Cita actualizada exitosamente', 'success')
         else:
             flash('Error al actualizar la cita', 'danger')
-        return redirect(url_for('main.Con_Citas'))
+        return render_template('updateSucefull.html')
     return render_template('update_citas.html', cita=cita)
 
-@main.route('/delete_citas')
-def delete_citas():
-    return
+@main.route('/delete_citas/<int:cita_id>', methods=['GET', 'POST'])
+def delete_citas(cita_id):
+    cita = Cita.query.get(cita_id)
+    if cita:
+        # Cambia el estado del cita a "eliminado"
+        cita.status_id = '4'
+        db.session.commit()
+        flash('El doctor ha sido desactivado correctamente', 'success')
+        return render_template('eliminado.html')
+    else:
+        flash('cita no encontrada', 'danger')
+
+    return redirect(url_for('main.dashboard'))
 

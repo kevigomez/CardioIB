@@ -1,0 +1,71 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 0;
+}
+
+
+
+
+
+form {
+    background-color: #fff;
+    padding: 4px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 800px;
+    padding-left: 2%;
+    padding-right: 2%;
+    padding-bottom: 2%;
+    color: #53577F;
+}
+
+input[type="text"], input[type="password"], input[type="number"], input[type="email"], textarea {
+    width: 95%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    display: flex;
+    align-content: center;
+    margin-top: 3%;
+    height: 5%;
+    color: #838383;
+}
+select {
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    display: flex;
+    align-content: center;
+    margin-top: 3%;
+    height: 47px;
+    width: 100%;
+    padding: 10px;
+    color: #838383;
+}
+
+input[type="submit"] {
+    background-color: #53577F;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 20px 0; /* Adjusted for spacing */
+    cursor: pointer;
+    width: 100%; /* Same width as input fields */    
+}
+
+input[type="submit"]:hover {
+    background-color: #616380;
+    transition-duration: 0.2s;
+}
+
+.container_label {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 10%;
+}

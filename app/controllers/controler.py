@@ -156,6 +156,34 @@ def actualizar_intervalo(nuevo_intervalo):
 def obtener_usuario_por_id(user_id):
     return User.query.get(user_id)
 
+def actualizar_usuario(user_id, form_data):
+    usuario = obtener_usuario_por_id(user_id)
+    
+    if not usuario:
+        logging.error(f"Usuario con ID {user_id} no encontrado.")
+        return None
+
+    # Actualizar los campos del usuario
+    usuario.fname = form_data.get('fname', usuario.fname)
+    usuario.lname = form_data.get('lname', usuario.lname)
+    usuario.username = form_data.get('username', usuario.username)
+    usuario.email = form_data.get('email', usuario.email)
+    usuario.organization = form_data.get('organization', usuario.organization)
+    usuario.position = form_data.get('position', usuario.position)
+    usuario.phone = form_data.get('phone', usuario.phone)
+    usuario.document_type = form_data.get('document_type', usuario.document_type)
+
+    try:
+        db.session.commit()
+        logging.info(f"Usuario con ID {user_id} actualizado correctamente.")
+        return usuario
+    except Exception as e:
+        logging.error(f"Error al actualizar el usuario: {e}")
+        db.session.rollback()
+        return None
+
+
+
 def obtener_cita_por_id(cita_id):
     return Cita.query.get(cita_id)
 

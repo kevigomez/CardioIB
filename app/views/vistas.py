@@ -1,6 +1,6 @@
 #app/views/vistas.py
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash, jsonify
-from app.controllers.controler import registrar_usuarios, obtener_usuarios_paginados, register_cita, obtenerCitas_paginas, obtener_intervalo, actualizar_intervalo, obtener_cita_por_id, actualizar_cita, obtener_usuario_por_id
+from app.controllers.controler import registrar_usuarios, obtener_usuarios_paginados, register_cita, obtenerCitas_paginas, obtener_intervalo, actualizar_intervalo, obtener_cita_por_id, actualizar_cita, obtener_usuario_por_id, actualizar_usuario
 from app.models.modelo import Paciente, Appointment, User, Cita
 from app import db
 from flask_paginate import Pagination, get_page_parameter
@@ -186,19 +186,33 @@ def get_time_interval():
     return jsonify(interval=intervalo)
 
 
-
 @main.route('/updateUsers/<int:user_id>', methods=['GET', 'POST'])
 def updateUsers(user_id):
-    cita = obtener_usuario_por_id(user_id)
+    user = obtener_usuario_por_id(user_id)
     if request.method == 'POST':
         form_data = request.form.to_dict()
-        cita_actualizada = actualizar_cita(user_id, form_data)
-        if cita_actualizada:
-            flash('usuario actualizado exitosamente', 'success')
+        user_actualizado = actualizar_usuario(user_id, form_data)
+        if user_actualizado:
+            flash('Usuario actualizado exitosamente', 'success')
         else:
-            flash('Error al actualizar la cita', 'danger')
-        return render_template('updateSucefull.html')
-    return render_template('updateUsers.html', cita=cita)
+            flash('Error al actualizar el usuario', 'danger')
+        return render_template('updateSucefull_users.html')
+    return render_template('updateUsers.html', usuario=user)
+
+
+@main.route('/delete_users/<int:user_id>', methods=['GET', 'POST'])
+def delete_users(user_id):
+    user = obtener_usuario_por_id(user_id)
+    if user:
+        # Cambia el estado del user a "eliminado"
+        user.status_id = '3'
+        db.session.commit()
+        flash('El usuario ha sido desactivado correctamente', 'success')
+        return render_template('eliminado_user.html')
+    else:
+        flash('usuario no encontrada', 'danger')
+
+    return redirect(url_for('main.dashboard'))
 
 
 @main.route('/update_citas/<int:cita_id>', methods=['GET', 'POST'])
@@ -227,4 +241,6 @@ def delete_citas(cita_id):
         flash('cita no encontrada', 'danger')
 
     return redirect(url_for('main.dashboard'))
+
+
 

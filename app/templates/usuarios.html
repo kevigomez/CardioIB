@@ -61,7 +61,7 @@
                             Desconocido
                         {% endif %}
                     </td>
-                    <td class="accion"><i class="fa-solid fa-pen-to-square"></i><i class="fa-solid fa-trash" style="color: #ee2b2b;"></i></td>
+                    <td class="accion"><a href="{{ url_for('main.updateUsers', user_id=usuario.user_id) }}"><i class="fa-solid fa-pen-to-square"></i></a> <a href="{{ url_for('main.delete_users', user_id=usuario.user_id) }}"><i class="fa-solid fa-trash" style="color: #ee2b2b;"></i></a></td>
                 </tr>
                 {% endfor %}
             </tbody>

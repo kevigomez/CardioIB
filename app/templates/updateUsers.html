@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actualizar Usuario</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles_form_usuario.css') }}">
+</head>
+<body>
+    <div class="container">
+        <form action="{{ url_for('main.updateUsers', user_id=usuario.user_id) }}" method="POST">
+            <h1>Registro de Usuarios</h1>
+            <div class="container_label">
+              <div>
+                <label for="username">Nombre de usuario</label><br>
+                <input type="text" id="username" name="username" value="{{ usuario.username }}" required><br>
+          
+                <label for="fname">Nombre</label><br>
+                <input type="text" id="fname" name="fname" value="{{ usuario.fname }}" required><br>
+                
+                <label for="phone">Teléfono</label><br>
+                <input type="text" id="phone" name="phone" value="{{ usuario.phone }}" required><br>
+          
+              </div>
+              <div>
+                <label for="email">Correo</label><br>
+                <input type="email" id="email" name="email" value="{{ usuario.email }}" required><br>
+          
+                <label for="lname">Apellido</label><br>
+                <input type="text" id="lname" name="lname" value="{{ usuario.lname }}" required><br>
+          
+                <label for="organization">RUT/CC</label><br>
+                <input type="text" id="organization" name="organization" value="{{ usuario.organization }}" required><br>
+                
+                <label for="document_type">Tipo de documento</label><br>
+                <input type="text" id="document_type" name="document_type" value="{{ usuario.document_type }}" required><br>
+              </div>
+            </div>
+            <input type="submit" value="Actualizar">
+          </form>
+    </div>
+</body>
+</html>

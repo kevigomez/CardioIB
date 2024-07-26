@@ -1,10 +1,12 @@
 #app/controllers/controler.py
 from flask import render_template, request, flash, redirect, url_for
 from app import db
-from app.models.modelo import Paciente, Appointment, User, Cita, Settings
+from app.models.modelo import Paciente, Appointment, User, Cita, Settings, Group, UserGroup
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import logging
+import hashlib
+import os
 
 def registrar_usuarios(form_data):
     username = form_data['username']
@@ -41,13 +43,54 @@ def registrar_usuarios(form_data):
 
     return nuevo_usuario
 
-def obtener_usuarios_paginados(page, per_page):
+def registrar_usuariosAses(form_data):
+    username = form_data['username']
+    fname = form_data['fname']
+    lname = form_data['lname']
+    email = form_data['email']
+    organization = form_data['organization']
+    position = form_data.get('position', 'Cardio IB IPS')  # Valor predeterminado
+    phone = form_data['phone']
+    document_type = form_data['document_type']
+
+    # Generar un salt aleatorio
+    salt = os.urandom(16).hex()
+    
+    # Convertir la contraseña en un hash SHA-1 con el salt
+    password = form_data['Password'].encode('utf-8')  # Asegúrate de que el campo es 'Password'
+    password_salted = password + salt.encode('utf-8')
+    password_encrypted = hashlib.sha1(password_salted).hexdigest()
+    
+    nuevo_usuario = User(
+        fname=fname,
+        lname=lname,
+        username=username,
+        email=email,
+        password=password_encrypted,
+        salt=salt,
+        organization=organization,
+        position=position,
+        phone=phone,
+        timezone='UTC',
+        language='es',
+        status_id=1,
+        document_type=document_type,
+    )
+    db.session.add(nuevo_usuario)
+    db.session.commit()
+
+    return nuevo_usuario
+
+
+def obtener_usuarios_paginados(page, per_page, group_id=None):
     try:
-        users = User.query.paginate(page=page, per_page=per_page, error_out=False)
+        query = User.query.join(UserGroup).filter(UserGroup.group_id == group_id) if group_id else User.query
+        users = query.paginate(page=page, per_page=per_page, error_out=False)
         return users
     except Exception as e:
         print(f"Error al obtener Usuarios: {e}")
         return None
+
 
 def obtenerCitas_paginas(page, per_page):
     try:

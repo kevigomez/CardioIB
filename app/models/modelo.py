@@ -1,7 +1,5 @@
-#app/models/modelo.py
 from app import db
 from datetime import datetime
-from flask_sqlalchemy import SQLAlchemy
 
 class Paciente(db.Model):
     __tablename__ = 'pacientes'
@@ -42,7 +40,6 @@ class Appointment(db.Model):
         self.user_id = user_id
         self.description = description
 
-
 class User(db.Model):
     __tablename__ = 'users'
     user_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -70,6 +67,7 @@ class User(db.Model):
     credit_count = db.Column(db.Numeric(7, 2), default=0.00)
     terms_date_accepted = db.Column(db.DateTime, nullable=True)
     document_type = db.Column(db.String(50), nullable=True, default=None)
+    user_groups = db.relationship('UserGroup', back_populates='user')
 
     def __init__(self, fname, lname, username, email, password, salt, organization, position, phone, timezone, language, homepageid=1, lastlogin=None, status_id=1, legacyid=None, legacypassword=None, public_id=None, allow_calendar_subscription=False, default_schedule_id=None, credit_count=0.00, terms_date_accepted=None, document_type=None):
        self.fname = fname
@@ -95,30 +93,31 @@ class User(db.Model):
        self.terms_date_accepted = terms_date_accepted
        self.document_type = document_type
 
-
-class groups(db.Model):
-    __tablename__='groups'
+class Group(db.Model):
+    __tablename__ = 'groups'
     group_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(85), nullable=True)
-    admin_group_id = db.Column(db.Integer,  nullable=True)
+    admin_group_id = db.Column(db.Integer, nullable=True)
     legacyid = db.Column(db.String(16), nullable=True)
     isdefault = db.Column(db.String(16), nullable=True)
+    user_groups = db.relationship('UserGroup', back_populates='group')
 
-    def __init__(self, group_id,name,admin_group_id,legacyid,isdefault):
-        self.group_id = group_id
+    def __init__(self, name, admin_group_id=None, legacyid=None, isdefault=None):
         self.name = name
         self.admin_group_id = admin_group_id
         self.legacyid = legacyid
         self.isdefault = isdefault
- 
-class User_groups(db.Model):
+
+class UserGroup(db.Model):
     __tablename__ = 'user_groups'
-    user_id = db.Column(db.Integer, primary_key=True)
-    group_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), primary_key=True)
+    group_id = db.Column(db.Integer, db.ForeignKey('groups.group_id'), primary_key=True)
+    user = db.relationship('User', back_populates='user_groups')
+    group = db.relationship('Group', back_populates='user_groups')
 
     def __init__(self, user_id, group_id):
         self.user_id = user_id
-        self.group_id = group_id   
+        self.group_id = group_id
 
 class Cita(db.Model):
     __tablename__ = 'citas'
@@ -137,10 +136,10 @@ class Cita(db.Model):
     last_action_by = db.Column(db.Integer)
     type_label = db.Column(db.String(85))
     status_label = db.Column(db.String(85))
-    prioridad=db.Column(db.String(85))
-    registro_llamada=db.Column(db.Integer, nullable=False)
-    cual=db.Column(db.Text)
-    edad=db.Column(db.Integer, nullable=False)
+    prioridad = db.Column(db.String(85))
+    registro_llamada = db.Column(db.Integer, nullable=False)
+    cual = db.Column(db.Text)
+    edad = db.Column(db.Integer, nullable=False)
 
     def __init__(self, series_id, start, end, title, description, type_id, status_id, owner_id, type_label, status_label, prioridad, registro_llamada, cual, edad):
         self.series_id = series_id
@@ -153,13 +152,10 @@ class Cita(db.Model):
         self.owner_id = owner_id
         self.type_label = type_label
         self.status_label = status_label
-        self.prioridad=prioridad,
-        self.registro_llamada=registro_llamada,
-        self.cual=cual,
-        self.edad=edad
-
-
-
+        self.prioridad = prioridad
+        self.registro_llamada = registro_llamada
+        self.cual = cual
+        self.edad = edad
 
 class Resource(db.Model):
     __tablename__ = 'resources'
@@ -243,7 +239,6 @@ class Resource(db.Model):
         self.last_modified = last_modified
         self.additional_properties = additional_properties
 
-        
 class Settings(db.Model):
     __tablename__ = 'settings'
     id = db.Column(db.Integer, primary_key=True)

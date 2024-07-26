@@ -1,6 +1,6 @@
 #app/views/vistas.py
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash, jsonify
-from app.controllers.controler import registrar_usuarios, obtener_usuarios_paginados, register_cita, obtenerCitas_paginas, obtener_intervalo, actualizar_intervalo, obtener_cita_por_id, actualizar_cita, obtener_usuario_por_id, actualizar_usuario
+from app.controllers.controler import registrar_usuarios, obtener_usuarios_paginados, register_cita, obtenerCitas_paginas, obtener_intervalo, actualizar_intervalo, obtener_cita_por_id, actualizar_cita, obtener_usuario_por_id, actualizar_usuario, registrar_usuariosAses
 from app.models.modelo import Paciente, Appointment, User, Cita
 from app import db
 from flask_paginate import Pagination, get_page_parameter
@@ -10,6 +10,7 @@ from passlib.hash import pbkdf2_sha256
 from flask_cors import CORS
 from datetime import datetime
 from app.models.modelo import db, Settings
+from functools import wraps
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -19,11 +20,20 @@ CORS(main)
 
 appointments = {}
 
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            return render_template('sesionCerrada.html')
+        return f(*args, **kwargs)
+    return decorated_function
+
+
 @main.route('/')
 def home():
     # Devuelve una plantilla llamada 'index.html'
     return render_template('index.html')
-
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
@@ -36,9 +46,13 @@ def index():
         user = User.query.filter_by(username=username).first()
         
         if user:
-            # Hash la contraseña ingresada usando SHA-1
-            logging.debug(f"Contraseña almacenada (hash): {user.password}")
-            password_hash = hashlib.sha1(password.encode()).hexdigest()
+            # Obtener el salt almacenado
+            salt = user.salt
+            logging.debug(f"Salt almacenado: {salt}")
+            
+            # Hash la contraseña ingresada usando SHA-1 con el salt
+            password_salted = password.encode('utf-8') + salt.encode('utf-8')
+            password_hash = hashlib.sha1(password_salted).hexdigest()
             logging.debug(f"Hash de la contraseña ingresada: {password_hash}")
             
             # Verificar si el hash de la contraseña ingresada coincide con el hash almacenado
@@ -57,35 +71,42 @@ def index():
 
 
 @main.route('/dashboard')
+@login_required
 def dashboard():
     return render_template('view_administrator.html')
     
 
 @main.route('/logout')
+@login_required
 def logout():
     session.pop('user_id', None)
     flash('Has cerrado sesión exitosamente', 'info')
     return redirect(url_for('main.index'))
 
 @main.route('/usuarios')
+@login_required
 def usuarios():
     page = request.args.get('page', 1, type=int)
     per_page = 10
-    paginated_users = obtener_usuarios_paginados(page, per_page)
+    group_id = 5  # Define el ID del grupo que deseas filtrar
+    paginated_users = obtener_usuarios_paginados(page, per_page, group_id=group_id)
     if paginated_users:
         return render_template('usuarios.html', users=paginated_users)
     else:
         return render_template('usuarios.html', users=[])
 
 @main.route('/citas')
+@login_required
 def citas():
     return render_template('calendariocitas.html')
           
 @main.route('/calendario')
+@login_required
 def calendario():
     return render_template('calendario.html')
 
 @main.route('/reg_usuarios', methods=['GET', 'POST'])
+@login_required
 def reg_usuarios():
     logging.debug(f"Formulario de datos recibidos: {request.form}")
     if request.method == 'POST':
@@ -96,7 +117,20 @@ def reg_usuarios():
     return render_template('form_registrousuarios.html')
 
 
+@main.route('/reg_usuariosAses', methods=['GET', 'POST'])
+@login_required
+def reg_usuariosAses():
+    logging.debug(f"Formulario de datos recibidos: {request.form}")
+    if request.method == 'POST':
+        form_data = request.form
+        registrar_usuariosAses(form_data)
+        flash('Usuario registrado exitosamente', 'success')
+        return redirect(url_for('main.usuarios'))
+    return render_template('formRegisAsesor.html')
+
+
 @main.route('/reg_citas', methods=['GET', 'POST'])
+@login_required
 def reg_citas():
     logging.debug(f"Formulario de datos recibidos: {request.form}")
     if request.method == 'POST':
@@ -112,6 +146,7 @@ def reg_citas():
 
 
 @main.route('/search_user')
+@login_required
 def search_user():
     query = request.args.get('query')
     if query:
@@ -125,6 +160,7 @@ def search_user():
 
 
 @main.route('/Consul_citas')
+@login_required
 def Con_Citas():
     page = request.args.get('page', 1, type=int)
     per_page = 10
@@ -151,10 +187,12 @@ def Con_Citas():
     
 
 @main.route('/appointments/<date>', methods=['GET'])
+@login_required
 def get_appointments(date):
     return jsonify(appointments.get(date, {}))
 
 @main.route('/appointments', methods=['POST'])
+@login_required
 def save_appointment():
     data = request.get_json()
     date = data['date']
@@ -170,6 +208,7 @@ def save_appointment():
 
 
 @main.route('/admin', methods=['GET', 'POST'])
+@login_required
 def admin():
     if request.method == 'POST':
         nuevo_intervalo = request.form['time-interval']
@@ -181,12 +220,14 @@ def admin():
     return render_template('admin_int.html', intervalo=intervalo)
 
 @main.route('/get_time_interval')
+@login_required
 def get_time_interval():
     intervalo = obtener_intervalo()
     return jsonify(interval=intervalo)
 
 
 @main.route('/updateUsers/<int:user_id>', methods=['GET', 'POST'])
+@login_required
 def updateUsers(user_id):
     user = obtener_usuario_por_id(user_id)
     if request.method == 'POST':
@@ -201,6 +242,7 @@ def updateUsers(user_id):
 
 
 @main.route('/delete_users/<int:user_id>', methods=['GET', 'POST'])
+@login_required
 def delete_users(user_id):
     user = obtener_usuario_por_id(user_id)
     if user:
@@ -216,6 +258,7 @@ def delete_users(user_id):
 
 
 @main.route('/update_citas/<int:cita_id>', methods=['GET', 'POST'])
+@login_required
 def update_citas(cita_id):
     cita = obtener_cita_por_id(cita_id)
     if request.method == 'POST':
@@ -229,6 +272,7 @@ def update_citas(cita_id):
     return render_template('update_citas.html', cita=cita)
 
 @main.route('/delete_citas/<int:cita_id>', methods=['GET', 'POST'])
+@login_required
 def delete_citas(cita_id):
     cita = Cita.query.get(cita_id)
     if cita:

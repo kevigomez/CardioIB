@@ -94,19 +94,10 @@ class User(db.Model):
        self.document_type = document_type
 
 class Group(db.Model):
-    __tablename__ = 'groups'
+    __tablename__='groups'
     group_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(85), nullable=True)
-    admin_group_id = db.Column(db.Integer, nullable=True)
-    legacyid = db.Column(db.String(16), nullable=True)
-    isdefault = db.Column(db.String(16), nullable=True)
     user_groups = db.relationship('UserGroup', back_populates='group')
-
-    def __init__(self, name, admin_group_id=None, legacyid=None, isdefault=None):
-        self.name = name
-        self.admin_group_id = admin_group_id
-        self.legacyid = legacyid
-        self.isdefault = isdefault
 
 class UserGroup(db.Model):
     __tablename__ = 'user_groups'
@@ -115,9 +106,6 @@ class UserGroup(db.Model):
     user = db.relationship('User', back_populates='user_groups')
     group = db.relationship('Group', back_populates='user_groups')
 
-    def __init__(self, user_id, group_id):
-        self.user_id = user_id
-        self.group_id = group_id
 
 class Cita(db.Model):
     __tablename__ = 'citas'

@@ -1,5 +1,5 @@
 #app/views/vistas.py
-from flask import Blueprint, render_template, request, redirect, url_for, session, flash, jsonify
+from flask import Blueprint, Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from app.controllers.controler import registrar_usuarios, obtener_usuarios_paginados, register_cita, obtenerCitas_paginas, obtener_intervalo, actualizar_intervalo, obtener_cita_por_id, actualizar_cita, obtener_usuario_por_id, actualizar_usuario, registrar_usuariosAses
 from app.models.modelo import Paciente, Appointment, User, Cita
 from app import db
@@ -11,6 +11,10 @@ from flask_cors import CORS
 from datetime import datetime
 from app.models.modelo import db, Settings
 from functools import wraps
+from flask import request, redirect, url_for, session, flash
+from werkzeug.security import check_password_hash
+from datetime import timedelta
+
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -19,6 +23,9 @@ main = Blueprint('main', __name__)
 CORS(main)
 
 appointments = {}
+
+
+
 
 
 def login_required(f):
@@ -34,6 +41,14 @@ def login_required(f):
 def home():
     # Devuelve una plantilla llamada 'index.html'
     return render_template('index.html')
+
+app = Flask(__name__)
+
+# Configuración de la clave secreta
+app.secret_key = 'tu_clave_secreta_aqui'
+
+# Configuración del tiempo de vida de la sesión
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=1)
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
@@ -57,7 +72,12 @@ def index():
             
             # Verificar si el hash de la contraseña ingresada coincide con el hash almacenado
             if user.password == password_hash:
+                session.permanent = True  # Establecer la sesión como permanente
                 session['user_id'] = user.user_id
+                session['username'] = user.username
+                session['fname'] = user.fname
+                session['lname'] = user.lname
+                logging.debug(f"Usuario de sesion: {session['fname']}")
                 flash('Inicio de sesión exitoso!', 'success')
                 return redirect(url_for('main.dashboard'))
         
@@ -68,6 +88,16 @@ def index():
     # Si el método es GET, renderizar la página de inicio de sesión
     return render_template("index.html")
 
+@main.route('/logout')
+def logout():
+    session.pop('user_id', None)
+    session.pop('username', None)
+    session.pop('fname', None)
+    session.pop('lname', None)
+    # Elimina otros datos de sesión
+    flash('Has cerrado sesión')
+    return redirect(url_for('main.index'))
+
 
 
 @main.route('/dashboard')
@@ -75,13 +105,6 @@ def index():
 def dashboard():
     return render_template('view_administrator.html')
     
-
-@main.route('/logout')
-@login_required
-def logout():
-    session.pop('user_id', None)
-    flash('Has cerrado sesión exitosamente', 'info')
-    return redirect(url_for('main.index'))
 
 @main.route('/usuarios')
 @login_required

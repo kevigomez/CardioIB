@@ -7,7 +7,9 @@
     <title>Calendario y Registro de Citas</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles_calendario.css') }}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="{{ url_for('static', filename='script/script.js') }}" defer></script>
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.2/main.min.css' rel='stylesheet' />
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.2/main.min.js'></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
     {% extends "base.html" %}
@@ -36,7 +38,7 @@
         <button id="next-btn"><i class="fa-solid fa-arrow-right"></i></button>
     </div>
     
-    <div class="hour-selection">
+    <div class="hour-selection"><!--con este -->
         <h2>Selecciona una hora</h2>
         <table id="schedule-table" border="1" class="table_citas">
             <thead>
@@ -116,34 +118,89 @@
             <input type="submit" value="Enviar">
         </form>
     </div>
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    var calendarEl = document.getElementById('calendar');
+                    var scheduleTableEl = document.getElementById('schedule-table');
+
+                    var calendar = new FullCalendar.Calendar(calendarEl, {
+                        initialView: 'dayGridMonth',
+                        locale: 'es',
+                        events: function (fetchInfo, successCallback, failureCallback) {
+                            fetch('/get_appointments')
+                                .then(response => response.json())
+                                .then(data => {
+                                    successCallback(data.appointments);
+                                })
+                                .catch(error => {
+                                    console.error('Error fetching appointments:', error);
+                                    failureCallback(error);
+                                });
+                        }
+                    });
+
+                    calendar.render();
+                });
+    
+
+    </script>
+    
 
     <script>
-        $(document).ready(function(){
-            $('#paciente').on('input', function(){
+        $(document).ready(function() {
+            $(document).ready(function() {
+                function loadAppointments() {
+                $.ajax({
+                    url: "{{ url_for('main.get_appointments') }}",
+                    method: "GET",
+                    success: function(response) {
+                        let appointments = response.appointments;
+                        console.log('Citas:', appointments);
+
+                        appointments.forEach(appointment => {
+                            let startDate = new Date(appointment.start);
+                            let endDate = new Date(appointment.end);
+                            let dateString = `${startDate.getFullYear()}-${String(startDate.getMonth() + 1).padStart(2, '0')}-${String(startDate.getDate()).padStart(2, '0')}`;
+                            let timeSlot = `${String(startDate.getHours()).padStart(2, '0')}:${String(startDate.getMinutes()).padStart(2, '0')} - ${String(endDate.getHours()).padStart(2, '0')}:${String(endDate.getMinutes()).padStart(2, '0')}`;
+
+                            // Aquí podrías querer ajustar cómo se identifican las celdas en el calendario
+                            $(`#schedule-table td[data-date="${dateString}"][data-time="${timeSlot}"]`)
+                                .addClass('has-appointment')
+                                .attr('title', appointment.title);
+                        });
+                    },
+                    error: function(error) {
+                        console.log('Error al obtener las citas:', error);
+                    }
+                });
+            }
+
+                loadAppointments(); // Llama a esta función para cargar las citas
+            });
+    
+            $('#paciente').on('input', function() {
                 let query = $(this).val();
-                console.log('Input:', query); // Verifica el valor del input
-                if(query.length > 2) {
+                if (query.length > 2) {
                     $.ajax({
-                        url: "{{ url_for('main.search_user') }}", // Asegúrate de que la URL es correcta
+                        url: "{{ url_for('main.search_user') }}",
                         method: "GET",
                         data: { query: query },
                         success: function(data) {
-                            console.log('Response:', data); // Verifica la respuesta del servidor
                             let results = data.results;
                             let tableBody = $('#resultsTable tbody');
                             tableBody.empty();
-
-                            if(results.length > 0) {
+    
+                            if (results.length > 0) {
                                 $('#resultsTable').show();
                                 results.forEach(function(user) {
                                     let row = `<tr class="selectable">
-                                        <td>${user.fname} ${user.lname} (${user.organization})</td>   
+                                        <td>${user.fname} ${user.lname} (${user.organization})</td>
                                     </tr>`;
                                     tableBody.append(row);
                                 });
-
+    
                                 $('.selectable').on('click', function() {
-                                    let selectedText = $(this).find('td').text(); // Assuming Rut(CC) is in the third column
+                                    let selectedText = $(this).find('td').text();
                                     $('#paciente').val(selectedText);
                                     $('#resultsTable').hide();
                                 });
@@ -159,15 +216,15 @@
                     $('#resultsTable').hide();
                 }
             });
-
+    
             $('#citaForm').on('submit', function(event) {
                 event.preventDefault(); // Evitar el envío del formulario estándar
-                let paciente = $('#paciente').val(); // Obtener el valor del campo del paciente
-                
+                let formData = $(this).serialize(); // Obtener todos los datos del formulario
+    
                 $.ajax({
                     url: "{{ url_for('main.reg_citas') }}",
                     method: "POST",
-                    data: { paciente: paciente },
+                    data: formData,
                     success: function(response) {
                         console.log('Formulario enviado exitosamente', response);
                         // Puedes agregar lógica adicional aquí, como mostrar un mensaje de éxito
@@ -178,22 +235,68 @@
                     }
                 });
             });
-        });
-    </script>
-    <script>
-       $(document).ready(function() {
+    
+            function generateTable(startDate, interval) {
+                let start = "07:00";
+                let end = "17:00";
+                let slots = generateTimeSlots(start, end, interval);
+    
+                let tableHead = `<tr><th>Día y Fecha</th>${slots.map(slot => `<th>${slot}</th>`).join('')}</tr>`;
+                let tableBody = '';
+    
+                let dayOfWeek = startDate.getDay();
+                let monday = new Date(startDate);
+                monday.setDate(startDate.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
+    
+                for (let i = 0; i < 7; i++) {
+                    let currentDay = new Date(monday);
+                    currentDay.setDate(monday.getDate() + i);
+    
+                    let dayOfWeekStr = currentDay.toLocaleString('es-ES', { weekday: 'long' });
+                    let date = currentDay.toLocaleDateString('es-ES');
+    
+                    tableBody += `<tr><td>${dayOfWeekStr}, ${date}</td>${slots.map(slot => `<td class="hour-column" data-date="${currentDay}" data-time="${slot}"></td>`).join('')}</tr>`;
+                }
+    
+                $('#schedule-table thead').html(tableHead);
+                $('#schedule-table tbody').html(tableBody);
+    
+                $('.hour-column').on('click', function() {
+                    const cita = $('.cita option:selected').text();
+                    let date = new Date($(this).data('date'));
+                    let time = $(this).data('time');
+                    let [start, end] = time.split(' - ');
+    
+                    let duracion = calculateDuration(start, end);
+                    $('#duracion').text(duracion);
+                    console.log('Celda clickeada:', date, time);
+                    $('#title').val(`Cita - ${cita}`);
+                    $('#inicio-fecha').val(formatDate(date));
+                    $('#inicio-hora').val(formatTime(start));
+                    $('#fin-fecha').val(formatDate(date));
+                    $('#fin-hora').val(formatTime(end));
+    
+                    $('#title, #inicio-fecha, #fin-fecha').prop('readonly', true);
+                    $('.selecc').prop('readonly', true);
+                    $('.Info_cita').hide();
+                    $('.calendar-container').hide();
+                    $('.hour-selection').hide();
+                    $('.form-container').show();
+                });
+                loadAppointments();
+            }
             function formatDate(date) {
                 let day = String(date.getDate()).padStart(2, '0');
                 let month = String(date.getMonth() + 1).padStart(2, '0');
                 let year = date.getFullYear();
                 return `${year}-${month}-${day}`;
             }
-
+    
             function formatTime(time) {
                 let [hours, minutes] = time.split(':');
                 return `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}`;
             }
-
+    
             function calculateDuration(start, end) {
                 let startTime = new Date(`1970-01-01T${start}:00`);
                 let endTime = new Date(`1970-01-01T${end}:00`);
@@ -202,14 +305,14 @@
                 let minutes = duration % 60;
                 return `${hours} horas ${minutes} minutos`;
             }
-
+    
             function generateTimeSlots(start, end, interval) {
                 let slots = [];
                 let startTime = new Date();
                 startTime.setHours(start.split(':')[0], start.split(':')[1], 0, 0);
                 let endTime = new Date();
                 endTime.setHours(end.split(':')[0], end.split(':')[1], 0, 0);
-
+    
                 while (startTime < endTime) {
                     let endTimeSlot = new Date(startTime.getTime() + interval * 60000);
                     slots.push(`${startTime.getHours().toString().padStart(2, '0')}:${startTime.getMinutes().toString().padStart(2, '0')} - ${endTimeSlot.getHours().toString().padStart(2, '0')}:${endTimeSlot.getMinutes().toString().padStart(2, '0')}`);
@@ -217,79 +320,31 @@
                 }
                 return slots;
             }
-
-            function generateTable(startDate, interval) {
-                let start = "07:00";
-                let end = "17:00";
-                let slots = generateTimeSlots(start, end, interval);
-
-                let tableHead = `<tr><th>Día y Fecha</th>${slots.map(slot => `<th>${slot}</th>`).join('')}</tr>`;
-                let tableBody = '';
-
-                let dayOfWeek = startDate.getDay();
-                let monday = new Date(startDate);
-                monday.setDate(startDate.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
-
-                for (let i = 0; i < 7; i++) {
-                    let currentDay = new Date(monday);
-                    currentDay.setDate(monday.getDate() + i);
-
-                    let dayOfWeekStr = currentDay.toLocaleString('es-ES', { weekday: 'long' });
-                    let date = currentDay.toLocaleDateString('es-ES');
-
-                    tableBody += `<tr><td>${dayOfWeekStr}, ${date}</td>${slots.map(slot => `<td class="hour-column" data-date="${currentDay}" data-time="${slot}"></td>`).join('')}</tr>`;
-                }
-
-                $('#schedule-table thead').html(tableHead);
-                $('#schedule-table tbody').html(tableBody);
-
-                $('.hour-column').on('click', function() {
-                    const cita = $('.cita option:selected').text();
-                    let date = new Date($(this).data('date'));
-                    let time = $(this).data('time');
-                    let [start, end] = time.split(' - ');
-
-                    let duracion = calculateDuration(start, end);
-                    $('#duracion').text(duracion);
-
-                    $('#title').val(`Cita - ${cita}`);
-                    $('#inicio-fecha').val(formatDate(date));
-                    $('#inicio-hora').val(formatTime(start));
-                    $('#fin-fecha').val(formatDate(date));
-                    $('#fin-hora').val(formatTime(end));
-
-                    $('#title, #inicio-fecha, #fin-fecha').prop('readonly', true);
-                    $('.selecc').prop('readonly', true);
-                    $('.Info_cita').hide();
-                    $('.calendar-container').hide();
-                    $('.hour-selection').hide();
-                    $('.form-container').show();
-                });
-            }
-
+    
+    
             const calendarContainer = document.getElementById('calendar');
             const prevBtn = document.getElementById('prev-btn');
             const nextBtn = document.getElementById('next-btn');
             let selectedDate = new Date();
             let currentYear = selectedDate.getFullYear();
             let currentMonth = selectedDate.getMonth();
-
+    
             function getMonthsArray(year, startMonth) {
                 return Array.from({ length: 3 }, (_, i) => new Date(year, startMonth + i));
             }
-
+    
             function renderCalendar() {
                 calendarContainer.innerHTML = '';
                 const months = getMonthsArray(currentYear, currentMonth);
                 months.forEach(date => {
                     const monthDiv = document.createElement('div');
                     monthDiv.className = 'month';
-
+    
                     const monthNameDiv = document.createElement('div');
                     monthNameDiv.className = 'month-name';
                     monthNameDiv.textContent = date.toLocaleString('es-ES', { month: 'long', year: 'numeric' });
                     monthDiv.appendChild(monthNameDiv);
-
+    
                     const weekdaysDiv = document.createElement('div');
                     weekdaysDiv.className = 'weekdays';
                     ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].forEach(day => {
@@ -299,18 +354,18 @@
                         weekdaysDiv.appendChild(weekdayDiv);
                     });
                     monthDiv.appendChild(weekdaysDiv);
-
+    
                     const daysDiv = document.createElement('div');
                     daysDiv.className = 'days';
                     const firstDay = new Date(date.getFullYear(), date.getMonth(), 1).getDay() || 7;
                     const daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
-
+    
                     for (let i = 1; i < firstDay; i++) {
                         const emptyDiv = document.createElement('div');
                         emptyDiv.className = 'day empty';
                         daysDiv.appendChild(emptyDiv);
                     }
-
+    
                     for (let day = 1; day <= daysInMonth; day++) {
                         const dayDiv = document.createElement('div');
                         dayDiv.className = 'day';
@@ -319,16 +374,17 @@
                             selectedDate = new Date(date.getFullYear(), date.getMonth(), day);
                             $.getJSON("{{ url_for('main.get_time_interval') }}", function(data) {
                                 generateTable(selectedDate, parseInt(data.interval));
+                                loadAppointments(); // Cambiado a loadAppointments
                             });
                         });
                         daysDiv.appendChild(dayDiv);
                     }
-
+    
                     monthDiv.appendChild(daysDiv);
                     calendarContainer.appendChild(monthDiv);
                 });
             }
-
+    
             prevBtn.addEventListener('click', () => {
                 currentMonth -= 3;
                 if (currentMonth < 0) {
@@ -337,7 +393,7 @@
                 }
                 renderCalendar();
             });
-
+    
             nextBtn.addEventListener('click', () => {
                 currentMonth += 3;
                 if (currentMonth > 11) {
@@ -346,15 +402,17 @@
                 }
                 renderCalendar();
             });
-
-            renderCalendar();
-
+    
+            renderCalendar(); 
+    
             $.getJSON("{{ url_for('main.get_time_interval') }}", function(data) {
                 generateTable(selectedDate, parseInt(data.interval));
+                loadAppointments(); // Cambiado a loadAppointments
             });
         });
     </script>
+    
     </div>
     {% endblock %}
 </body>
-</html>
+</html> 

@@ -253,3 +253,7 @@ input[type="text"], input[type="password"], input[type="number"], input[type="em
     background-color: white;
     border: 1px solid #ccc;
 }
+
+.hour-selection{
+    background-color: chartreuse;
+}

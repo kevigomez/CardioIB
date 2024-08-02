@@ -201,19 +201,6 @@ def Con_Citas():
     else:
         return render_template('citas.html', citas=[])
 
-
-
-
-
-
-
-    
-
-@main.route('/appointments/<date>', methods=['GET'])
-@login_required
-def get_appointments(date):
-    return jsonify(appointments.get(date, {}))
-
 @main.route('/appointments', methods=['POST'])
 @login_required
 def save_appointment():
@@ -310,4 +297,20 @@ def delete_citas(cita_id):
     return redirect(url_for('main.dashboard'))
 
 
+
+@main.route('/get_appointments', methods=['GET'])
+def get_appointments():
+    try:
+        citas = Cita.query.all()
+        appointments = []
+        for cita in citas:
+            appointment = {
+                "start": cita.start.strftime('%Y-%m-%dT%H:%M:%S'),
+                "end": cita.end.strftime('%Y-%m-%dT%H:%M:%S'),
+                "title": cita.title
+            }
+            appointments.append(appointment)
+        return jsonify({"appointments": appointments})
+    except Exception as e:
+        return jsonify({"message": "Error al obtener las citas: " + str(e)})
 

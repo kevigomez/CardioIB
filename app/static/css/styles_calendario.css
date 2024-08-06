@@ -5,7 +5,14 @@ body {
     margin-left: 20%;
     
 }
-
+nav{
+    color: #f0f0f0;
+    text-decoration: none;
+}
+.nav_link:hover{
+    text-decoration: none;
+    color: #f0f0f0;
+}
 .calendar-container, .interval-selection, .hour-bar, .form-container {
     max-width: 600px;
     margin: auto;
@@ -86,6 +93,7 @@ button:hover {
     display: flex;
     justify-content: center;
     align-items: center;  
+    
 }
 #appointment-form{
     display: grid;
@@ -159,6 +167,7 @@ input[type="text"], input[type="password"], input[type="number"], input[type="em
 .calendar-container {
     display: flex;
     align-items: center;
+    margin-left: 22%;
 }
 
 #prev-btn, #next-btn {
@@ -212,7 +221,7 @@ input[type="text"], input[type="password"], input[type="number"], input[type="em
     border-radius:2px;
     padding-top: 5px;
     padding-bottom: 5px;
-    margin-left: 20%;
+    margin-left: 40%;
 }
 .hour-column:hover{
     background-color: #ccc;
@@ -253,7 +262,7 @@ input[type="text"], input[type="password"], input[type="number"], input[type="em
     background-color: white;
     border: 1px solid #ccc;
 }
+.container-citas{
+    margin-right: 30%;
 
-.hour-selection{
-    background-color: chartreuse;
 }

@@ -14,7 +14,14 @@ thead{
     background-color:#53577F ;
     color: white;
 }
-
+nav{
+    color: #f0f0f0;
+    text-decoration: none;
+}
+.nav_link:hover{
+    text-decoration: none;
+    color: #f0f0f0;
+}
 .accion{
     justify-content: space-between;
 }
@@ -25,10 +32,23 @@ thead{
 .tabla_us{
     font-size: smaller;
     margin-bottom: auto;
-}
+    background-color: rgba(255, 255, 255, 0.97);
+    padding:1%;
+    width: 150%;
+    overflow-x: auto; /* Activa el scroll horizontal si es necesario */
+    }
 .butt_acc{
     display: grid;
     grid-template-columns: 20% 80%;
+}
+.container_users{
+    margin-top: 3%;
+    width: 200%; /* Ajusta el ancho según tus necesidades */
+    height: auto; /* Ajusta la altura máxima según tus necesidades */
+    overflow-y: auto; /* Activa el scroll vertical */
+    -webkit-box-shadow: 0px 0px 14px 7px rgba(0,0,0,0.20);
+    -moz-box-shadow: 0px 0px 14px 7px rgba(0,0,0,0.20);
+    box-shadow: 0px 0px 14px 7px rgba(0,0,0,0.20);
 }
 
 

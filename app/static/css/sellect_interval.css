@@ -5,6 +5,14 @@ body {
     padding: 0;
     
 }
+nav{
+    color: #f0f0f0;
+    text-decoration: none;
+}
+.nav_link:hover{
+    text-decoration: none;
+    color: #f0f0f0;
+}
 .content{
     margin-left: 15%;
 }

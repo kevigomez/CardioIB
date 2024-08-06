@@ -14,3 +14,22 @@ thead{
 .registrar{
     margin-left: 20%;
 }
+.table_cit{
+    font-size: smaller;
+    margin-bottom: auto;
+    background-color: rgba(255, 255, 255, 0.97);
+    padding:1%;
+    width: 150%;
+    
+    }
+.container_citas{
+    margin-top: 4%;
+    width: 200%; /* Ajusta el ancho según tus necesidades */
+    height: auto; /* Ajusta la altura máxima según tus necesidades */
+    overflow-y: auto; /* Activa el scroll vertical */
+    overflow-x: auto; /* Activa el scroll horizontal si es necesario */
+    -webkit-box-shadow: 0px 0px 14px 7px rgba(0,0,0,0.20);
+    -moz-box-shadow: 0px 0px 14px 7px rgba(0,0,0,0.20);
+    box-shadow: 0px 0px 14px 7px rgba(0,0,0,0.20);
+}
+

@@ -100,5 +100,13 @@ h1 {
 .titulo {
   text-align: center;
 }
+nav{
+  color: #f0f0f0;
+  text-decoration: none;
+}
+.nav_link:hover{
+  text-decoration: none;
+  color: #f0f0f0;
+}
 
   

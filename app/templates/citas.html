@@ -16,7 +16,11 @@
     {% block content %}
     
     <div class="container_citas">
-        <h1>Lista de Citas</h1>
+        <div class="table_cit">
+            <div>
+                <h1>Lista de Citas</h1>
+            </div>
+        <div class="table_citas">    
         <table class="table table-striped" id="appointment-table">
             <thead>
                 <tr>
@@ -75,6 +79,8 @@
             {% endif %}
         </div>
     </div>
-    {% endblock %}
+    </div>    
+</div>
+{% endblock %}
 </body>
 </html>

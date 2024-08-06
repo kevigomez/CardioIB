@@ -86,3 +86,11 @@ input[type="submit"]:hover {
     transition-duration: 0.2s;
     
 }
+nav{
+    color: #f0f0f0;
+    text-decoration: none;
+}
+.nav_link:hover{
+    text-decoration: none;
+    color: #f0f0f0;
+}

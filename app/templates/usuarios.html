@@ -20,7 +20,7 @@
         </div>
         <div class="butt_acc">
     <div>
-        <a href="{{ url_for('main.reg_usuarios') }}">Registrar pacientes</a>
+        <a href="{{ url_for('main.reg_usuarios') }}">Registrar pacientes</a><br>
         <a href="{{ url_for('main.reg_usuariosAses') }}">Registrar Usuarios</a>
         </div>
     <div>
@@ -28,7 +28,7 @@
         <input type="text" id="searchInput" class="form-control mb-3" placeholder="Buscar usuarios...">    
         </div>
     </div>
-    
+    <div class="table_users">
         <table class="table table-striped" id="user-table">
             <thead>
                 <tr>
@@ -38,6 +38,7 @@
                     <th scope="col">Correo</th>
                     <th scope="col">Teléfono</th>
                     <th scope="col">RUT - CC</th>
+                    <th scope="col">Fecha de creacion</th>
                     <th scope="col">Estado</th>
                     <th scope="col">Accion</th>
                 </tr>
@@ -51,6 +52,7 @@
                     <td>{{ usuario.email }}</td>
                     <td>{{ usuario.phone }}</td>
                     <td>{{ usuario.organization }}</td>
+                    <td>{{ usuario.date_created }}</td>
                     <td>
                         {% if usuario.status_id == 1 %}
                             Activo
@@ -82,7 +84,7 @@
         </div>
     </div>
 </div>
-
+</div>
     <script>
         document.getElementById('searchInput').addEventListener('keyup', function() {
             let input = this.value.toLowerCase();

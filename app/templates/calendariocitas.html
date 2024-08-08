@@ -118,58 +118,53 @@
             <input type="submit" value="Enviar">
         </form>
     </div>
-            <script>
-                document.addEventListener('DOMContentLoaded', function () {
-                    var calendarEl = document.getElementById('calendar');               
-                    var calendar = new FullCalendar.Calendar(calendarEl, {
-                        initialView: 'dayGridMonth',
-                        locale: 'es',
-                        events: function (fetchInfo, successCallback, failureCallback) {
-                            fetch('/get_appointments')
-                                .then(response => response.json())
-                                .then(data => {
-                                    successCallback(data.appointments);
-                                    updateScheduleTable(data.appointments);
-                                })
-                                .catch(error => {
-                                    console.error('Error fetching appointments:', error);
-                                    failureCallback(error);
-                                });
-                        }
-                    });
 
-                    calendar.render();
-                });
-    </script>
     
 
     <script>
         $(document).ready(function() {
             $(document).ready(function() {
-            function loadAppointments() {
-                $.ajax({
-                    url: "{{ url_for('main.get_appointments') }}",
-                    method: "GET",
-                    success: function(response) {
-                        let appointments = response.appointments;
-                        console.log('Citas:', appointments);
+                function loadAppointments() {
+                    $.ajax({
+                        url: "{{ url_for('main.get_appointments') }}",
+                        method: "GET",
+                        success: function(response) {
+                            let appointments = response.appointments;
+                            
+                            // Asegúrate de que las citas estén llegando correctamente
+                            console.log(appointments); // Para depuración
 
-                        appointments.forEach(appointment => {
-                            let startDate = new Date(appointment.start);
-                            let endDate = new Date(appointment.end);
-                            let dateString = `${startDate.getFullYear()}-${String(startDate.getMonth() + 1).padStart(2, '0')}-${String(startDate.getDate()).padStart(2, '0')}`;
-                            let timeSlot = `${String(startDate.getHours()).padStart(2, '0')}:${String(startDate.getMinutes()).padStart(2, '0')} - ${String(endDate.getHours()).padStart(2, '0')}:${String(endDate.getMinutes()).padStart(2, '0')}`;
+                            appointments.forEach(appointment => {
+                                let startDate = new Date(appointment.start);
+                                let endDate = new Date(appointment.end);
+                                let dateString = `${startDate.getFullYear()}-${String(startDate.getMonth() + 1).padStart(2, '0')}-${String(startDate.getDate()).padStart(2, '0')}`;
+                                let timeSlot = `${String(startDate.getHours()).padStart(2, '0')}:${String(startDate.getMinutes()).padStart(2, '0')} - ${String(endDate.getHours()).padStart(2, '0')}:${String(endDate.getMinutes()).padStart(2, '0')}`;
 
-                            $(`#schedule-table td[data-date="${dateString}"][data-time="${timeSlot}"]`)
-                                .addClass('has-appointment')
-                                .attr('title', appointment.title);
-                        });
-                    },
-                    error: function(error) {
-                        console.log('Error al obtener las citas:', error);
-                    }
+                                // Aquí se debe seleccionar la celda correcta
+                                let cell = $(`#schedule-table td[data-date="${dateString}"][data-time="${timeSlot}"]`);
+
+                                if (cell.length > 0) {
+                                    cell.addClass('has-appointment')
+                                        .attr('title', appointment.title)
+                                        .text(appointment.title); // Esto asegura que el título de la cita se muestre en la celda
+                                } else {
+                                    console.log(`No se encontró celda para la fecha: ${dateString} y hora: ${timeSlot}`);
+                                }
+                            });
+                        },
+                        error: function(error) {
+                            console.log('Error al obtener las citas:', error);
+                        }
+                    });
+                }
+
+                // Carga las citas después de generar la tabla
+                $(document).ready(function() {
+                    generateTable(new Date(), 60); // Genera la tabla
+                    loadAppointments(); // Carga las citas en la tabla
                 });
-            }   
+
+   
                 $('#paciente').on('input', function() {
             let query = $(this).val();
             if (query.length > 2) {
@@ -225,56 +220,34 @@
         });
     });
     
-        function generateTable(startDate, interval) {
-        let start = "07:00";
-        let end = "17:00";
-        let slots = generateTimeSlots(start, end, interval);
+    function generateTable(startDate, interval) {
+    let start = "07:00";
+    let end = "17:00";
+    let slots = generateTimeSlots(start, end, interval);
 
-        let tableHead = `<tr><th>Día y Fecha</th>${slots.map(slot => `<th>${slot}</th>`).join('')}</tr>`;
-        let tableBody = '';
+    let tableHead = `<tr><th>Día y Fecha</th>${slots.map(slot => `<th>${slot}</th>`).join('')}</tr>`;
+    let tableBody = '';
 
-        let dayOfWeek = startDate.getDay();
-        let monday = new Date(startDate);
-        monday.setDate(startDate.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
+    let dayOfWeek = startDate.getDay();
+    let monday = new Date(startDate);
+    monday.setDate(startDate.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
 
-        for (let i = 0; i < 7; i++) {
-            let currentDay = new Date(monday);
-            currentDay.setDate(monday.getDate() + i);
+    for (let i = 0; i < 7; i++) {
+        let currentDay = new Date(monday);
+        currentDay.setDate(monday.getDate() + i);
 
-            let dayOfWeekStr = currentDay.toLocaleString('es-ES', { weekday: 'long' });
-            let date = currentDay.toLocaleDateString('es-ES');
+        let dayOfWeekStr = currentDay.toLocaleString('es-ES', { weekday: 'long' });
+        let date = currentDay.toLocaleDateString('es-ES');
 
-            tableBody += `<tr><td>${dayOfWeekStr}, ${date}</td>${slots.map(slot => `<td class="hour-column" data-date="${formatDate(currentDay)}" data-time="${slot}"></td>`).join('')}</tr>`;
-        }
-
-        $('#schedule-table thead').html(tableHead);
-        $('#schedule-table tbody').html(tableBody);
-
-        $('.hour-column').on('click', function() {
-            const cita = $('.cita option:selected').text();
-            let date = new Date($(this).data('date'));
-            let time = $(this).data('time');
-            let [start, end] = time.split(' - ');
-
-            let duracion = calculateDuration(start, end);
-            $('#duracion').text(duracion);
-            console.log('Celda clickeada:', date, time);
-            $('#title').val(`Cita - ${cita}`);
-            $('#inicio-fecha').val(formatDate(date));
-            $('#inicio-hora').val(formatTime(start));
-            $('#fin-fecha').val(formatDate(date));
-            $('#fin-hora').val(formatTime(end));
-
-            $('#title, #inicio-fecha, #fin-fecha').prop('readonly', true);
-            $('.selecc').prop('readonly', true);
-            $('.Info_cita').hide();
-            $('.calendar-container').hide();
-            $('.hour-selection').hide();
-            $('.form-container').show();
-        });
-
-        loadAppointments();
+        tableBody += `<tr><td>${dayOfWeekStr}, ${date}</td>${slots.map(slot => `<td class="hour-column" data-date="${formatDate(currentDay)}" data-time="${slot}"></td>`).join('')}</tr>`;
     }
+
+    $('#schedule-table thead').html(tableHead);
+    $('#schedule-table tbody').html(tableBody);
+}
+
+
+
 
     function formatDate(date) {
         let day = String(date.getDate()).padStart(2, '0');

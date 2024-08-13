@@ -1,7 +1,7 @@
 #app/views/vistas.py
 from flask import Blueprint, Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from app.controllers.controler import registrar_usuarios, obtener_usuarios_paginados, register_cita, obtenerCitas_paginas, obtener_intervalo, actualizar_intervalo, obtener_cita_por_id, actualizar_cita, obtener_usuario_por_id, actualizar_usuario, registrar_usuariosAses
-from app.models.modelo import Paciente, Appointment, User, Cita
+from app.models.modelo import Paciente, Appointment, User, Cita, Resource
 from app import db
 from flask_paginate import Pagination, get_page_parameter
 import hashlib
@@ -121,7 +121,11 @@ def usuarios():
 @main.route('/citas')
 @login_required
 def citas():
-    return render_template('calendariocitas.html')
+    # Consulta para obtener solo algunos recursos
+    selected_resource_ids = [1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 21, 22]  # IDs de los recursos que deseas mostrar
+    recursos = Resource.query.filter(Resource.resource_id.in_(selected_resource_ids)).all()
+    return render_template('calendariocitas.html', recursos=recursos)
+
           
 @main.route('/calendario')
 @login_required
@@ -297,20 +301,28 @@ def delete_citas(cita_id):
     return redirect(url_for('main.dashboard'))
 
 
-
 @main.route('/get_appointments', methods=['GET'])
 def get_appointments():
     try:
-        citas = Cita.query.all()
+        resource_id = request.args.get('resource_id')
+        if not resource_id:
+            return jsonify({'message': 'ID de recurso no proporcionado'}), 400
+        
+        filtered_appointments = Cita.query.filter_by(resource_id=resource_id).all()
+        
         appointments = []
-        for cita in citas:
+        for cita in filtered_appointments:
             appointment = {
                 "start": cita.start.strftime('%Y-%m-%dT%H:%M:%S'),
                 "end": cita.end.strftime('%Y-%m-%dT%H:%M:%S'),
                 "title": cita.title
             }
             appointments.append(appointment)
+        
         return jsonify({"appointments": appointments})
     except Exception as e:
-        return jsonify({"message": "Error al obtener las citas: " + str(e)})
+        app.logger.error(f"Error al obtener las citas: {e}")
+        return jsonify({"message": "Error al obtener las citas: " + str(e)}), 500
+
+
 

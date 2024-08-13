@@ -128,8 +128,9 @@ class Cita(db.Model):
     registro_llamada = db.Column(db.Integer, nullable=False)
     cual = db.Column(db.Text)
     edad = db.Column(db.Integer, nullable=False)
+    resource_id = db.Column(db.SmallInteger, nullable=False)
 
-    def __init__(self, series_id, start, end, title, description, type_id, status_id, owner_id, type_label, status_label, prioridad, registro_llamada, cual, edad):
+    def __init__(self, series_id, start, end, title, description, type_id, status_id, owner_id, type_label, status_label, prioridad, registro_llamada, cual, edad, resource_id):
         self.series_id = series_id
         self.start = start
         self.end = end
@@ -144,6 +145,7 @@ class Cita(db.Model):
         self.registro_llamada = registro_llamada
         self.cual = cual
         self.edad = edad
+        self.resource_id = resource_id
 
 class Resource(db.Model):
     __tablename__ = 'resources'

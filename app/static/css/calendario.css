@@ -65,3 +65,6 @@ button {
     background: none;
     border: none;
 }
+.has-appointment{
+    background-color: blue;
+}

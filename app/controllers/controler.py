@@ -138,6 +138,8 @@ def register_cita(form_data):
     prioridad = form_data.get('prioridad')
     registro_llamada = form_data.get('registro_llamada')
     cual = form_data.get('cual')
+    resource_id = form_data.get("resource_id")
+
 
     logging.debug(f"Inicio Fecha: {inicio_fecha}, Inicio Hora: {inicio_hora}")
     logging.debug(f"Fin Fecha: {fin_fecha}, Fin Hora: {fin_hora}")
@@ -175,7 +177,8 @@ def register_cita(form_data):
         prioridad=prioridad,
         registro_llamada=registro_llamada,
         cual=cual,
-        edad=edad
+        edad=edad,
+        resource_id=resource_id
     )
 
     db.session.add(nueva_cita)

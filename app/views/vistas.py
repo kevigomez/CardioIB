@@ -304,25 +304,26 @@ def delete_citas(cita_id):
 @main.route('/get_appointments', methods=['GET'])
 def get_appointments():
     try:
-        resource_id = request.args.get('resource_id')
+        resource_id = request.args.get('resource_id', type=int)
         if not resource_id:
             return jsonify({'message': 'ID de recurso no proporcionado'}), 400
-        
+
         filtered_appointments = Cita.query.filter_by(resource_id=resource_id).all()
         
-        appointments = []
-        for cita in filtered_appointments:
-            appointment = {
+        appointments = [
+            {
                 "start": cita.start.strftime('%Y-%m-%dT%H:%M:%S'),
                 "end": cita.end.strftime('%Y-%m-%dT%H:%M:%S'),
                 "title": cita.title
             }
-            appointments.append(appointment)
+            for cita in filtered_appointments
+        ]
         
         return jsonify({"appointments": appointments})
     except Exception as e:
         app.logger.error(f"Error al obtener las citas: {e}")
-        return jsonify({"message": "Error al obtener las citas: " + str(e)}), 500
+        return jsonify({"message": f"Error al obtener las citas: {str(e)}"}), 500
+
 
 
 

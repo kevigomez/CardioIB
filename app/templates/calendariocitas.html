@@ -47,6 +47,7 @@
     <div class="form-container" style="display:none;">
         <h2>Formulario de Registro de Citas</h2>
         <form method="post" action="{{ url_for('main.reg_citas') }}">
+            <input type="hidden" id="resource_id" name="resource_id">
             <div id="appointment-form">
                 <div>
                     <h3>Detalles de la Cita</h3>
@@ -162,7 +163,7 @@
                     $.ajax({
                         url: "{{ url_for('main.search_user') }}",
                         method: "GET",
-                        data: { query: query },
+                        data: { query: query},
                         success: function(data) {
                             let results = data.results;
                             let tableBody = $('#resultsTable tbody');
@@ -196,6 +197,8 @@
             });
     
                 $('#cita-select').change(function() {
+                    let selectedResourceId = $(this).val();
+                    $('#resource_id').val(selectedResourceId);
                     loadAppointments();
                 });
     
@@ -229,22 +232,24 @@
                     let date = new Date($(this).data('date'));
                     let time = $(this).data('time');
                     let [start, end] = time.split(' - ');
-    
+
                     let duracion = calculateDuration(start, end);
                     $('#duracion').text(duracion);
-                    console.log('Celda clickeada:', date, time);
                     $('#title').val(`Cita - ${cita}`);
                     $('#inicio-fecha').val(formatDate(date));
                     $('#inicio-hora').val(formatTime(start));
                     $('#fin-fecha').val(formatDate(date));
                     $('#fin-hora').val(formatTime(end));
-    
+
                     $('#title, #inicio-fecha, #fin-fecha').prop('readonly', true);
                     $('.selecc').prop('readonly', true);
                     $('.Info_cita').hide();
                     $('.calendar-container').hide();
                     $('.hour-selection').hide();
                     $('.form-container').show();
+
+                    let selectedResourceId = $('#cita-select').val();
+                    $('#resource_id').val(selectedResourceId); // Asegúrate de que el resource_id se incluya en el formulario
                 });
     
                 loadAppointments();

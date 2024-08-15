@@ -200,6 +200,8 @@
                     let selectedResourceId = $(this).val();
                     $('#resource_id').val(selectedResourceId);
                     loadAppointments();
+                    let newUrl = `{{ url_for('main.citas') }}?resource_id=${selectedResourceId}`;
+                    window.location.href = newUrl;
                 });
     
             function generateTable(startDate, interval) {

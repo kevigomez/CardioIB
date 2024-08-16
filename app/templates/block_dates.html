@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form id="block-dates-form" method="POST" action="{{ url_for('main.save_blocked_dates') }}">
+        <h2>Selecciona los días para bloquear</h2>
+        
+        <label for="block-dates">Selecciona las fechas:</label>
+        <input type="text" id="block-dates" name="block_dates" readonly>
+        
+        <button type="submit">Guardar Días Bloqueados</button>
+    </form>
+    <script>
+    $(document).ready(function() {
+        $('#block-dates').datepicker({
+            language: 'es',
+            multidate: true,
+            format: 'yyyy-mm-dd',
+            todayHighlight: true
+        });
+    });
+    </script>    
+</body>
+</html>

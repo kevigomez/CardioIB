@@ -3,16 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles_calendario.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles_calendario_update.css') }}">
     <title>Actualizar Citas</title>
     
 </head>
 <body>
+    {% extends "base.html" %}
+    {% block content %}
     <div class="container">
-        <h1>Actualizar Cita</h1>
         <form method="post" action="{{ url_for('main.update_citas', cita_id=cita.cita_id) }}">
             <div class="form-container">
                 <h2>Formulario de Registro de Citas</h2>
+                <br>
                 <div id="appointment-form">
                     <div>
                         <h3>Detalles de la Cita</h3>
@@ -141,5 +143,6 @@
             });
         });
     </script>
+       {% endblock %}
 </body>
 </html>

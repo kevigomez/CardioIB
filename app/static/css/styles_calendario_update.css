@@ -1,0 +1,280 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    color: #53577F;
+    margin-left: 20%;
+    
+}
+nav{
+    color: #f0f0f0;
+    text-decoration: none;
+}
+.nav_link:hover{
+    text-decoration: none;
+    color: #f0f0f0;
+}
+.calendar-container, .interval-selection, .hour-bar, .form-container {
+    max-width: 500px;
+    margin: auto;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #53577F;
+    color: #ffffff;
+}
+
+#hour-bar {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+#hour-bar div {
+    width: 14.28%;
+    border: 1px solid #ddd;
+    box-sizing: border-box;
+    text-align: center;
+    padding: 10px;
+    cursor: pointer;
+}
+
+#hour-bar div.selected {
+    background-color: #53577F;
+    color: white;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #53577F;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #5a5d77bd;
+    transition-duration: 0.2s;
+}
+/* Estilos previamente definidos */
+
+#hours {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+#hours div {
+    width: calc(100% / 24);
+    border: 1px solid #ddd;
+    box-sizing: border-box;
+    text-align: center;
+    padding: 10px;
+    cursor: pointer;
+}
+
+#hours div:hover {
+    background-color: #f0f0f0;
+}
+.container-citas-module{
+    width: 100%;
+}
+.hour-selection{
+    margin-left: 20%;
+    width: 1000px;
+    overflow-x: auto; 
+}
+#schedule-table{
+    width: 200%; /* Ajusta el ancho según tus necesidades */
+    height: auto; /* Ajusta la altura máxima según tus necesidades */
+}
+
+
+.Info_cita {
+    display: flex;
+    justify-content: center;
+    align-items: center;  
+    
+}
+#appointment-form{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin-bottom: 15%;
+    
+      
+}
+form {
+    background-color: #fff;
+    padding: 4px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    height: 800px;
+    width: 800px;
+    padding-left: 2%;
+    padding-right: 2%;
+    padding-bottom: 2%;
+    margin-top: 4%;
+    margin-left: 50px auto;
+    margin-right: 50px auto;
+    margin-bottom: 50px auto; /* Center the form vertically */
+    color: #53577F;
+}
+input[type="submit"] {
+    background-color: #53577F;
+    color: white;
+    border: none;
+    height: 40px;
+    font-size: 16px;
+    cursor: pointer;
+    width:99%; /* Same width as input fields */
+}
+
+input[type="submit"]:hover {
+    background-color: #616380;
+    transition-duration: 0.2s;
+}
+input[type="text"], input[type="password"], input[type="number"], input[type="email"], textarea {
+    width: 95%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    display: flex;
+    align-content: center;
+    height: 5%;
+    color: #838383;
+}
+
+.titulo{
+    display: none;
+}
+    input[type="date"],input[type="time"]{
+        width: 45.5%;
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 2px;
+        height: 5%;
+        color: #838383;
+    }
+.selecc{
+    width: 98%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    display: flex;
+    align-content: center;
+    height: 7%;
+    color: #838383;
+}
+
+.calendar-container {
+    display: flex;
+    align-items: center;
+    margin-left: 22%;
+}
+
+#prev-btn, #next-btn {
+    margin: 0 10px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+#calendar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.month {
+    background: #fff;
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+
+.month-name {
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.weekdays, .days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    text-align: center;
+}
+
+.weekday {
+    font-weight: bold;
+}
+
+.day {
+    padding: 5px;
+    border: 1px solid #ddd;
+}
+
+.empty {
+    background: none;
+    border: none;
+}
+.cita{
+    width: 40%;
+    text-align: center;
+    margin-top: 4%;
+    border-radius:2px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-left: 40%;
+}
+.hour-column:hover{
+    background-color: #ccc;
+    
+}
+  
+/* Añadir estilos para asegurar que la tabla no deforme el formulario */
+#resultsTable {
+    width: 100%;
+    max-height: 150px; /* Controla la altura máxima de la tabla */
+    overflow-y: auto; /* Añade barra de desplazamiento si es necesario */
+    border-collapse: collapse;
+}
+
+#resultsTable tbody tr {
+    cursor: pointer;
+}
+
+#resultsTable td {
+    padding: 8px;
+    border: 1px solid #ccc; /* Añade borde a las celdas de la tabla */
+}
+
+.form-container {
+    width: 100%;
+    max-width: 600px; /* Controla el tamaño máximo del contenedor del formulario */
+    margin: 0 auto; /* Centra el formulario */
+}
+
+#paciente-container {
+    position: relative;
+}
+
+#resultsTable {
+    position: absolute;
+    width: 100%;
+    z-index: 1;
+    background-color: white;
+    border: 1px solid #ccc;
+}
+.container-citas{
+    margin-right: 30%;
+
+}
+

@@ -1,6 +1,6 @@
 #app/views/vistas.py
 from flask import Blueprint, Flask, render_template, request, redirect, url_for, session, flash, jsonify
-from app.controllers.controler import registrar_usuarios, obtener_usuarios_paginados, register_cita, obtenerCitas_paginas, obtener_intervalo, actualizar_intervalo, obtener_cita_por_id, actualizar_cita, obtener_usuario_por_id, actualizar_usuario, registrar_usuariosAses
+from app.controllers.controler import registrar_usuarios, obtener_usuarios_paginados, register_cita, obtenerCitas_paginas, obtener_intervalo, actualizar_intervalo, obtener_cita_por_id, actualizar_cita, obtener_usuario_por_id, actualizar_usuario, registrar_usuariosAses, save_blocked_dates_to_appointments
 from app.models.modelo import Paciente, Appointment, User, Cita, Resource
 from app import db
 from flask_paginate import Pagination, get_page_parameter
@@ -124,7 +124,12 @@ def citas():
     # Consulta para obtener solo algunos recursos
     selected_resource_ids = [1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 21, 22]  # IDs de los recursos que deseas mostrar
     recursos = Resource.query.filter(Resource.resource_id.in_(selected_resource_ids)).all()
-    return render_template('calendariocitas.html', recursos=recursos)
+    
+    # Obtener el recurso seleccionado de los parámetros de la URL
+    selected_resource_id = request.args.get('resource_id', recursos[0].resource_id)  # Si no hay recurso seleccionado, tomar el primero de la lista
+
+    return render_template('calendariocitas.html', recursos=recursos, selected_resource_id=int(selected_resource_id))
+
 
           
 @main.route('/calendario')
@@ -312,6 +317,7 @@ def get_appointments():
         
         appointments = [
             {
+                "cita_id": cita.cita_id,  # Asegúrate de incluir el ID aquí
                 "start": cita.start.strftime('%Y-%m-%dT%H:%M:%S'),
                 "end": cita.end.strftime('%Y-%m-%dT%H:%M:%S'),
                 "title": cita.title
@@ -323,6 +329,30 @@ def get_appointments():
     except Exception as e:
         app.logger.error(f"Error al obtener las citas: {e}")
         return jsonify({"message": f"Error al obtener las citas: {str(e)}"}), 500
+    
+
+from flask import render_template, request, redirect, url_for, flash
+
+from datetime import datetime
+
+@app.route('/block_dates', methods=['GET', 'POST'])
+def block_dates():
+    if request.method == 'POST':
+        blocked_dates = request.form.get('block_dates', '')
+        
+        # Convierte las fechas en una lista
+        blocked_dates_list = blocked_dates.split(',')
+        
+        # Guarda cada día bloqueado como una nueva cita con el status 5
+        save_blocked_dates_to_appointments(blocked_dates_list)
+        
+        flash('Días bloqueados guardados con éxito.')
+        return redirect(url_for('main.block_dates'))
+    
+    return render_template('block_dates.html')
+
+
+
 
 
 

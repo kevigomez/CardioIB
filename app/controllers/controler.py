@@ -271,3 +271,27 @@ def actualizar_cita(cita_id, form_data):
     return None
 
 
+
+def save_blocked_dates_to_appointments(dates):
+    for date_str in dates:
+        date_obj = datetime.strptime(date_str, '%Y-%m-%d')
+        
+        # Verificar si ya existe una cita bloqueada para esta fecha
+        existing_entry = Cita.query.filter_by(start=date_obj, status_id=5).first()
+        
+        if not existing_entry:
+            # Crear una nueva cita con todos los campos nulos excepto el estado
+            nueva_cita = Cita(
+                start=date_obj,
+                end=None,
+                title=None,
+                description=None,
+                resource_id=None,
+                patient_id=None,
+                status_id=5  # Status 5 para indicar que está bloqueado
+            )
+            db.session.add(nueva_cita)
+    db.session.commit()
+
+
+

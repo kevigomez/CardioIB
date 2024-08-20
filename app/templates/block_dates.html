@@ -3,26 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Bloqueo de citas</title>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    
+
 </head>
 <body>
-    <form id="block-dates-form" method="POST" action="{{ url_for('main.save_blocked_dates') }}">
+    <form id="block-dates-form" method="POST" action="{{ url_for('main.block_dates') }}">
         <h2>Selecciona los días para bloquear</h2>
         
         <label for="block-dates">Selecciona las fechas:</label>
-        <input type="text" id="block-dates" name="block_dates" readonly>
+        <input type="date" id="block-dates" name="block_dates">
         
         <button type="submit">Guardar Días Bloqueados</button>
     </form>
     <script>
-    $(document).ready(function() {
-        $('#block-dates').datepicker({
-            language: 'es',
-            multidate: true,
-            format: 'yyyy-mm-dd',
-            todayHighlight: true
-        });
-    });
+            function isDayBlocked(date) {
+                let formattedDate = formatDate(date);
+                let isBlocked = false;
+                
+                $.ajax({
+                    url: "{{ url_for('main.get_blocked_dates') }}",
+                    method: "GET",
+                    async: false,
+                    success: function(response) {
+                        let blockedDates = response.blocked_dates;
+                        if (blockedDates.includes(formattedDate)) {
+                            isBlocked = true;
+                        }
+                    }
+                });
+                
+                return isBlocked;
+            }
     </script>    
 </body>
 </html>

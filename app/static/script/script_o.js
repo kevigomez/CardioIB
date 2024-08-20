@@ -51,6 +51,26 @@ $(document).ready(function() {
             }
         });
     }
+    let blockedDates = [];
+
+    function loadBlockedDates() {
+        $.ajax({
+            url: blockedDatesUrl,
+            method: "GET",
+            success: function(response) {
+                blockedDates = response.blocked_dates.map(date => new Date(date));
+                console.log("Días bloqueados cargados:", blockedDates);
+                renderCalendar();
+            },
+            error: function() {
+                console.log('Error al cargar los días bloqueados');
+            }
+        });
+    }
+
+    function isDayBlocked(date) {
+        return blockedDates.some(blockedDate => formatDate(date) === formatDate(blockedDate));
+    }
 
     $.getJSON(timeIntervalUrl, function(data) {
         generateTable(selectedDate, parseInt(data.interval));
@@ -152,9 +172,7 @@ $(document).ready(function() {
             $('.form-container').show();
         
             $('#resource_id').val($('#cita-select').val());
-        });
-        
-    
+        }); 
         loadAppointments();
     }
     
@@ -240,7 +258,19 @@ $(document).ready(function() {
                 center: 'title',
                 end: ''
             },
-            height: 'auto'
+            height: 'auto',
+            datesSet: function() {
+                $('.fc-day').each(function() {
+                    let dateStr = $(this).data('date');
+                    let date = new Date(dateStr);
+                    if (isDayBlocked(date)) {
+                        console.log(`Bloqueando día: ${dateStr}`);
+                        $(this).addClass('fc-day-blocked');
+                    } else {
+                        $(this).removeClass('fc-day-blocked');
+                    }
+                });
+            }
         });
         calendar.render();
     }
@@ -261,6 +291,12 @@ $(document).ready(function() {
     }
 
     function renderCalendar() {
+        $('#schedule-table td').each(function() {
+            let cellDate = $(this).data('date');
+            if (isDayBlocked(new Date(cellDate))) {
+                $(this).addClass('blocked-day');
+            }
+        });
         calendarContainer.innerHTML = '';
         const months = getMonthsArray(currentYear, currentMonth);
         months.forEach(date => {
@@ -296,21 +332,34 @@ $(document).ready(function() {
             for (let day = 1; day <= daysInMonth; day++) {
                 const dayDiv = document.createElement('div');
                 dayDiv.className = 'day';
+                let dayDate = new Date(date.getFullYear(), date.getMonth(), day);
+                if (isDayBlocked(dayDate)) {
+                    dayDiv.classList.add('blocked');
+                }
                 dayDiv.textContent = day;
                 dayDiv.addEventListener('click', () => {
-                    selectedDate = new Date(date.getFullYear(), date.getMonth(), day);
-                    console.log('Fecha seleccionada:', selectedDate);
-                    $.getJSON( timeIntervalUrl , function(data) {
-                        generateTable(selectedDate, parseInt(data.interval));
-                    });
+                    if (!dayDiv.classList.contains('blocked')) {
+                        selectedDate = new Date(date.getFullYear(), date.getMonth(), day);
+                        console.log('Fecha seleccionada:', selectedDate);
+                        $.getJSON(timeIntervalUrl, function(data) {
+                            generateTable(selectedDate, parseInt(data.interval));
+                        });
+                    }
                 });
                 daysDiv.appendChild(dayDiv);
             }
-    
+
             monthDiv.appendChild(daysDiv);
             calendarContainer.appendChild(monthDiv);
         });
+    
     }
+    loadBlockedDates();
+    $.getJSON(timeIntervalUrl, function(data) {
+        generateTable(selectedDate, parseInt(data.interval));
+        loadAppointments();
+    });
+    
     
 
     prevBtn.addEventListener('click', () => {
@@ -337,3 +386,14 @@ $(document).ready(function() {
         loadAppointments();
     });
 });
+$(document).ready(function() {
+    $('.hour-column').datepicker({
+        language: 'es',
+        format: 'yyyy-mm-dd',
+        beforeShowDay: function(date) {
+            return !isDayBlocked(date);
+        }
+    });    
+});
+
+

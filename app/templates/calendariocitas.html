@@ -1,24 +1,38 @@
 
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calendario y Registro de Citas</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles_calendario.css') }}">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.2/main.min.css' rel='stylesheet' />
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.2/main.min.js'></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        // Definir las URLs necesarias en una variable global
-        var citasUrl = "{{ url_for('main.citas') }}";
-        var timeIntervalUrl = "{{ url_for('main.get_time_interval') }}";
-        var appointmentsUrl = "{{ url_for('main.get_appointments') }}";
-        var searchUserUrl = "{{ url_for('main.search_user') }}";
-        var updateCitasUrl = "{{ url_for('main.update_citas', cita_id=0) }}";
-    </script>
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Calendario y Registro de Citas</title>
+        
+        <!-- Estilos -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/styles_calendario.css') }}">
+        <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.2/main.min.css' rel='stylesheet' />
+        <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    
+        <!-- jQuery -->
+        <!-- Incluye jQuery -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+        <!-- Incluye jQuery UI -->
+        <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    
+        <!-- FullCalendar -->
+        <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.2/main.min.js'></script>
+        
+        <!-- Definir las URLs necesarias en una variable global -->
+        <script>
+            var blockedDatesUrl = "{{ url_for('main.get_blocked_dates') }}";
+            var citasUrl = "{{ url_for('main.citas') }}";
+            var timeIntervalUrl = "{{ url_for('main.get_time_interval') }}";
+            var appointmentsUrl = "{{ url_for('main.get_appointments') }}";
+            var searchUserUrl = "{{ url_for('main.search_user') }}";
+            var updateCitasUrl = "{{ url_for('main.update_citas', cita_id=0) }}";
+        </script>
+    </head>
 <body>
     {% extends "base.html" %}
     {% block content %}
@@ -116,13 +130,7 @@
             <input type="submit" value="Enviar">
         </form>
     </div>
-
-    
-
     <script src="{{ url_for('static', filename='script/script_o.js') }}"></script>
-    
-    
-    
     </div>
     {% endblock %}
 </body>

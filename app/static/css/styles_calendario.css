@@ -278,3 +278,10 @@ input[type="text"], input[type="password"], input[type="number"], input[type="em
 
 }
 
+.fc-day-blocked {
+    background-color: #f5f5f5;
+    color: #eb8682;
+    pointer-events: none;
+}
+
+

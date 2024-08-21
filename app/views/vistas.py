@@ -312,7 +312,7 @@ def delete_citas(cita_id):
 @main.route('/get_appointments', methods=['GET'])
 def get_appointments():
     try:
-        resource_id = request.args.get('resource_id', 5, type=int)
+        resource_id = request.args.get('resource_id', type=int)
         if not resource_id:
             return jsonify({'message': 'ID de recurso no proporcionado'}), 400
 
@@ -332,6 +332,10 @@ def get_appointments():
     except Exception as e:
         app.logger.error(f"Error al obtener las citas: {e}")
         return jsonify({"message": f"Error al obtener las citas: {str(e)}"}), 500
+
+
+
+
 
 @main.route('/get_blocked_dates', methods=['GET'])
 def get_blocked_dates():
@@ -364,34 +368,7 @@ def block_dates():
     return render_template('block_dates.html')
 
 
-def save_blocked_dates_to_appointments(dates):
-    for date_str in dates:
-        date_obj = datetime.strptime(date_str, '%Y-%m-%d')
-        
-        # Verificar si ya existe una cita bloqueada para esta fecha
-        existing_entry = Cita.query.filter_by(start=date_obj, status_id=5).first()
-        
-        if not existing_entry:
-            # Crear una nueva cita con todos los campos nulos excepto el estado
-            nueva_cita = Cita(
-                series_id=0,  # Ajustar este valor según la lógica de series
-                start=date_obj,
-                end=None,
-                title=None,
-                description=None,
-                type_id=0,  
-                status_id=5,  
-                owner_id=0,  
-                type_label=None,
-                status_label=None,
-                prioridad=0,
-                registro_llamada=0,
-                cual=0,
-                edad=0,
-                resource_id=0
-            )
-            db.session.add(nueva_cita)
-    db.session.commit()
+
 
 
 

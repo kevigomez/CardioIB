@@ -282,13 +282,21 @@ def save_blocked_dates_to_appointments(dates):
         if not existing_entry:
             # Crear una nueva cita con todos los campos nulos excepto el estado
             nueva_cita = Cita(
+                series_id=0,  # Ajustar este valor según la lógica de series
                 start=date_obj,
                 end=None,
                 title=None,
                 description=None,
-                resource_id=None,
-                patient_id=None,
-                status_id=5  # Status 5 para indicar que está bloqueado
+                type_id=0,  
+                status_id=5,  
+                owner_id=0,  
+                type_label=None,
+                status_label=None,
+                prioridad=0,
+                registro_llamada=0,
+                cual=0,
+                edad=0,
+                resource_id=0
             )
             db.session.add(nueva_cita)
     db.session.commit()

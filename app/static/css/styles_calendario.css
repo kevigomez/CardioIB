@@ -283,4 +283,6 @@ input[type="text"], input[type="password"], input[type="number"], input[type="em
     color: #ffffff; /* Texto blanco */
     pointer-events: none; /* Desactiva clics en días bloqueados */
 }
-
+#calendar{
+    margin-bottom: 5%;
+}

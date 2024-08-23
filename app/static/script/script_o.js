@@ -1,7 +1,6 @@
 $(document).ready(function() {
     let updateBaseUrl = updateCitasUrl;
     let blockedDates = [];
-
     function loadBlockedDates() {
         return $.ajax({
             url: blockedDatesUrl,
@@ -20,10 +19,16 @@ $(document).ready(function() {
             }
         });
     }
-
+    
     function isDayBlocked(date) {
         return blockedDates.some(blockedDate => formatDate(date) === formatDate(blockedDate));
     }
+    loadBlockedDates().then(() => {
+        renderCalendar();
+        $.getJSON(timeIntervalUrl, function(data) {
+            generateTable(selectedDate, parseInt(data.interval));
+        });
+    });
 
     function loadAppointments() {
         let selectedResource = $('#cita-select').val();
@@ -73,17 +78,6 @@ $(document).ready(function() {
                 console.log('Error al obtener las citas:', error);
             }
         });
-    }
-    function updateHourSelection(selectedDate) {
-        if (isDayBlocked(selectedDate)) {
-            console.log('Día seleccionado está bloqueado:', selectedDate);
-            $('#schedule-table tbody').empty(); // Vaciar la tabla si el día está bloqueado
-        } else {
-            console.log('Día seleccionado no está bloqueado:', selectedDate);
-            $.getJSON(timeIntervalUrl, function(data) {
-                generateTable(selectedDate, parseInt(data.interval));
-            });
-        }
     }
 
     $.getJSON(timeIntervalUrl, function(data) {
@@ -304,14 +298,14 @@ $(document).ready(function() {
     function getMonthsArray(year, startMonth) {
         return Array.from({ length: 3 }, (_, i) => new Date(year, startMonth + i));
     }
-    loadBlockedDates();
+
     function renderCalendar() {
         $('#schedule-table td').each(function() {
             let cellDate = $(this).data('date');
             let adjustedDate = new Date(cellDate);
             adjustedDate.setMinutes(adjustedDate.getMinutes() + adjustedDate.getTimezoneOffset()); // Ajuste para la zona horaria
             if (isDayBlocked(adjustedDate)) {
-                $(this).addClass('blocked-day');
+                $(this).addClass('blocked-day'); // Asegúrate de que esta clase tenga los estilos adecuados en CSS
             }
         });
         calendarContainer.innerHTML = '';
@@ -358,7 +352,7 @@ $(document).ready(function() {
                     if (!dayDiv.classList.contains('blocked')) {
                         selectedDate = new Date(date.getFullYear(), date.getMonth(), day);
                         console.log('Fecha seleccionada:', selectedDate);
-                        updateHourSelection(selectedDate);
+                        
                     }
                 });
                 daysDiv.appendChild(dayDiv);
@@ -367,26 +361,7 @@ $(document).ready(function() {
             monthDiv.appendChild(daysDiv);
             calendarContainer.appendChild(monthDiv);
         });
-
-        if (!selectedDate) {
-            const today = new Date();
-            selectedDate = new Date(currentYear, currentMonth, today.getDate());
-            updateHourSelection(selectedDate);
-        } else {
-            updateHourSelection(selectedDate);
-        }
     }
-    loadBlockedDates().then(() => {
-        $.getJSON(timeIntervalUrl, function(data) {
-            // Si la fecha seleccionada no está bloqueada, actualizar la tabla de horarios
-            if (selectedDate && !isDayBlocked(selectedDate)) {
-                generateTable(selectedDate, parseInt(data.interval));
-            }
-            loadAppointments();
-        });
-    });
-
-    
 
     prevBtn.addEventListener('click', () => {
         currentMonth -= 3;

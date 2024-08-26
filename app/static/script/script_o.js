@@ -1,4 +1,10 @@
 $(document).ready(function() {
+    loadBlockedDates().then(() => {
+        renderCalendar();
+        $.getJSON(timeIntervalUrl, function(data) {
+            generateTable(selectedDate, parseInt(data.interval));
+        });
+    });
     let updateBaseUrl = updateCitasUrl;
     let blockedDates = [];
     function loadBlockedDates() {
@@ -23,13 +29,6 @@ $(document).ready(function() {
     function isDayBlocked(date) {
         return blockedDates.some(blockedDate => formatDate(date) === formatDate(blockedDate));
     }
-    loadBlockedDates().then(() => {
-        renderCalendar();
-        $.getJSON(timeIntervalUrl, function(data) {
-            generateTable(selectedDate, parseInt(data.interval));
-        });
-    });
-
     function loadAppointments() {
         let selectedResource = $('#cita-select').val();
         console.log("Recurso seleccionado:", selectedResource);
@@ -370,6 +369,7 @@ $(document).ready(function() {
             currentYear -= 1;
         }
         renderCalendar();
+        loadBlockedDates()
     });
 
     nextBtn.addEventListener('click', () => {
@@ -379,6 +379,7 @@ $(document).ready(function() {
             currentYear += 1;
         }
         renderCalendar();
+        loadBlockedDates()
     });
 });
 $(document).ready(function() {

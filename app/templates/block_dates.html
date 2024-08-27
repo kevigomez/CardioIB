@@ -10,15 +10,25 @@
 
 </head>
 <body>
+    {% extends "base.html" %}
+    {% block content %}
     <form id="block-dates-form" method="POST" action="{{ url_for('main.block_dates') }}">
         <h2>Selecciona los días para bloquear</h2>
-        
-        <label for="block-dates">Selecciona las fechas:</label>
-        <input type="date" id="block-dates" name="block_dates">
+        <label for="cita-select">Seleccione especialidad</label>
+        <select class="cita" id="cita-select" name="resource_id">
+            {% for recurso in recursos %}
+            <option value="{{ recurso.resource_id }}" {% if recurso.resource_id == selected_resource_id %}selected{% endif %}>{{ recurso.name }}</option>
+            {% endfor %}
+        </select>    
+        <label for="block-date">Selecciona la fecha:</label>
+        <input type="date" id="block-date" name="block_date" required>
         
         <button type="submit">Guardar Días Bloqueados</button>
     </form>
+    
     <script>
+            var selecct = getElementById('cita-select')
+            console.log("selecct")
             function isDayBlocked(date) {
                 let formattedDate = formatDate(date);
                 let isBlocked = false;
@@ -38,5 +48,6 @@
                 return isBlocked;
             }
     </script>    
+{% endblock %}
 </body>
 </html>

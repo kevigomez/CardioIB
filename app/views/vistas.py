@@ -349,23 +349,43 @@ def get_blocked_dates():
 @main.route('/bloqueo_citas')
 @login_required
 def bloqueo_citas():
-    return render_template('block_dates.html')
+
+    selected_resource_ids = [1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 21, 22]  # IDs de los recursos que deseas mostrar
+    recursos = Resource.query.filter(Resource.resource_id.in_(selected_resource_ids)).all()
+    
+    # Obtener el recurso seleccionado de los parámetros de la URL
+    selected_resource_id = request.args.get('resource_id', recursos[0].resource_id)  # Si no hay recurso seleccionado, tomar el primero de la lista
+
+    return render_template('block_dates.html', recursos=recursos, selected_resource_id=int(selected_resource_id))
 
 @main.route('/block_dates', methods=['GET', 'POST'])
 def block_dates():
     if request.method == 'POST':
-        blocked_dates = request.form.get('block_dates', '')
+        # Obtén la fecha bloqueada desde el formulario
+        blocked_date = request.form.get('block_date', '')
         
-        # Convierte las fechas en una lista
-        blocked_dates_list = blocked_dates.split(',')
+        # Asegúrate de que se haya seleccionado una fecha
+        if not blocked_date:
+            flash('Por favor selecciona una fecha válida.', 'error')
+            return redirect(url_for('main.block_dates'))
         
-        # Guarda cada día bloqueado como una nueva cita con el status 5
-        save_blocked_dates_to_appointments(blocked_dates_list)
+        # Convertir la fecha en un objeto datetime
+        try:
+            date_obj = datetime.strptime(blocked_date, '%Y-%m-%d')
+        except ValueError:
+            flash('Formato de fecha inválido.', 'error')
+            return redirect(url_for('main.block_dates'))
         
-        flash('Días bloqueados guardados con éxito.')
+        # Guarda la fecha bloqueada como una nueva cita con el status 5
+        form_data = request.form
+        save_blocked_dates_to_appointments([blocked_date], form_data)  # Pasar la fecha como cadena, no como objeto datetime
+        
+        flash('Día bloqueado guardado con éxito.')
         return redirect(url_for('main.block_dates'))
     
+    # En el caso de una solicitud GET, renderiza la página de bloqueo de fechas
     return render_template('block_dates.html')
+
 
 
 

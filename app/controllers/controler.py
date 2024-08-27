@@ -272,7 +272,7 @@ def actualizar_cita(cita_id, form_data):
 
 
 
-def save_blocked_dates_to_appointments(dates):
+def save_blocked_dates_to_appointments(dates, form_data):
     for date_str in dates:
         date_obj = datetime.strptime(date_str, '%Y-%m-%d')
         
@@ -296,7 +296,7 @@ def save_blocked_dates_to_appointments(dates):
                 registro_llamada=0,
                 cual=0,
                 edad=0,
-                resource_id=0
+                resource_id=form_data.get("resource_id")
             )
             db.session.add(nueva_cita)
     db.session.commit()

@@ -7,17 +7,18 @@ $(document).ready(function() {
     });
     let updateBaseUrl = updateCitasUrl;
     let blockedDates = [];
-    function loadBlockedDates() {
+    function loadBlockedDates(resourceId) {
         return $.ajax({
             url: blockedDatesUrl,
             method: "GET",
+            data: { resource_id: resourceId },
             success: function(response) {
                 blockedDates = response.blocked_dates.map(date => {
                     let localDate = new Date(date);
                     localDate.setMinutes(localDate.getMinutes() + localDate.getTimezoneOffset());
                     return localDate;
                 });
-                console.log("Días bloqueados cargados:", blockedDates);
+                console.log("Días bloqueados cargados para el recurso:", resourceId, blockedDates);
                 renderCalendar();
             },
             error: function() {
@@ -25,6 +26,7 @@ $(document).ready(function() {
             }
         });
     }
+    
     
     function isDayBlocked(date) {
         return blockedDates.some(blockedDate => formatDate(date) === formatDate(blockedDate));
@@ -125,12 +127,14 @@ $(document).ready(function() {
     $('#cita-select').change(function() {
         let selectedResourceId = $(this).val();
         $('#resource_id').val(selectedResourceId);
+        loadBlockedDates(selectedResourceId); // Cargar días bloqueados para el recurso seleccionado
         loadAppointments();
         setTimeout(function() {
             let newUrl = `${citasUrl}?resource_id=${selectedResourceId}`;
             window.location.href = newUrl;
-        }); // Ajusta el tiempo de espera según sea necesario
+        });
     });
+    
 
     function generateTable(startDate, interval) {
         let start = "07:00";
@@ -298,7 +302,7 @@ $(document).ready(function() {
         return Array.from({ length: 3 }, (_, i) => new Date(year, startMonth + i));
     }
 
-    function renderCalendar() {
+    function renderCalendar(resourceId) {
         $('#schedule-table td').each(function() {
             let cellDate = $(this).data('date');
             let adjustedDate = new Date(cellDate);
@@ -351,16 +355,16 @@ $(document).ready(function() {
                     if (!dayDiv.classList.contains('blocked')) {
                         selectedDate = new Date(date.getFullYear(), date.getMonth(), day);
                         console.log('Fecha seleccionada:', selectedDate);
-                        
                     }
                 });
                 daysDiv.appendChild(dayDiv);
             }
-
+    
             monthDiv.appendChild(daysDiv);
             calendarContainer.appendChild(monthDiv);
         });
     }
+    
 
     prevBtn.addEventListener('click', () => {
         currentMonth -= 3;

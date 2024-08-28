@@ -115,7 +115,8 @@
         <li class="list_item list_item--click">
           <div class="list_button list_button--click">
           <i class="fa-solid fa-right-from-bracket" style="color: #ffffff;"></i> 
-          <a class="nav_link" href="{{ url_for('main.logout') }}">Cerrar sesión</a>
+          <a class="nav_link logout" href="{{ url_for('main.logout') }}" onclick="return confirm('¿Estás seguro de que deseas cerrar sesión?');">Cerrar sesión</a>
+
         </div>
         </li>
       </ul>

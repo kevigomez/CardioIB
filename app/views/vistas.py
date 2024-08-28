@@ -9,11 +9,13 @@ import logging
 from passlib.hash import pbkdf2_sha256
 from flask_cors import CORS
 from datetime import datetime
+import pytz
 from app.models.modelo import db, Settings
 from functools import wraps
 from flask import request, redirect, url_for, session, flash
 from werkzeug.security import check_password_hash
 from datetime import timedelta
+
 
 
 
@@ -98,8 +100,8 @@ def logout():
     session.pop('fname', None)
     session.pop('lname', None)
     # Elimina otros datos de sesión
-    flash('Has cerrado sesión')
-    return redirect(url_for('main.index'))
+
+    return render_template('logout.html')
 
 
 
@@ -318,15 +320,17 @@ def get_appointments():
 
         filtered_appointments = Cita.query.filter_by(resource_id=resource_id).all()
         
-        appointments = [
-            {
-                "cita_id": cita.cita_id,  # Asegúrate de incluir el ID aquí
-                "start": cita.start.strftime('%Y-%m-%dT%H:%M:%S'),
-                "end": cita.end.strftime('%Y-%m-%dT%H:%M:%S'),
-                "title": cita.title
-            }
-            for cita in filtered_appointments
-        ]
+        appointments = []
+        for cita in filtered_appointments:
+            if cita.start and cita.end:  # Verifica que start y end no sean None
+                appointments.append({
+                    "cita_id": cita.cita_id,
+                    "start": cita.start.strftime('%Y-%m-%dT%H:%M:%S'),
+                    "end": cita.end.strftime('%Y-%m-%dT%H:%M:%S'),
+                    "title": cita.title
+                })
+            else:
+                app.logger.warning(f"Cita con ID {cita.cita_id} tiene valores de fecha inválidos.")
         
         return jsonify({"appointments": appointments})
     except Exception as e:
@@ -336,12 +340,31 @@ def get_appointments():
 
 
 
-
 @main.route('/get_blocked_dates', methods=['GET'])
 def get_blocked_dates():
-    blocked_dates = Cita.query.filter_by(status_id=5).with_entities(Cita.start).all()
-    blocked_dates_list = [str(date.start.date()) for date in blocked_dates]
-    return jsonify({'blocked_dates': blocked_dates_list})
+    try:
+        resource_id = request.args.get('resource_id', type=int)
+        if not resource_id:
+            return jsonify({'message': 'ID de recurso no proporcionado'}), 400
+        
+        # Define la zona horaria correcta
+        tz = pytz.timezone('America/Bogota')  # Cambia a la zona horaria que corresponda
+        
+        # Obtiene las fechas bloqueadas
+        blocked_dates = Cita.query.filter_by(status_id=5, resource_id=resource_id).with_entities(Cita.start).all()
+        
+        # Verifica si hay fechas bloqueadas
+        if not blocked_dates:
+            return jsonify({'blocked_dates': []})
+
+        # Convierte las fechas a la zona horaria especificada
+        blocked_dates_list = [date.start.astimezone(tz).date().isoformat() for date in blocked_dates]
+        
+        return jsonify({'blocked_dates': blocked_dates_list})
+
+    except Exception as e:
+        return jsonify({'message': str(e)}), 500
+
 
 
     
@@ -360,6 +383,12 @@ def bloqueo_citas():
 
 @main.route('/block_dates', methods=['GET', 'POST'])
 def block_dates():
+    selected_resource_ids = [1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 21, 22]  # IDs de los recursos que deseas mostrar
+    recursos = Resource.query.filter(Resource.resource_id.in_(selected_resource_ids)).all()
+    
+    # Obtener el recurso seleccionado de los parámetros de la URL
+    selected_resource_id = request.args.get('resource_id', recursos[0].resource_id)  # Si no hay recurso seleccionado, tomar el primero de la lista
+
     if request.method == 'POST':
         # Obtén la fecha bloqueada desde el formulario
         blocked_date = request.form.get('block_date', '')
@@ -384,7 +413,7 @@ def block_dates():
         return redirect(url_for('main.block_dates'))
     
     # En el caso de una solicitud GET, renderiza la página de bloqueo de fechas
-    return render_template('block_dates.html')
+    return render_template('block_dates.html', recursos=recursos, selected_resource_id=int(selected_resource_id))
 
 
 

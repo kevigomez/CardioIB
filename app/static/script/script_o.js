@@ -1,36 +1,103 @@
 $(document).ready(function() {
-    loadBlockedDates().then(() => {
-        renderCalendar();
-        $.getJSON(timeIntervalUrl, function(data) {
-            generateTable(selectedDate, parseInt(data.interval));
-        });
-    });
-    let updateBaseUrl = updateCitasUrl;
     let blockedDates = [];
-    function loadBlockedDates(resourceId) {
-        return $.ajax({
-            url: blockedDatesUrl,
-            method: "GET",
-            data: { resource_id: resourceId },
-            success: function(response) {
-                blockedDates = response.blocked_dates.map(date => {
-                    let localDate = new Date(date);
-                    localDate.setMinutes(localDate.getMinutes() + localDate.getTimezoneOffset());
-                    return localDate;
-                });
-                console.log("Días bloqueados cargados para el recurso:", resourceId, blockedDates);
-                renderCalendar();
-            },
-            error: function() {
-                console.log('Error al cargar los días bloqueados');
+    const calendarContainer = document.getElementById('calendar');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    let selectedDate = new Date();
+    let currentYear = selectedDate.getFullYear();
+    let currentMonth = selectedDate.getMonth();
+
+
+
+    function getMonthsArray(year, startMonth) {
+        return Array.from({ length: 3 }, (_, i) => new Date(year, startMonth + i));
+    }
+
+    function renderCalendar(resourceId) {
+        $('#schedule-table td').each(function() {
+            let cellDate = $(this).data('date');
+            let adjustedDate = new Date(cellDate);
+            adjustedDate.setMinutes(adjustedDate.getMinutes() + adjustedDate.getTimezoneOffset()); // Ajuste para la zona horaria
+            if (isDayBlocked(adjustedDate)) {
+                $(this).addClass('blocked-day'); // Asegúrate de que esta clase tenga los estilos adecuados en CSS
             }
         });
+        calendarContainer.innerHTML = '';
+        const months = getMonthsArray(currentYear, currentMonth);
+        months.forEach(date => {
+            const monthDiv = document.createElement('div');
+            monthDiv.className = 'month';
+    
+            const monthNameDiv = document.createElement('div');
+            monthNameDiv.className = 'month-name';
+            monthNameDiv.textContent = date.toLocaleString('es-ES', { month: 'long', year: 'numeric' });
+            monthDiv.appendChild(monthNameDiv);
+    
+            const weekdaysDiv = document.createElement('div');
+            weekdaysDiv.className = 'weekdays';
+            ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].forEach(day => {
+                const weekdayDiv = document.createElement('div');
+                weekdayDiv.className = 'weekday';
+                weekdayDiv.textContent = day;
+                weekdaysDiv.appendChild(weekdayDiv);
+            });
+            monthDiv.appendChild(weekdaysDiv);
+    
+            const daysDiv = document.createElement('div');
+            daysDiv.className = 'days';
+            const firstDay = new Date(date.getFullYear(), date.getMonth(), 1).getDay() || 7;
+            const daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+    
+            for (let i = 1; i < firstDay; i++) {
+                const emptyDiv = document.createElement('div');
+                emptyDiv.className = 'day empty';
+                daysDiv.appendChild(emptyDiv);
+            }
+    
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayDiv = document.createElement('div');
+                dayDiv.className = 'day';
+                let dayDate = new Date(date.getFullYear(), date.getMonth(), day);
+                if (isDayBlocked(dayDate)) {
+                    dayDiv.classList.add('blocked');
+                }
+                dayDiv.textContent = day;
+                dayDiv.addEventListener('click', () => {
+                    if (!dayDiv.classList.contains('blocked')) {
+                        selectedDate = new Date(date.getFullYear(), date.getMonth(), day);
+                        console.log('Fecha seleccionada:', selectedDate);
+                    }
+                });
+                daysDiv.appendChild(dayDiv);
+            }
+    
+            monthDiv.appendChild(daysDiv);
+            calendarContainer.appendChild(monthDiv);
+        });
     }
     
-    
-    function isDayBlocked(date) {
-        return blockedDates.some(blockedDate => formatDate(date) === formatDate(blockedDate));
-    }
+
+    prevBtn.addEventListener('click', () => {
+        currentMonth -= 3;
+        if (currentMonth < 0) {
+            currentMonth += 12;
+            currentYear -= 1;
+        }
+        loadBlockedDates().then(() => {
+            renderCalendar();
+        });
+    });
+
+    nextBtn.addEventListener('click', () => {
+        currentMonth += 3;
+        if (currentMonth > 11) {
+            currentMonth -= 12;
+            currentYear += 1;
+        }
+        loadBlockedDates().then(() => {
+            renderCalendar();
+        });
+    });
     function loadAppointments() {
         let selectedResource = $('#cita-select').val();
         console.log("Recurso seleccionado:", selectedResource);
@@ -127,13 +194,12 @@ $(document).ready(function() {
     $('#cita-select').change(function() {
         let selectedResourceId = $(this).val();
         $('#resource_id').val(selectedResourceId);
-        loadBlockedDates(selectedResourceId); // Cargar días bloqueados para el recurso seleccionado
-        loadAppointments();
-        setTimeout(function() {
-            let newUrl = `${citasUrl}?resource_id=${selectedResourceId}`;
-            window.location.href = newUrl;
-        });
+    
+        // Redirigir inmediatamente
+        let newUrl = `${citasUrl}?resource_id=${selectedResourceId}`;
+        window.location.href = newUrl;
     });
+    
     
 
     function generateTable(startDate, interval) {
@@ -226,165 +292,40 @@ $(document).ready(function() {
         }
         return slots;
     }
-
-    const calendarContainer = document.getElementById('calendar');
-    const prevBtn = document.getElementById('prev-btn');
-    const nextBtn = document.getElementById('next-btn');
-    let selectedDate = new Date();
-    let currentYear = selectedDate.getFullYear();
-    let currentMonth = selectedDate.getMonth();
-
-    function updateCalendar() {
-        let calendar = new FullCalendar.Calendar(calendarContainer, {
-            initialView: 'dayGridMonth',
-            locale: 'es',
-            events: function(fetchInfo, successCallback, failureCallback) {
-                let cita = $('#cita-select').val();
-
-                $.ajax({
-                    url: appointmentsUrl,
-                    data: {
-                        cita: cita,
-                        start: fetchInfo.startStr,
-                        end: fetchInfo.endStr
-                    },
-                    success: function(response) {
-                        successCallback(response.appointments);
-                    },
-                    error: function() {
-                        failureCallback('Error al cargar los eventos');
-                    }
-                });
-            },
-            eventClick: function(info) {
-                let appointmentId = info.event.id;
-                if (appointmentId) {
-                    let updateUrl = updateBaseUrl.replace('0', appointmentId);
-                    window.location.href = updateUrl;
-                } else {
-                    console.log("Error: No se encontró el ID de la cita.");
-                }
-            },
-            headerToolbar: {
-                start: '',
-                center: 'title',
-                end: ''
-            },
-            height: 'auto',
-            datesSet: function() {
-                $('.fc-day').each(function() {
-                    let dateStr = $(this).data('date');
-                    let date = new Date(dateStr);
-                    if (isDayBlocked(date)) {
-                        console.log(`Bloqueando día: ${dateStr}`);
-                        $(this).addClass('fc-day-blocked');
-                    } else {
-                        $(this).removeClass('fc-day-blocked');
-                    }
-                });
-            }
-        });
-        calendar.render();
-    }
-
-    function navigateCalendar(direction) {
-        if (direction === 'prev') {
-            currentMonth--;
-        } else if (direction === 'next') {
-            currentMonth++;
-        }
-
-        selectedDate = new Date(currentYear, currentMonth);
-        updateCalendar();
-    }
-
-    function getMonthsArray(year, startMonth) {
-        return Array.from({ length: 3 }, (_, i) => new Date(year, startMonth + i));
-    }
-
-    function renderCalendar(resourceId) {
-        $('#schedule-table td').each(function() {
-            let cellDate = $(this).data('date');
-            let adjustedDate = new Date(cellDate);
-            adjustedDate.setMinutes(adjustedDate.getMinutes() + adjustedDate.getTimezoneOffset()); // Ajuste para la zona horaria
-            if (isDayBlocked(adjustedDate)) {
-                $(this).addClass('blocked-day'); // Asegúrate de que esta clase tenga los estilos adecuados en CSS
-            }
-        });
-        calendarContainer.innerHTML = '';
-        const months = getMonthsArray(currentYear, currentMonth);
-        months.forEach(date => {
-            const monthDiv = document.createElement('div');
-            monthDiv.className = 'month';
-    
-            const monthNameDiv = document.createElement('div');
-            monthNameDiv.className = 'month-name';
-            monthNameDiv.textContent = date.toLocaleString('es-ES', { month: 'long', year: 'numeric' });
-            monthDiv.appendChild(monthNameDiv);
-    
-            const weekdaysDiv = document.createElement('div');
-            weekdaysDiv.className = 'weekdays';
-            ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].forEach(day => {
-                const weekdayDiv = document.createElement('div');
-                weekdayDiv.className = 'weekday';
-                weekdayDiv.textContent = day;
-                weekdaysDiv.appendChild(weekdayDiv);
-            });
-            monthDiv.appendChild(weekdaysDiv);
-    
-            const daysDiv = document.createElement('div');
-            daysDiv.className = 'days';
-            const firstDay = new Date(date.getFullYear(), date.getMonth(), 1).getDay() || 7;
-            const daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
-    
-            for (let i = 1; i < firstDay; i++) {
-                const emptyDiv = document.createElement('div');
-                emptyDiv.className = 'day empty';
-                daysDiv.appendChild(emptyDiv);
-            }
-    
-            for (let day = 1; day <= daysInMonth; day++) {
-                const dayDiv = document.createElement('div');
-                dayDiv.className = 'day';
-                let dayDate = new Date(date.getFullYear(), date.getMonth(), day);
-                if (isDayBlocked(dayDate)) {
-                    dayDiv.classList.add('blocked');
-                }
-                dayDiv.textContent = day;
-                dayDiv.addEventListener('click', () => {
-                    if (!dayDiv.classList.contains('blocked')) {
-                        selectedDate = new Date(date.getFullYear(), date.getMonth(), day);
-                        console.log('Fecha seleccionada:', selectedDate);
-                    }
-                });
-                daysDiv.appendChild(dayDiv);
-            }
-    
-            monthDiv.appendChild(daysDiv);
-            calendarContainer.appendChild(monthDiv);
-        });
-    }
-    
-
-    prevBtn.addEventListener('click', () => {
-        currentMonth -= 3;
-        if (currentMonth < 0) {
-            currentMonth += 12;
-            currentYear -= 1;
-        }
+    // Renderiza el calendario primero
+    renderCalendar(); 
+    loadBlockedDates().then(() => {
         renderCalendar();
-        loadBlockedDates()
+        loadAppointments();
+    }).fail(function() {
+        console.log('Error al cargar días bloqueados o citas');
     });
-
-    nextBtn.addEventListener('click', () => {
-        currentMonth += 3;
-        if (currentMonth > 11) {
-            currentMonth -= 12;
-            currentYear += 1;
-        }
-        renderCalendar();
-        loadBlockedDates()
-    });
+    let updateBaseUrl = updateCitasUrl;
+    function loadBlockedDates() {
+        let selectedResource = $('#cita-select').val();
+        return $.ajax({
+            url: blockedDatesUrl,
+            method: "GET",
+            data: { resource_id: selectedResource }, 
+            success: function(response) {
+                blockedDates = response.blocked_dates.map(date => {
+                    // Crea una nueva fecha y ajusta para evitar desajustes por zona horaria
+                    let localDate = new Date(date + "T00:00:00"); // Agrega la hora para que no se interprete como UTC
+                    return localDate;
+                });
+                console.log("Días bloqueados cargados para el recurso:", selectedResource, blockedDates);
+                renderCalendar();
+            },
+            error: function() {
+                console.log('Error al cargar los días bloqueados');
+            }
+        });
+    }
+    
+    function isDayBlocked(date) {
+        return blockedDates.some(blockedDate => formatDate(date) === formatDate(blockedDate));
+    }
+ 
 });
 $(document).ready(function() {
     $('.hour-column').datepicker({

@@ -13,3 +13,6 @@ listElements.forEach(listElement => {
 
     })
 })
+
+let Logout = document.querySelectorAll('.logout')
+

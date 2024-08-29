@@ -17,10 +17,6 @@ from werkzeug.security import check_password_hash
 from datetime import timedelta
 
 
-
-
-
-
 logging.basicConfig(level=logging.DEBUG)
 
 main = Blueprint('main', __name__)

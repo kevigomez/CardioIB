@@ -286,3 +286,7 @@ input[type="text"], input[type="password"], input[type="number"], input[type="em
 #calendar{
     margin-bottom: 5%;
 }
+#contextMenu {
+    z-index: 1000;
+}
+

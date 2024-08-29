@@ -129,6 +129,12 @@
             </div>
             <input type="submit" value="Enviar">
         </form>
+        <!-- Menú contextual -->
+        <div id="contextMenu" class="dropdown-menu" style="display:none; position:absolute;">
+            <button id="blockDayContextBtn" class="dropdown-item">Bloquear día</button>
+            <button id="createAppointmentContextBtn" class="dropdown-item">Crear cita</button>
+        </div>
+  
     </div>
     <script src="{{ url_for('static', filename='script/script_o.js') }}"></script>
     </div>

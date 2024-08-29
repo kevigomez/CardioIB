@@ -116,7 +116,7 @@ def actualizar_intervalo(nuevo_intervalo):
     
 
 def obtener_citas():
-    return Appointment.query.all()
+    return Cita.query.all()
 
 
 

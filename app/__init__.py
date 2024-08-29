@@ -6,6 +6,7 @@ from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
 from dotenv import load_dotenv
 
+
 # Cargar las variables de entorno
 load_dotenv()
 
@@ -32,7 +33,9 @@ def create_app():
 
     # Registrar blueprints
     from app.views.vistas import main as main_blueprint
+    from app.views.excel_py import main as excel_blueprint
     app.register_blueprint(main_blueprint)
+    app.register_blueprint(excel_blueprint, url_prefix='/excel')
 
     # Inicializar configuraciones antes de la primera solicitud
     with app.app_context():

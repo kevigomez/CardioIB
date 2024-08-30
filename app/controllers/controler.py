@@ -1,7 +1,7 @@
 #app/controllers/controler.py
 from flask import render_template, request, flash, redirect, url_for
 from app import db
-from app.models.modelo import Paciente, Appointment, User, Cita, Settings, Group, UserGroup
+from app.models.modelo import Paciente, Appointment, User, Cita, Settings, Group, UserGroup, Resource
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import logging
@@ -117,6 +117,12 @@ def actualizar_intervalo(nuevo_intervalo):
 
 def obtener_citas():
     return Cita.query.all()
+
+def obtenerCitasPorFecha(start_date, end_date):
+    return Cita.query.filter(Cita.start >= start_date, Cita.start <= end_date).all()
+
+def obtenerRecursos():
+    return Resource.query.all()
 
 
 

@@ -1,0 +1,52 @@
+/* Estilos generales */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0; /* Fondo claro */
+    color: #53577F; /* Color de texto principal */
+    margin: 0;
+    padding: 0;
+}
+
+/* Contenedor principal */
+.container_excel {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #ffffff; /* Fondo blanco para el contenedor */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Título */
+.titulo_Excel {
+    font-size: 24px;
+    color: #53577F; /* Color del título */
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Estilo para el enlace */
+.link_excel {
+    display: inline-block;
+    background-color: #53577F; /* Fondo del botón */
+    color: #ffffff; /* Color del texto del botón */
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    text-align: center;
+}
+
+/* Estilo para el enlace al pasar el mouse */
+.link_excel:hover {
+    background-color: #424668; /* Color al hacer hover */
+}
+
+/* Estilo específico para el botón de download */
+.download {
+    display: block;
+    width: 200px;
+    margin: 20px auto;
+    text-align: center;
+}

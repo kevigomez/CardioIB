@@ -4,33 +4,416 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/sellect_interval.css') }}">
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <title>Administrador</title>
 </head>
 {% extends "base.html" %}
-    {% block content %}
+{% block content %}
 <body>
-    
-    <div class="content">
     <div class="content_form">
-    <form method="POST" class="form_interval">
-        <label for="time-interval">Selecciona un intervalo de tiempo:</label>
-        <br>
-        <select id="time-interval" name="time-interval">
-            <option value="5" {% if intervalo == 5 %}selected{% endif %}>5 minutos</option>
-            <option value="10" {% if intervalo == 10 %}selected{% endif %}>10 minutos</option>
-            <option value="15" {% if intervalo == 15 %}selected{% endif %}>15 minutos</option>
-            <option value="20" {% if intervalo == 20 %}selected{% endif %}>20 minutos</option>
-            <option value="25" {% if intervalo == 25 %}selected{% endif %}>25 minutos</option>
-            <option value="30" {% if intervalo == 30 %}selected{% endif %}>30 minutos</option>
-            <option value="35" {% if intervalo == 35 %}selected{% endif %}>35 minutos</option>
-            <option value="40" {% if intervalo == 40 %}selected{% endif %}>40 minutos</option>
-        </select>
-        <br>
-        <button type="submit">Actualizar Intervalo</button>
-    </form>
-</div>
+        <form method="POST" class="form_interval">
+            <label for="resource">Selecciona un recurso:</label>
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Ubicación</th>
+                        <th>Contacto</th>
+                        <th>Notas</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for recurso in recursos %}
+                        <tr>
+                            <td>{{ recurso.name }}</td>
+                            <td>{{ recurso.description }}</td>
+                            <td>{{ recurso.location }}</td>
+                            <td>{{ recurso.contact_info }}</td>
+                            <td>{{ recurso.notes }}</td>
+                            <td><span class="fa fa-pencil-square-o" id="openModal" data-layout-type="0">…</span></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <br>
+            <h3>Actualizar Intervalo de Tiempo</h3>
+            <label for="time-interval">Intervalo:</label>
+            <input type="number" id="time-interval" name="time-interval" min="5" max="60" step="5" required>
+            <button type="submit">Actualizar Intervalo</button>
+            <br><br>
+        </form>
     </div>
+
+        <!-- Modal -->
+        <div id="intervalModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Cambiar Distribución Horaria</h2>
+
+                <div class="flex items-center space-x-2">
+                    <input type="checkbox" id="same-schedule">
+                    <label for="same-schedule">Usar la misma distribución horaria para todos los días</label>
+                </div>
+
+                <div class="tabs">
+                    <ul class="tabs-list">
+                        <li class="tabs-trigger active" data-day="domingo">Domingo</li>
+                        <li class="tabs-trigger" data-day="lunes">Lunes</li>
+                        <li class="tabs-trigger" data-day="martes">Martes</li>
+                        <li class="tabs-trigger" data-day="miercoles">Miércoles</li>
+                        <li class="tabs-trigger" data-day="jueves">Jueves</li>
+                        <li class="tabs-trigger" data-day="viernes">Viernes</li>
+                        <li class="tabs-trigger" data-day="sabado">Sábado</li>
+                    </ul>
+                    <br>
+
+                    <div class="tabs-content active" id="domingo-content">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label>Intervalos de Tiempo Citables</label>
+                                <textarea class="h-32" readonly>
+                                    00:00 - 00:15
+                                </textarea>
+                            </div>
+                            <div>
+                                <div class="flex justify-between">
+                                    <label>Intervalos de Tiempo Bloqueados</label>
+                                    <button class="btn-auto-fill">Auto rellenar</button>
+                                </div>
+                                <textarea class="h-32" readonly>
+                                    00:15 - 00:00
+                                </textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Lunes -->
+                    <div class="tabs-content" id="lunes-content">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label>Intervalos de Tiempo Citables</label>
+                                <textarea class="h-32" readonly>
+                                    07:00 - 07:20
+                                    07:20 - 07:40
+                                    07:40 - 08:00
+                                    08:00 - 08:20
+                                    08:20 - 08:40
+                                    08:40 - 09:00
+                                    09:00 - 09:20
+                                    09:20 - 09:40
+                                    09:40 - 10:00
+                                    10:00 - 10:20
+                                    10:20 - 10:40
+                                    10:40 - 11:00
+                                    11:00 - 11:20
+                                    11:20 - 11:40
+                                    11:40 - 13:00
+                                    13:00 - 13:20
+                                    13:20 - 13:40
+                                    13:40 - 14:00
+                                    14:00 - 14:20
+                                    14:20 - 14:40
+                                    14:40 - 15:00
+                                    15:00 - 15:20
+                                    15:20 - 15:40
+                                    15:40 - 16:00
+                                    16:00 - 16:20
+                                    16:20 - 16:40
+                                    16:40 - 17:00
+                                </textarea>
+                                </div>
+                            <div>
+                                <div class="flex justify-between">
+                                    <label>Intervalos de Tiempo Bloqueados</label>
+                                    <button class="btn-auto-fill">Auto rellenar</button>
+                                </div>
+                                <textarea class="h-32" readonly>
+                                    00:00 - 07:00
+                                    17:00 - 00:00
+                                </textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Martes -->
+                    <div class="tabs-content" id="martes-content">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label>Intervalos de Tiempo Citables</label>
+                                <textarea class="h-32" readonly>
+                                    13:00 - 13:20
+                                    13:20 - 13:40
+                                    13:40 - 14:00
+                                    14:00 - 14:20
+                                    14:20 - 14:40
+                                    14:40 - 15:00
+                                    15:00 - 15:20
+                                    15:20 - 15:40
+                                    15:40 - 16:00
+                                    16:00 - 16:20
+                                </textarea>
+                                </div>
+                            <div>
+                                <div class="flex justify-between">
+                                    <label>Intervalos de Tiempo Bloqueados</label>
+                                    <button class="btn-auto-fill">Auto rellenar</button>
+                                </div>
+                                <textarea class="h-32" readonly>
+                                    00:00 - 13:00
+                                    16:20 - 00:00
+                                </textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Miércoles -->
+                    <div class="tabs-content" id="miercoles-content">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label>Intervalos de Tiempo Citables</label>
+                                <textarea class="h-32" readonly>
+                                    07:00 - 07:20
+                                    07:20 - 07:40
+                                    07:40 - 08:00
+                                    08:00 - 08:20
+                                    08:20 - 08:40
+                                    08:40 - 09:00
+                                    09:00 - 09:20
+                                    09:20 - 09:40
+                                    09:40 - 10:00
+                                    10:00 - 10:20
+                                    10:20 - 10:40
+                                    10:40 - 11:00
+                                    11:00 - 11:20
+                                    11:20 - 11:40
+                                    11:40 - 13:00
+                                    13:00 - 13:20
+                                    13:20 - 13:40
+                                    13:40 - 14:00
+                                    14:00 - 14:20
+                                    14:20 - 14:40
+                                    14:40 - 15:00
+                                    15:00 - 15:20
+                                    15:20 - 15:40
+                                    15:40 - 16:00
+                                    16:00 - 16:20
+                                    16:20 - 16:40
+                                    16:40 - 17:00
+                                </textarea>
+                                            </div>
+                            <div>
+                                <div class="flex justify-between">
+                                    <label>Intervalos de Tiempo Bloqueados</label>
+                                    <button class="btn-auto-fill">Auto rellenar</button>
+                                </div>
+                                <textarea class="h-32" readonly>
+                                    00:00 - 07:00
+                                    17:00 - 00:00
+                                </textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Jueves -->
+                    <div class="tabs-content" id="jueves-content">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label>Intervalos de Tiempo Citables</label>
+                                <textarea class="h-32" readonly>
+                                    07:00 - 07:20
+                                    07:20 - 07:40
+                                    07:40 - 08:00
+                                    08:00 - 08:20
+                                    08:20 - 08:40
+                                    08:40 - 09:00
+                                    09:00 - 09:20
+                                    09:20 - 09:40
+                                    09:40 - 10:00
+                                    10:00 - 10:20
+                                    10:20 - 10:40
+                                    10:40 - 11:00
+                                    11:00 - 11:20
+                                    11:20 - 11:40
+                                    11:40 - 13:00
+                                    13:00 - 13:20
+                                    13:20 - 13:40
+                                    13:40 - 14:00
+                                    14:00 - 14:20
+                                    14:20 - 14:40
+                                    14:40 - 15:00
+                                    15:00 - 15:20
+                                    15:20 - 15:40
+                                    15:40 - 16:00
+                                    16:00 - 16:20
+                                    16:20 - 16:40
+                                    16:40 - 17:00
+                                </textarea>
+                            </div>
+                            <div>
+                                <div class="flex justify-between">
+                                    <label>Intervalos de Tiempo Bloqueados</label>
+                                    <button class="btn-auto-fill">Auto rellenar</button>
+                                </div>
+                                <textarea class="h-32" readonly>
+                                    00:00 - 07:00
+                                    17:00 - 00:00  
+                                </textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Viernes -->
+                    <div class="tabs-content" id="viernes-content">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label>Intervalos de Tiempo Citables</label>
+                            <textarea class="h-32" readonly>
+                                07:00 - 07:20
+                                07:20 - 07:40
+                                07:40 - 08:00
+                                08:00 - 08:20
+                                08:20 - 08:40
+                                08:40 - 09:00
+                                09:00 - 09:20
+                                09:20 - 09:40
+                                09:40 - 10:00
+                                10:00 - 10:20
+                                10:20 - 10:40
+                                10:40 - 11:00
+                                11:00 - 11:20
+                                11:20 - 11:40
+                                11:40 - 13:00
+                                13:00 - 13:20
+                                13:20 - 13:40
+                                13:40 - 14:00
+                                14:00 - 14:20
+                                14:20 - 14:40
+                                14:40 - 15:00
+                                15:00 - 15:20
+                                15:20 - 15:40
+                                15:40 - 16:00
+                            </textarea>
+                            </div>
+                            <div>
+                                <div class="flex justify-between">
+                                    <label>Intervalos de Tiempo Bloqueados</label>
+                                    <button class="btn-auto-fill">Auto rellenar</button>
+                                </div>
+                            <textarea class="h-32" readonly>
+                                00:00 - 07:00
+                                16:00 - 00:00
+                            </textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sábado -->
+                    <div class="tabs-content" id="sabado-content">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label>Intervalos de Tiempo Citables</label>
+                                <textarea class="h-32" readonly>
+                                    08:00 - 08:20
+                                    08:20 - 08:40
+                                    08:40 - 09:00
+                                    09:00 - 09:20
+                                    09:20 - 09:40
+                                    09:40 - 10:00
+                                    10:00 - 10:20
+                                    10:20 - 10:40
+                                    10:40 - 11:00
+                                    11:00 - 11:20
+                                    11:20 - 11:40
+                                    11:40 - 12:00
+                                </textarea>
+                            </div>
+                            <div>
+                                <div class="flex justify-between">
+                                    <label>Intervalos de Tiempo Bloqueados</label>
+                                    <button class="btn-auto-fill">Auto rellenar</button>
+                                </div>
+                                <textarea class="h-32" readonly>
+                                    00:00 - 08:00
+                                    12:00 - 00:00
+                                </textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+
+                <div class="space-y-2">
+                    <label for="timezone">Zona Horaria</label>
+                    <select id="timezone">
+                        <option value="America/Bogota">America/Bogota</option>
+                        <!-- Agregar más zonas horarias si es necesario -->
+                    </select>
+                </div>
+
+                <div class="flex items-center space-x-2">
+                    <label>Crear un intervalo de tiempo cada</label>
+                    <input type="number" defaultValue="30" class="w-16">
+                    <label>minutos entre</label>
+                    <input type="time" defaultValue="08:00" class="w-20">
+                    <label>y</label>
+                    <input type="time" defaultValue="18:00" class="w-20">
+                    <button class="btn-link">Crear</button>
+                </div>
+
+                <p class="text-sm text-muted-foreground">
+                    Formato: HH:MM - HH:MM Etiqueta opcional
+                    <br />
+                    Introduce un intervalo de tiempo por línea. Se deben proporcionar intervalos de tiempo para las 24 horas del
+                    día comenzando y terminando a las 12:00 AM.
+                </p>
+
+                <div class="modal-footer">
+                    <button class="btn-ghost">Cancelar</button>
+                    <button class="btn-green">Actualizar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+   
+</div>
+<script>
+    // Script para mostrar el modal
+    document.getElementById('openModal').onclick = function() {
+        document.getElementById('intervalModal').style.display = 'block';
+    }
+
+    // Script para cerrar el modal
+    var modal = document.getElementById("intervalModal");
+    var span = document.getElementsByClassName("close")[0];
+
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+
+    // Script para las pestañas
+    document.querySelectorAll('.tabs-trigger').forEach(tab => {
+        tab.onclick = function() {
+            document.querySelectorAll('.tabs-trigger').forEach(t => {
+                t.classList.remove('active');
+            });
+            document.querySelectorAll('.tabs-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            this.classList.add('active');
+            document.getElementById(this.dataset.day + '-content').classList.add('active');
+        }
+    });
+</script>
+
 </body>
 {% endblock %}
 </html>

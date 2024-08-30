@@ -3,12 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Reportes Excel</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/excel.css') }}">
 </head>
 <body>
-    <div>
-        <h2>Reporte General Excel</h2>
-        <a class="nav_link logout" href="{{ url_for('excel.download_excel') }}">Generar reporte excel</a>
+    {% extends "base.html" %}
+    {% block content %}
+    <div class="container_excel">
+        <h2 class="titulo_Excel">Reporte General Excel</h2>
+        <a class="link_excel download" href="{{ url_for('excel.download_excel') }}">Generar reporte excel</a>
     </div>
+    
+{% endblock %}
 </body>
 </html>

@@ -1,6 +1,6 @@
 #app/views/vistas.py
 from flask import Blueprint, Flask, render_template, request, redirect, url_for, session, flash, jsonify
-from app.controllers.controler import registrar_usuarios, obtener_usuarios_paginados, register_cita, obtenerCitas_paginas, obtener_intervalo, actualizar_intervalo, obtener_cita_por_id, actualizar_cita, obtener_usuario_por_id, actualizar_usuario, registrar_usuariosAses, save_blocked_dates_to_appointments
+from app.controllers.controler import registrar_usuarios, obtener_usuarios_paginados, register_cita, obtenerCitas_paginas, obtener_intervalo, actualizar_intervalo, obtener_cita_por_id, actualizar_cita, obtener_usuario_por_id, actualizar_usuario, registrar_usuariosAses, save_blocked_dates_to_appointments, obtenerRecursos
 from app.models.modelo import Paciente, Appointment, User, Cita, Resource
 from app import db
 from flask_paginate import Pagination, get_page_parameter
@@ -230,6 +230,7 @@ def save_appointment():
 @main.route('/admin', methods=['GET', 'POST'])
 @login_required
 def admin():
+    recursos = obtenerRecursos()
     if request.method == 'POST':
         nuevo_intervalo = request.form['time-interval']
         actualizar_intervalo(nuevo_intervalo)
@@ -237,13 +238,13 @@ def admin():
         return redirect(url_for('main.admin'))
 
     intervalo = obtener_intervalo()
-    return render_template('admin_int.html', intervalo=intervalo)
+    return render_template('admin_int.html', intervalo=intervalo, recursos=recursos)
 
 @main.route('/get_time_interval')
 @login_required
 def get_time_interval():
     intervalo = obtener_intervalo()
-    return jsonify(interval=intervalo)
+    return jsonify(interval=intervalo )
 
 
 @main.route('/updateUsers/<int:user_id>', methods=['GET', 'POST'])

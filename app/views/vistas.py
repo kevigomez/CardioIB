@@ -240,11 +240,19 @@ def admin():
     intervalo = obtener_intervalo()
     return render_template('admin_int.html', intervalo=intervalo, recursos=recursos)
 
-@main.route('/get_time_interval')
+@main.route('/get_intervalos', methods=['POST'])
 @login_required
-def get_time_interval():
-    intervalo = obtener_intervalo()
-    return jsonify(interval=intervalo )
+def get_intervalos():
+    data = request.get_json()
+    dia_seleccionado = data['dia']
+    recurso_id = data['resource_id']
+
+    # Aquí deberías implementar la lógica para obtener los intervalos de tiempo
+    # según el día seleccionado y el recurso. Este es un ejemplo básico:
+    intervalos = obtener_intervalos_por_dia(dia_seleccionado, recurso_id)
+
+    return jsonify(intervalos)
+
 
 
 @main.route('/updateUsers/<int:user_id>', methods=['GET', 'POST'])

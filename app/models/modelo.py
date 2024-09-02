@@ -234,3 +234,24 @@ class Settings(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), unique=True, nullable=False)
     value = db.Column(db.String(255), nullable=False)
+
+
+class TimeSet(db.Model):
+    __tablename__ = 'timeSet'
+
+    timeSet_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    resource_id = db.Column(db.SmallInteger, db.ForeignKey('resources.resource_id'), nullable=False)
+    weekDay = db.Column(db.Enum('domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'), nullable=False)
+    intervalStart = db.Column(db.Time, nullable=False)
+    intervalEnd = db.Column(db.Time, nullable=False)
+    tipe = db.Column(db.Enum('citable', 'bloqueado'), nullable=False)
+
+    def __init__(timeSet_id,resource_id,weekDay,intervalStart,intervalEnd,tipe,self):
+        self.timeSet_id = timeSet_id
+        self.resource_id = resource_id
+        self.weekDay = weekDay
+        self.intervalStart = intervalStart
+        self.intervalEnd = intervalEnd
+        self.tipe = tipe
+
+        

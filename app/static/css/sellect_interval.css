@@ -35,6 +35,7 @@ tbody tr:nth-child(odd) {
 
 body {
     font-family: Arial, sans-serif;
+    color: #53577F;
 }
 
 .btn-outline {
@@ -55,6 +56,10 @@ body {
 .btn-ghost {
     background-color: transparent;
     color: #53577F;
+    padding: 8px 16px;
+    cursor: pointer;
+    margin-right: 2%;
+    border:1px solid #53577F;
 }
 
 .btn-green {
@@ -62,7 +67,15 @@ body {
     color: #ffffff;
     padding: 8px 16px;
     cursor: pointer;
+    border: none;
 }
+.btn-ghost:hover {
+    background-color: rgb(221, 221, 221)
+}
+.btn-green:hover{
+    background-color: #006b2d;
+}
+
 
 .modal {
     display: none;
@@ -72,17 +85,16 @@ body {
     top: 0;
     width: 100%;
     height: 100%;
-    overflow: auto;
     background-color: rgba(0,0,0,0.4);
 }
 
 .modal-content {
     background-color: #ffffff;
-    margin: 15% auto;
+    margin: 2% auto;
     padding: 20px;
     border: 1px solid #888;
-    width: 80%;
-    max-width: 600px;
+    height: 90%;
+    width: 60%;
 }
 
 .close {
@@ -112,14 +124,20 @@ body {
 .tabs-trigger {
     padding: 10px 20px;
     cursor: pointer;
-    border: 1px solid #53577F;
+    border-bottom: 1px solid #53577f8c;
     background-color: #ffffff;
-    color: #53577F;
+    color: #babddb;
+}
+.tabs-trigger:hover {
+    transition-duration: 0.3s;
+    background-color: #e7e7e7;
 }
 
 .tabs-trigger.active {
-    background-color: #53577F;
-    color: #ffffff;
+    background-color: #ffffff;
+    border: 1px solid #53577f8c;
+    border-bottom: none;
+    color: #53577F;
 }
 
 .tabs-content {
@@ -147,16 +165,30 @@ body {
 .text-muted-foreground {
     color: #888;
 }
+.modal-footer{
+    border-top: 1px solid #53577f8c;
+    padding: 2%;
+    display: flex;
+    justify-content: end;
+    margin-top: auto;
+}
 
-textarea.h-32 {
-    height: 32px; 
-    line-height: 1.5; 
-    padding: 8px; 
+textarea {
+    width: 100%;
+    height: 250px; /* Ajusta la altura según sea necesario */
+    resize: none; /* Esto desactiva el redimensionamiento manual */
+    overflow: auto;
     white-space: pre-wrap;
-    background-color: #f9f9f9; 
-    color: #53577F; 
-    border: 1px solid #ccc; 
-    font-family: Arial, sans-serif; 
-    resize: none; 
+    padding: 10px;
+    border: 1px solid #53577F;
+    color: #53577F;
+    background-color: #ffffff;
+    font-family: Arial, sans-serif;
+}
+
+textarea:read-only {
+    background-color: #f9f9f9; /* Color de fondo para textareas de solo lectura */
+    color: #53577F;
+    border: 1px solid #53577F;
 }
 

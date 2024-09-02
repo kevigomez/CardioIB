@@ -308,4 +308,3 @@ def save_blocked_dates_to_appointments(dates, form_data):
     db.session.commit()
 
 
-

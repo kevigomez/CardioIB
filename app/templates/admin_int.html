@@ -32,7 +32,7 @@
                             <td>{{ recurso.location }}</td>
                             <td>{{ recurso.contact_info }}</td>
                             <td>{{ recurso.notes }}</td>
-                            <td><span class="fa fa-pencil-square-o" id="openModal" data-layout-type="0">…</span></td>
+                            <td><span class="fa fa-pencil-square-o openModal" data-resource-id="{{ recurso.id }}">…</span></td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -74,7 +74,7 @@
                             <div>
                                 <label>Intervalos de Tiempo Citables</label>
                                 <textarea class="h-32" readonly>
-                                    00:00 - 00:15
+00:00 - 00:15
                                 </textarea>
                             </div>
                             <div>
@@ -83,7 +83,7 @@
                                     <button class="btn-auto-fill">Auto rellenar</button>
                                 </div>
                                 <textarea class="h-32" readonly>
-                                    00:15 - 00:00
+00:15 - 00:00
                                 </textarea>
                             </div>
                         </div>
@@ -95,33 +95,33 @@
                             <div>
                                 <label>Intervalos de Tiempo Citables</label>
                                 <textarea class="h-32" readonly>
-                                    07:00 - 07:20
-                                    07:20 - 07:40
-                                    07:40 - 08:00
-                                    08:00 - 08:20
-                                    08:20 - 08:40
-                                    08:40 - 09:00
-                                    09:00 - 09:20
-                                    09:20 - 09:40
-                                    09:40 - 10:00
-                                    10:00 - 10:20
-                                    10:20 - 10:40
-                                    10:40 - 11:00
-                                    11:00 - 11:20
-                                    11:20 - 11:40
-                                    11:40 - 13:00
-                                    13:00 - 13:20
-                                    13:20 - 13:40
-                                    13:40 - 14:00
-                                    14:00 - 14:20
-                                    14:20 - 14:40
-                                    14:40 - 15:00
-                                    15:00 - 15:20
-                                    15:20 - 15:40
-                                    15:40 - 16:00
-                                    16:00 - 16:20
-                                    16:20 - 16:40
-                                    16:40 - 17:00
+07:00 - 07:20
+07:20 - 07:40
+07:40 - 08:00
+08:00 - 08:20
+08:20 - 08:40
+08:40 - 09:00
+09:00 - 09:20
+09:20 - 09:40
+09:40 - 10:00
+10:00 - 10:20
+10:20 - 10:40
+10:40 - 11:00
+11:00 - 11:20
+11:20 - 11:40
+11:40 - 13:00
+13:00 - 13:20
+13:20 - 13:40
+13:40 - 14:00
+14:00 - 14:20
+14:20 - 14:40
+14:40 - 15:00
+15:00 - 15:20
+15:20 - 15:40
+15:40 - 16:00
+16:00 - 16:20
+16:20 - 16:40
+16:40 - 17:00
                                 </textarea>
                                 </div>
                             <div>
@@ -130,8 +130,8 @@
                                     <button class="btn-auto-fill">Auto rellenar</button>
                                 </div>
                                 <textarea class="h-32" readonly>
-                                    00:00 - 07:00
-                                    17:00 - 00:00
+00:00 - 07:00
+17:00 - 00:00
                                 </textarea>
                             </div>
                         </div>
@@ -143,16 +143,16 @@
                             <div>
                                 <label>Intervalos de Tiempo Citables</label>
                                 <textarea class="h-32" readonly>
-                                    13:00 - 13:20
-                                    13:20 - 13:40
-                                    13:40 - 14:00
-                                    14:00 - 14:20
-                                    14:20 - 14:40
-                                    14:40 - 15:00
-                                    15:00 - 15:20
-                                    15:20 - 15:40
-                                    15:40 - 16:00
-                                    16:00 - 16:20
+13:00 - 13:20
+13:20 - 13:40
+13:40 - 14:00
+14:00 - 14:20
+14:20 - 14:40
+14:40 - 15:00
+15:00 - 15:20
+15:20 - 15:40
+15:40 - 16:00
+16:00 - 16:20
                                 </textarea>
                                 </div>
                             <div>
@@ -161,8 +161,8 @@
                                     <button class="btn-auto-fill">Auto rellenar</button>
                                 </div>
                                 <textarea class="h-32" readonly>
-                                    00:00 - 13:00
-                                    16:20 - 00:00
+00:00 - 13:00
+16:20 - 00:00
                                 </textarea>
                             </div>
                         </div>
@@ -174,33 +174,33 @@
                             <div>
                                 <label>Intervalos de Tiempo Citables</label>
                                 <textarea class="h-32" readonly>
-                                    07:00 - 07:20
-                                    07:20 - 07:40
-                                    07:40 - 08:00
-                                    08:00 - 08:20
-                                    08:20 - 08:40
-                                    08:40 - 09:00
-                                    09:00 - 09:20
-                                    09:20 - 09:40
-                                    09:40 - 10:00
-                                    10:00 - 10:20
-                                    10:20 - 10:40
-                                    10:40 - 11:00
-                                    11:00 - 11:20
-                                    11:20 - 11:40
-                                    11:40 - 13:00
-                                    13:00 - 13:20
-                                    13:20 - 13:40
-                                    13:40 - 14:00
-                                    14:00 - 14:20
-                                    14:20 - 14:40
-                                    14:40 - 15:00
-                                    15:00 - 15:20
-                                    15:20 - 15:40
-                                    15:40 - 16:00
-                                    16:00 - 16:20
-                                    16:20 - 16:40
-                                    16:40 - 17:00
+07:00 - 07:20
+07:20 - 07:40
+07:40 - 08:00
+08:00 - 08:20
+08:20 - 08:40
+08:40 - 09:00
+09:00 - 09:20
+09:20 - 09:40
+09:40 - 10:00
+10:00 - 10:20
+10:20 - 10:40
+10:40 - 11:00
+11:00 - 11:20
+11:20 - 11:40
+11:40 - 13:00
+13:00 - 13:20
+13:20 - 13:40
+13:40 - 14:00
+14:00 - 14:20
+14:20 - 14:40
+14:40 - 15:00
+15:00 - 15:20
+15:20 - 15:40
+15:40 - 16:00
+16:00 - 16:20
+16:20 - 16:40
+16:40 - 17:00
                                 </textarea>
                                             </div>
                             <div>
@@ -222,33 +222,33 @@
                             <div>
                                 <label>Intervalos de Tiempo Citables</label>
                                 <textarea class="h-32" readonly>
-                                    07:00 - 07:20
-                                    07:20 - 07:40
-                                    07:40 - 08:00
-                                    08:00 - 08:20
-                                    08:20 - 08:40
-                                    08:40 - 09:00
-                                    09:00 - 09:20
-                                    09:20 - 09:40
-                                    09:40 - 10:00
-                                    10:00 - 10:20
-                                    10:20 - 10:40
-                                    10:40 - 11:00
-                                    11:00 - 11:20
-                                    11:20 - 11:40
-                                    11:40 - 13:00
-                                    13:00 - 13:20
-                                    13:20 - 13:40
-                                    13:40 - 14:00
-                                    14:00 - 14:20
-                                    14:20 - 14:40
-                                    14:40 - 15:00
-                                    15:00 - 15:20
-                                    15:20 - 15:40
-                                    15:40 - 16:00
-                                    16:00 - 16:20
-                                    16:20 - 16:40
-                                    16:40 - 17:00
+07:00 - 07:20
+07:20 - 07:40
+07:40 - 08:00
+08:00 - 08:20
+08:20 - 08:40
+08:40 - 09:00
+09:00 - 09:20
+09:20 - 09:40
+09:40 - 10:00
+10:00 - 10:20
+10:20 - 10:40
+10:40 - 11:00
+11:00 - 11:20
+11:20 - 11:40
+11:40 - 13:00
+13:00 - 13:20
+13:20 - 13:40
+13:40 - 14:00
+14:00 - 14:20
+14:20 - 14:40
+14:40 - 15:00
+15:00 - 15:20
+15:20 - 15:40
+15:40 - 16:00
+16:00 - 16:20
+16:20 - 16:40
+16:40 - 17:00
                                 </textarea>
                             </div>
                             <div>
@@ -257,8 +257,8 @@
                                     <button class="btn-auto-fill">Auto rellenar</button>
                                 </div>
                                 <textarea class="h-32" readonly>
-                                    00:00 - 07:00
-                                    17:00 - 00:00  
+00:00 - 07:00
+17:00 - 00:00  
                                 </textarea>
                             </div>
                         </div>
@@ -270,30 +270,30 @@
                             <div>
                                 <label>Intervalos de Tiempo Citables</label>
                             <textarea class="h-32" readonly>
-                                07:00 - 07:20
-                                07:20 - 07:40
-                                07:40 - 08:00
-                                08:00 - 08:20
-                                08:20 - 08:40
-                                08:40 - 09:00
-                                09:00 - 09:20
-                                09:20 - 09:40
-                                09:40 - 10:00
-                                10:00 - 10:20
-                                10:20 - 10:40
-                                10:40 - 11:00
-                                11:00 - 11:20
-                                11:20 - 11:40
-                                11:40 - 13:00
-                                13:00 - 13:20
-                                13:20 - 13:40
-                                13:40 - 14:00
-                                14:00 - 14:20
-                                14:20 - 14:40
-                                14:40 - 15:00
-                                15:00 - 15:20
-                                15:20 - 15:40
-                                15:40 - 16:00
+07:00 - 07:20
+07:20 - 07:40
+07:40 - 08:00
+08:00 - 08:20
+08:20 - 08:40
+08:40 - 09:00
+09:00 - 09:20
+09:20 - 09:40
+09:40 - 10:00
+10:00 - 10:20
+10:20 - 10:40
+10:40 - 11:00
+11:00 - 11:20
+11:20 - 11:40
+11:40 - 13:00
+13:00 - 13:20
+13:20 - 13:40
+13:40 - 14:00
+14:00 - 14:20
+14:20 - 14:40
+14:40 - 15:00
+15:00 - 15:20
+15:20 - 15:40
+15:40 - 16:00
                             </textarea>
                             </div>
                             <div>
@@ -302,8 +302,8 @@
                                     <button class="btn-auto-fill">Auto rellenar</button>
                                 </div>
                             <textarea class="h-32" readonly>
-                                00:00 - 07:00
-                                16:00 - 00:00
+00:00 - 07:00
+16:00 - 00:00
                             </textarea>
                             </div>
                         </div>
@@ -315,18 +315,18 @@
                             <div>
                                 <label>Intervalos de Tiempo Citables</label>
                                 <textarea class="h-32" readonly>
-                                    08:00 - 08:20
-                                    08:20 - 08:40
-                                    08:40 - 09:00
-                                    09:00 - 09:20
-                                    09:20 - 09:40
-                                    09:40 - 10:00
-                                    10:00 - 10:20
-                                    10:20 - 10:40
-                                    10:40 - 11:00
-                                    11:00 - 11:20
-                                    11:20 - 11:40
-                                    11:40 - 12:00
+08:00 - 08:20
+08:20 - 08:40
+08:40 - 09:00
+09:00 - 09:20
+09:20 - 09:40
+09:40 - 10:00
+10:00 - 10:20
+10:20 - 10:40
+10:40 - 11:00
+11:00 - 11:20
+11:20 - 11:40
+11:40 - 12:00
                                 </textarea>
                             </div>
                             <div>
@@ -335,15 +335,16 @@
                                     <button class="btn-auto-fill">Auto rellenar</button>
                                 </div>
                                 <textarea class="h-32" readonly>
-                                    00:00 - 08:00
-                                    12:00 - 00:00
+00:00 - 08:00
+12:00 - 00:00
                                 </textarea>
                             </div>
                         </div>
                     </div>
                     
                 </div>
-
+                <br>
+                <br>
                 <div class="space-y-2">
                     <label for="timezone">Zona Horaria</label>
                     <select id="timezone">
@@ -351,7 +352,7 @@
                         <!-- Agregar más zonas horarias si es necesario -->
                     </select>
                 </div>
-
+                <br>
                 <div class="flex items-center space-x-2">
                     <label>Crear un intervalo de tiempo cada</label>
                     <input type="number" defaultValue="30" class="w-16">
@@ -361,14 +362,14 @@
                     <input type="time" defaultValue="18:00" class="w-20">
                     <button class="btn-link">Crear</button>
                 </div>
-
+                <br>
                 <p class="text-sm text-muted-foreground">
                     Formato: HH:MM - HH:MM Etiqueta opcional
                     <br />
                     Introduce un intervalo de tiempo por línea. Se deben proporcionar intervalos de tiempo para las 24 horas del
                     día comenzando y terminando a las 12:00 AM.
                 </p>
-
+                <br>
                 <div class="modal-footer">
                     <button class="btn-ghost">Cancelar</button>
                     <button class="btn-green">Actualizar</button>
@@ -381,37 +382,45 @@
 </div>
 <script>
     // Script para mostrar el modal
-    document.getElementById('openModal').onclick = function() {
-        document.getElementById('intervalModal').style.display = 'block';
+// Script para mostrar el modal
+document.querySelectorAll('.openModal').forEach(function(trigger) {
+    trigger.onclick = function() {
+        document.getElementById('intervalModal').style.display = 'flex';
     }
+});
 
-    // Script para cerrar el modal
-    var modal = document.getElementById("intervalModal");
-    var span = document.getElementsByClassName("close")[0];
+// Script para cerrar el modal
+var modal = document.getElementById("intervalModal");
+var span = document.getElementsByClassName("close")[0];
 
-    span.onclick = function() {
+span.onclick = function() {
+    modal.style.display = "none";
+}
+
+window.onclick = function(event) {
+    if (event.target == modal) {
         modal.style.display = "none";
     }
+}
 
-    window.onclick = function(event) {
-        if (event.target == modal) {
-            modal.style.display = "none";
-        }
+document.querySelector('.btn-ghost').onclick = function() {
+    modal.style.display = "none";
+}
+
+// Script para las pestañas
+document.querySelectorAll('.tabs-trigger').forEach(tab => {
+    tab.onclick = function() {
+        document.querySelectorAll('.tabs-trigger').forEach(t => {
+            t.classList.remove('active');
+        });
+        document.querySelectorAll('.tabs-content').forEach(content => {
+            content.classList.remove('active');
+        });
+        this.classList.add('active');
+        document.getElementById(this.dataset.day + '-content').classList.add('active');
     }
+});
 
-    // Script para las pestañas
-    document.querySelectorAll('.tabs-trigger').forEach(tab => {
-        tab.onclick = function() {
-            document.querySelectorAll('.tabs-trigger').forEach(t => {
-                t.classList.remove('active');
-            });
-            document.querySelectorAll('.tabs-content').forEach(content => {
-                content.classList.remove('active');
-            });
-            this.classList.add('active');
-            document.getElementById(this.dataset.day + '-content').classList.add('active');
-        }
-    });
 </script>
 
 </body>

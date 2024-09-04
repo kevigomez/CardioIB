@@ -1,7 +1,7 @@
 #app/controllers/controler.py
 from flask import render_template, request, flash, redirect, url_for
 from app import db
-from app.models.modelo import Paciente, Appointment, User, Cita, Settings, Group, UserGroup, Resource
+from app.models.modelo import Paciente, Appointment, User, Cita, Settings, Group, UserGroup, Resource, Schedule, TimeSet
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import logging
@@ -100,9 +100,53 @@ def obtenerCitas_paginas(page, per_page):
         logging.error(f"Error al obtener Citas: {e}")
         return None
 
-def obtener_intervalo():
-    setting = Settings.query.filter_by(name='time_interval').first()
-    return int(setting.value) if setting else 15
+def obtener_intervalo_time(schedule_id):
+    # Consulta todos los intervalos asociados con el schedule_id
+    intervalos = TimeSet.query.filter_by(schedule_id=schedule_id).order_by(TimeSet.weekDay, TimeSet.intervalStart).all()
+
+    # Estructura para almacenar los intervalos por día de la semana
+    dias_semana = { 
+        "domingo": {"citable": [], "bloqueado": []},
+        "lunes": {"citable": [], "bloqueado": []},
+        "martes": {"citable": [], "bloqueado": []},
+        "miércoles": {"citable": [], "bloqueado": []},
+        "jueves": {"citable": [], "bloqueado": []},
+        "viernes": {"citable": [], "bloqueado": []},
+        "sábado": {"citable": [], "bloqueado": []}
+    }
+
+    # Mapeo de weekDay a nombres de días
+    mapeo_dias = {
+        7: "domingo",
+        1: "lunes",
+        2: "martes",
+        3: "miércoles",
+        4: "jueves",
+        5: "viernes",
+        6: "sábado"
+    }
+
+    # Procesa cada intervalo y lo asigna al día correspondiente
+    for intervalo in intervalos:
+        dia = mapeo_dias.get(intervalo.weekDay)
+        if intervalo.tipe == 'citable':
+            dias_semana[dia]["citable"].append(f"{intervalo.intervalStart} - {intervalo.intervalEnd}")
+        elif intervalo.tipe == 'bloqueado':
+            dias_semana[dia]["bloqueado"].append(f"{intervalo.intervalStart} - {intervalo.intervalEnd}")
+
+    return dias_semana
+
+    
+    dias = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado']
+    resultado = {dia: {'citable': [], 'bloqueado': []} for dia in dias}
+
+    for intervalo in intervalos:
+        if intervalo.tipe == 'citable':
+            resultado[intervalo.weekDay]['citable'].append(f"{intervalo.intervalStart} - {intervalo.intervalEnd}")
+        elif intervalo.tipe == 'bloqueado':
+            resultado[intervalo.weekDay]['bloqueado'].append(f"{intervalo.intervalStart} - {intervalo.intervalEnd}")
+
+    return resultado
 
 def actualizar_intervalo(nuevo_intervalo):
     setting = Settings.query.filter_by(name='time_interval').first()
@@ -121,8 +165,9 @@ def obtener_citas():
 def obtenerCitasPorFecha(start_date, end_date):
     return Cita.query.filter(Cita.start >= start_date, Cita.start <= end_date).all()
 
-def obtenerRecursos():
-    return Resource.query.all()
+def obtenerSchedule():
+    return Schedule.query.order_by(Schedule.name).all()
+
 
 
 
@@ -192,9 +237,6 @@ def register_cita(form_data):
 
     return nueva_cita
 
-def obtener_intervalo():
-    setting = db.session.query(Settings).filter_by(name='time_interval').first()
-    return int(setting.value) if setting else 15
 
 def actualizar_intervalo(nuevo_intervalo):
     setting = db.session.query(Settings).filter_by(name='time_interval').first()

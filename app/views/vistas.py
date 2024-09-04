@@ -1,6 +1,6 @@
 #app/views/vistas.py
 from flask import Blueprint, Flask, render_template, request, redirect, url_for, session, flash, jsonify
-from app.controllers.controler import registrar_usuarios, obtener_usuarios_paginados, register_cita, obtenerCitas_paginas, obtener_intervalo, actualizar_intervalo, obtener_cita_por_id, actualizar_cita, obtener_usuario_por_id, actualizar_usuario, registrar_usuariosAses, save_blocked_dates_to_appointments, obtenerRecursos
+from app.controllers.controler import registrar_usuarios, obtener_usuarios_paginados, register_cita, obtenerCitas_paginas, actualizar_intervalo, obtener_cita_por_id, actualizar_cita, obtener_usuario_por_id, actualizar_usuario, registrar_usuariosAses, save_blocked_dates_to_appointments, obtenerSchedule, obtener_intervalo_time
 from app.models.modelo import Paciente, Appointment, User, Cita, Resource
 from app import db
 from flask_paginate import Pagination, get_page_parameter
@@ -227,31 +227,28 @@ def save_appointment():
 
 
 
+
 @main.route('/admin', methods=['GET', 'POST'])
 @login_required
 def admin():
-    recursos = obtenerRecursos()
+    Schedules = obtenerSchedule()
+
     if request.method == 'POST':
         nuevo_intervalo = request.form['time-interval']
         actualizar_intervalo(nuevo_intervalo)
         flash('Intervalo de tiempo actualizado con éxito', 'success')
         return redirect(url_for('main.admin'))
 
-    intervalo = obtener_intervalo()
-    return render_template('admin_int.html', intervalo=intervalo, recursos=recursos)
+    return render_template('admin_int.html', Schedules=Schedules)
 
-@main.route('/get_intervalos', methods=['POST'])
+
+
+@main.route('/get_intervalos/<int:schedule_id>', methods=['GET'])
 @login_required
-def get_intervalos():
-    data = request.get_json()
-    dia_seleccionado = data['dia']
-    recurso_id = data['resource_id']
-
-    # Aquí deberías implementar la lógica para obtener los intervalos de tiempo
-    # según el día seleccionado y el recurso. Este es un ejemplo básico:
-    intervalos = obtener_intervalos_por_dia(dia_seleccionado, recurso_id)
-
+def get_intervalos(schedule_id):
+    intervalos = obtener_intervalo_time(schedule_id)
     return jsonify(intervalos)
+
 
 
 

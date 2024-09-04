@@ -235,20 +235,60 @@ class Settings(db.Model):
     name = db.Column(db.String(255), unique=True, nullable=False)
     value = db.Column(db.String(255), nullable=False)
 
+class Layout(db.Model):
+    __tablename__ = 'layouts'
+
+    layout_id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
+    timezone = db.Column(db.String(50), nullable=False)
+    layout_type = db.Column(db.SmallInteger, nullable=False, default=0)
+
+    def __repr__(self):
+        return f'<Layout {self.layout_id}>'
+
+
+class Schedule(db.Model):
+    __tablename__ = 'schedules'
+
+    schedule_id = db.Column(db.SmallInteger, primary_key=True, autoincrement=True, nullable=False)
+    name = db.Column(db.String(85), nullable=False)
+    isdefault = db.Column(db.Boolean, nullable=False)
+    weekdaystart = db.Column(db.SmallInteger, nullable=False)
+    daysvisible = db.Column(db.SmallInteger, nullable=False, default=7)
+    layout_id = db.Column(db.Integer, db.ForeignKey('other_table.layout_id'), nullable=False)  # Relación con otra tabla si es necesario
+    legacyid = db.Column(db.String(16), nullable=True)
+    public_id = db.Column(db.String(20), nullable=True, unique=True)  # Clave única
+    allow_calendar_subscription = db.Column(db.Boolean, nullable=False, default=False)
+    admin_group_id = db.Column(db.SmallInteger, db.ForeignKey('admin_groups.admin_group_id'), nullable=True)
+    start_date = db.Column(db.DateTime, nullable=True)
+    end_date = db.Column(db.DateTime, nullable=True)
+    allow_concurrent_bookings = db.Column(db.Boolean, nullable=False, default=False)
+    default_layout = db.Column(db.Boolean, nullable=False, default=False)
+    total_concurrent_reservations = db.Column(db.SmallInteger, nullable=False, default=0)
+    max_resources_per_reservation = db.Column(db.SmallInteger, nullable=False, default=0)
+    additional_properties = db.Column(db.Text, nullable=True)
+
+    __table_args__ = (
+        db.Index('idx_layout_id', 'layout_id'),  # Índice para layout_id
+        db.Index('idx_admin_group_id', 'admin_group_id'),  # Índice para admin_group_id
+    )
+
+    def __repr__(self):
+        return f'<Schedule {self.name}>'
+
 
 class TimeSet(db.Model):
     __tablename__ = 'timeSet'
 
     timeSet_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    resource_id = db.Column(db.SmallInteger, db.ForeignKey('resources.resource_id'), nullable=False)
+    schedule_id = db.Column(db.SmallInteger, db.ForeignKey('resources.resource_id'), nullable=False)
     weekDay = db.Column(db.Enum('domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'), nullable=False)
     intervalStart = db.Column(db.Time, nullable=False)
     intervalEnd = db.Column(db.Time, nullable=False)
     tipe = db.Column(db.Enum('citable', 'bloqueado'), nullable=False)
 
-    def __init__(timeSet_id,resource_id,weekDay,intervalStart,intervalEnd,tipe,self):
+    def __init__(timeSet_id,schedule_id,weekDay,intervalStart,intervalEnd,tipe,self):
         self.timeSet_id = timeSet_id
-        self.resource_id = resource_id
+        self.schedule_id = schedule_id
         self.weekDay = weekDay
         self.intervalStart = intervalStart
         self.intervalEnd = intervalEnd

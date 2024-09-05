@@ -1,6 +1,6 @@
 #app/views/vistas.py
 from flask import Blueprint, Flask, render_template, request, redirect, url_for, session, flash, jsonify
-from app.controllers.controler import registrar_usuarios, obtener_usuarios_paginados, register_cita, obtenerCitas_paginas, actualizar_intervalo, obtener_cita_por_id, actualizar_cita, obtener_usuario_por_id, actualizar_usuario, registrar_usuariosAses, save_blocked_dates_to_appointments, obtenerSchedule, obtener_intervalo_time
+from app.controllers.controler import registrar_usuarios, obtener_usuarios_paginados, register_cita, obtenerCitas_paginas, actualizar_intervalo, obtener_cita_por_id, actualizar_cita, obtener_usuario_por_id, actualizar_usuario, registrar_usuariosAses, save_blocked_dates_to_appointments, obtenerSchedule, obtener_intervalo_time, obtenerSchedules_true
 from app.models.modelo import Paciente, Appointment, User, Cita, Resource
 from app import db
 from flask_paginate import Pagination, get_page_parameter
@@ -231,16 +231,36 @@ def save_appointment():
 @main.route('/admin', methods=['GET', 'POST'])
 @login_required
 def admin():
-    Schedules = obtenerSchedule()
+    # Obtener los intervalos de tiempo organizados por día de la semana
+    Schedules = obtenerSchedules_true()
+    timeSet = obtenerSchedule()
 
     if request.method == 'POST':
+        # Aquí procesas los datos enviados desde el formulario para actualizar los intervalos de tiempo
         nuevo_intervalo = request.form['time-interval']
-        actualizar_intervalo(nuevo_intervalo)
-        flash('Intervalo de tiempo actualizado con éxito', 'success')
+        try:
+            # Función que actualiza el intervalo en la base de datos
+            actualizar_intervalo(nuevo_intervalo)
+            flash('Intervalo de tiempo actualizado con éxito', 'success')
+        except Exception as e:
+            flash(f'Error al actualizar el intervalo de tiempo: {str(e)}', 'danger')
+
         return redirect(url_for('main.admin'))
 
-    return render_template('admin_int.html', Schedules=Schedules)
+    # Pasar el objeto `Schedules` a la plantilla para renderizar los intervalos en el modal
+    return render_template('admin_int.html', timeSet=timeSet, Schedules=Schedules)
 
+@main.route('/update_intervalos/<schedule_id>', methods=['POST'])
+def update_intervalos(schedule_id):
+    data = request.get_json()
+
+    # Procesa los datos y actualiza en la base de datos
+    # Ejemplo: 
+    # for day, intervals in data.items():
+    #     update_intervals_in_db(schedule_id, day, intervals)
+    
+    # Simulación de respuesta
+    return jsonify({'success': True})
 
 
 @main.route('/get_intervalos/<int:schedule_id>', methods=['GET'])

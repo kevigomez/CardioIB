@@ -27,7 +27,7 @@
                             <td>{{ Schedule.name }}</td>
                             <td>{{ Schedule.weekdaystart }}</td>
                             <td>{{ Schedule.daysvisible }} dias a la vez</td>
-                            <td><span class="fa fa-pencil-square-o openModal" data-resource-id="{{ Schedules.schedule_id }}">…</span></td>
+                            <td><span class="fa fa-pencil-square-o openModal" data-resource-id="{{ Schedule.schedule_id }}">…</span></td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -39,6 +39,7 @@
 
         <!-- Modal -->
         <div id="intervalModal" class="modal">
+            <form>
             <div class="modal-content">
                 <span class="close">&times;</span>
                 <h2>Cambiar Distribución Horaria</h2>
@@ -50,22 +51,22 @@
 
                 <div class="tabs">
                     <ul class="tabs-list">
-                        <li class="tabs-triggeractive" data-day="lunes">Lunes</li>
+                        <li class="tabs-trigger active" data-day="lunes">Lunes</li>
                         <li class="tabs-trigger" data-day="martes">Martes</li>
-                        <li class="tabs-trigger" data-day="miercoles">Miércoles</li>
+                        <li class="tabs-trigger" data-day="miércoles">Miércoles</li>
                         <li class="tabs-trigger" data-day="jueves">Jueves</li>
                         <li class="tabs-trigger" data-day="viernes">Viernes</li>
-                        <li class="tabs-trigger" data-day="sabado">Sábado</li>
-                        <li class="tabs-trigger " data-day="domingo">Domingo</li>
+                        <li class="tabs-trigger" data-day="sábado">Sábado</li>
+                        <li class="tabs-trigger" data-day="domingo">Domingo</li>
                     </ul>
                     <br>
-                    {% for day in ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'] %}
+                    {% for day in ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo'] %}
                     <div class="tabs-content {% if loop.first %}active{% endif %}" id="{{ day }}-content">
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label>Intervalos de Tiempo Citables</label>
-                                <textarea class="h-32" readonly>
-                                    {% for intervalo in Schedules[day]['citable'] %}
+                                <textarea class="citable h-32" >
+                                    {% for intervalo in timeSet[day]['citable'] %}
                                     {{ intervalo }}
                                     {% endfor %}
                                 </textarea>
@@ -74,12 +75,12 @@
                                 <div class="flex justify-between">
                                     <label>Intervalos de Tiempo Bloqueados</label>
                                     <button class="btn-auto-fill">Auto rellenar</button>
-                                </div>
-                                <textarea class="h-32" readonly>
-                                    {% for intervalo in Schedules[day]['bloqueado'] %}
+                                    <textarea class="bloqueado h-32" >
+                                    {% for intervalo in timeSet[day]['bloqueado'] %}
                                     {{ intervalo }}
                                     {% endfor %}
-                                </textarea>
+                                    </textarea>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -117,45 +118,54 @@
                     <button class="btn-green">Actualizar</button>
                 </div>
             </div>
+        </form>
         </div>
     </div>
 
    
 </div>
 <script>
-    // Script para mostrar el modal
-// Script para mostrar el modal
-document.querySelectorAll('.openModal').forEach(function(trigger) {
+ document.querySelectorAll('.openModal').forEach(function(trigger) {
     trigger.onclick = function() {
         var scheduleId = this.getAttribute('data-resource-id');
-        fetch(`/get_intervalos/${scheduleId}`)
+        var url = `/get_intervalos/${scheduleId}`;
+        fetch(url)
             .then(response => response.json())
             .then(data => {
-                // Actualizar el contenido del modal con los intervalos obtenidos
-                document.querySelector('#domingo-content textarea').value = data.domingo.citable.join("\n");
-                document.querySelector('#lunes-content textarea').value = data.lunes.citable.join("\n");
-                document.querySelector('#martes-content textarea').value = data.martes.citable.join("\n");
-                document.querySelector('#miercoles-content textarea').value = data.miércoles.citable.join("\n");
-                document.querySelector('#jueves-content textarea').value = data.jueves.citable.join("\n");
-                document.querySelector('#viernes-content textarea').value = data.viernes.citable.join("\n");
-                document.querySelector('#sabado-content textarea').value = data.sábado.citable.join("\n");
+                console.log(data); // Depuración: Verifica los datos recibidos
 
-                // Similar para los intervalos bloqueados
-                document.querySelector('#domingo-content textarea').value = data.domingo.bloqueado.join("\n");
-                document.querySelector('#lunes-content textarea').value = data.lunes.bloqueado.join("\n");
-                document.querySelector('#martes-content textarea').value = data.martes.bloqueado.join("\n");
-                document.querySelector('#miercoles-content textarea').value = data.miércoles.bloqueado.join("\n");
-                document.querySelector('#jueves-content textarea').value = data.jueves.bloqueado.join("\n");
-                document.querySelector('#viernes-content textarea').value = data.viernes.bloqueado.join("\n");
-                document.querySelector('#sabado-content textarea').value = data.sábado.bloqueado.join("\n");
+                // Actualizar los intervalos citables
+                const days = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo'];
+                days.forEach(day => {
+                    const citableTextArea = document.querySelector(`#${day}-content .citable`);
+                    const bloqueadoTextArea = document.querySelector(`#${day}-content .bloqueado`);
+
+
+                    
+                    if (citableTextArea && data[day] && data[day].citable) {
+                        citableTextArea.value = data[day].citable.join("\n");
+                    } else {
+                        console.warn(`Citable textarea not found or no data for ${day}`);
+                    }
+                    
+                    if (bloqueadoTextArea && data[day] && data[day].bloqueado) {
+                        bloqueadoTextArea.value = data[day].bloqueado.join("\n");
+                    } else {
+                        console.warn(`Bloqueado textarea not found or no data for ${day}`);
+                    }
+                });
 
                 // Mostrar el modal
-                document.getElementById('intervalModal').style.display = 'flex';
+                const modal = document.getElementById('intervalModal');
+                if (modal) {
+                    modal.style.display = 'flex';
+                } else {
+                    console.warn('Modal not found');
+                }
             })
             .catch(error => console.error('Error al obtener los intervalos:', error));
     }
 });
-
 
 // Script para cerrar el modal
 var modal = document.getElementById("intervalModal");
@@ -170,6 +180,45 @@ window.onclick = function(event) {
         modal.style.display = "none";
     }
 }
+
+document.querySelector('.btn-green').onclick = function() {
+    // Recolectar datos de los textareas
+    const days = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo'];
+    let updatedIntervals = {};
+
+    days.forEach(day => {
+        const citableTextArea = document.querySelector(`#${day}-content .citable`);
+        const bloqueadoTextArea = document.querySelector(`#${day}-content .bloqueado`);
+        
+        updatedIntervals[day] = {
+            citable: citableTextArea ? citableTextArea.value.split("\n") : [],
+            bloqueado: bloqueadoTextArea ? bloqueadoTextArea.value.split("\n") : []
+        };
+    });
+
+    // Enviar datos al servidor
+    const scheduleId = document.querySelector('.openModal').getAttribute('data-resource-id'); // O usa el ID correcto de donde sea necesario
+    const url = `/update_intervalos/${scheduleId}`;
+
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(updatedIntervals)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Intervalos actualizados con éxito');
+            document.getElementById('intervalModal').style.display = 'none'; // Ocultar el modal
+        } else {
+            alert('Error al actualizar los intervalos');
+        }
+    })
+    .catch(error => console.error('Error al actualizar los intervalos:', error));
+};
+
 
 document.querySelector('.btn-ghost').onclick = function() {
     modal.style.display = "none";

@@ -7,6 +7,7 @@ from datetime import datetime
 import logging
 import hashlib
 import os
+from sqlalchemy import asc
 
 def registrar_usuarios(form_data):
     username = form_data['username']
@@ -101,52 +102,52 @@ def obtenerCitas_paginas(page, per_page):
         return None
 
 def obtener_intervalo_time(schedule_id):
-    # Consulta todos los intervalos asociados con el schedule_id
-    intervalos = TimeSet.query.filter_by(schedule_id=schedule_id).order_by(TimeSet.weekDay, TimeSet.intervalStart).all()
-
-    # Estructura para almacenar los intervalos por día de la semana
-    dias_semana = { 
-        "domingo": {"citable": [], "bloqueado": []},
-        "lunes": {"citable": [], "bloqueado": []},
-        "martes": {"citable": [], "bloqueado": []},
-        "miércoles": {"citable": [], "bloqueado": []},
-        "jueves": {"citable": [], "bloqueado": []},
-        "viernes": {"citable": [], "bloqueado": []},
-        "sábado": {"citable": [], "bloqueado": []}
+    intervalos = TimeSet.query.filter_by(schedule_id=schedule_id).all()
+    
+    dias_semana = {
+        'lunes': {'citable': [], 'bloqueado': []},
+        'martes': {'citable': [], 'bloqueado': []},
+        'miércoles': {'citable': [], 'bloqueado': []},
+        'jueves': {'citable': [], 'bloqueado': []},
+        'viernes': {'citable': [], 'bloqueado': []},
+        'sábado': {'citable': [], 'bloqueado': []},
+        'domingo': {'citable': [], 'bloqueado': []}
     }
-
-    # Mapeo de weekDay a nombres de días
-    mapeo_dias = {
-        7: "domingo",
-        1: "lunes",
-        2: "martes",
-        3: "miércoles",
-        4: "jueves",
-        5: "viernes",
-        6: "sábado"
-    }
-
-    # Procesa cada intervalo y lo asigna al día correspondiente
+    
     for intervalo in intervalos:
-        dia = mapeo_dias.get(intervalo.weekDay)
+        dia = intervalo.weekDay
         if intervalo.tipe == 'citable':
-            dias_semana[dia]["citable"].append(f"{intervalo.intervalStart} - {intervalo.intervalEnd}")
+            dias_semana[dia]['citable'].append(f"{intervalo.intervalStart} - {intervalo.intervalEnd}")
         elif intervalo.tipe == 'bloqueado':
-            dias_semana[dia]["bloqueado"].append(f"{intervalo.intervalStart} - {intervalo.intervalEnd}")
-
+            dias_semana[dia]['bloqueado'].append(f"{intervalo.intervalStart} - {intervalo.intervalEnd}")
+        else:
+            print(f"Advertencia: tipo no válido {intervalo.tipe} para el intervalo con ID {intervalo.id}")
+    
     return dias_semana
 
+
+
+    # Procesa cada intervalo y lo asigna al día correspondiente
+    # for intervalo in intervalos:
+    #     dia = mapeo_dias.get(intervalo.weekDay)
+    #    if intervalo.tipe == 'citable':
+    #         dias_semana[dia]["citable"].append(f"{intervalo.intervalStart} - {intervalo.intervalEnd}")
+    #    elif intervalo.tipe == 'bloqueado':
+    #         dias_semana[dia]["bloqueado"].append(f"{intervalo.intervalStart} - {intervalo.intervalEnd}")
+
+    # return dias_semana
+
     
-    dias = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado']
-    resultado = {dia: {'citable': [], 'bloqueado': []} for dia in dias}
+    # dias = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado']
+    # resultado = {dia: {'citable': [], 'bloqueado': []} for dia in dias}
 
-    for intervalo in intervalos:
-        if intervalo.tipe == 'citable':
-            resultado[intervalo.weekDay]['citable'].append(f"{intervalo.intervalStart} - {intervalo.intervalEnd}")
-        elif intervalo.tipe == 'bloqueado':
-            resultado[intervalo.weekDay]['bloqueado'].append(f"{intervalo.intervalStart} - {intervalo.intervalEnd}")
+    # for intervalo in intervalos:
+    #     if intervalo.tipe == 'citable':
+    #         resultado[intervalo.weekDay]['citable'].append(f"{intervalo.intervalStart} - {intervalo.intervalEnd}")
+    #     elif intervalo.tipe == 'bloqueado':
+    #         resultado[intervalo.weekDay]['bloqueado'].append(f"{intervalo.intervalStart} - {intervalo.intervalEnd}")
 
-    return resultado
+    # return resultado
 
 def actualizar_intervalo(nuevo_intervalo):
     setting = Settings.query.filter_by(name='time_interval').first()
@@ -165,8 +166,57 @@ def obtener_citas():
 def obtenerCitasPorFecha(start_date, end_date):
     return Cita.query.filter(Cita.start >= start_date, Cita.start <= end_date).all()
 
+def obtenerSchedules_true():
+    return Schedule.query.order_by(asc(Schedule.name)).all()
+
+def obtener_time_sets():
+    return TimeSet.query.all()
+
 def obtenerSchedule():
-    return Schedule.query.order_by(Schedule.name).all()
+    # Ejemplo de cómo podrías inicializar el diccionario
+    Schedules = { 'lunes': {'citable': [], 'bloqueado': []},
+                  'martes': {'citable': [], 'bloqueado': []},
+                  'miércoles': {'citable': [], 'bloqueado': []},
+                  'jueves': {'citable': [], 'bloqueado': []},
+                  'viernes': {'citable': [], 'bloqueado': []},
+                  'sábado': {'citable': [], 'bloqueado': []},
+                  'domingo': {'citable': [], 'bloqueado': []} }
+
+    # Supongamos que `time_set` es un objeto con `weekDay`, `intervalStart`, y `intervalEnd`
+    for time_set in obtener_time_sets():  # Asegúrate de que `obtener_time_sets` devuelva los valores correctos
+        day = convertir_numero_a_dia(time_set.weekDay)  # Asegúrate de que esto devuelve un día válido
+        if day in Schedules:
+            Schedules[day]['citable'].append(f"{time_set.intervalStart} - {time_set.intervalEnd}")
+        else:
+            raise ValueError(f"El día {day} no es válido en el diccionario de Schedules.")
+    
+    return Schedules
+
+
+def convertir_numero_a_dia(weekDay):
+    dias = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo']
+    
+    # Registro para depurar el valor de weekDay
+    print(f"Valor de weekDay recibido: {weekDay}")
+    
+    # Si el valor de weekDay es un número, convertir a día
+    if isinstance(weekDay, int):
+        if 1 <= weekDay <= 7:
+            return dias[weekDay - 1]  # Convertir número a día (lunes = 1, etc.)
+        else:
+            raise ValueError(f"El valor de weekDay ({weekDay}) debe estar entre 1 y 7.")
+    
+    # Si ya es un texto, solo devolver el mismo valor
+    elif isinstance(weekDay, str):
+        if weekDay in dias:
+            return weekDay  # Devolver directamente si ya es un día en texto
+        else:
+            raise ValueError(f"El valor de weekDay ({weekDay}) no es un día válido.")
+    
+    # Si no es ni entero ni texto, lanzar un error
+    else:
+        raise TypeError(f"El valor de weekDay ({weekDay}) no es un número ni un texto válido.")
+
 
 
 

@@ -1,6 +1,6 @@
 #app/views/vistas.py
 from flask import Blueprint, Flask, render_template, request, redirect, url_for, session, flash, jsonify
-from app.controllers.controler import registrar_usuarios, obtener_usuarios_paginados, register_cita, obtenerCitas_paginas, actualizar_intervalo, obtener_cita_por_id, actualizar_cita, obtener_usuario_por_id, actualizar_usuario, registrar_usuariosAses, save_blocked_dates_to_appointments, obtenerSchedule, obtener_intervalo_time, obtenerSchedules_true
+from app.controllers.controler import registrar_usuarios, obtener_usuarios_paginados, register_cita, obtenerCitas_paginas, actualizar_intervalo, obtener_cita_por_id, actualizar_cita, obtener_usuario_por_id, actualizar_usuario, registrar_usuariosAses, save_blocked_dates_to_appointments, obtenerSchedule, obtener_intervalo_time, obtenerSchedules_true, obtener_timeSet_porIdSchedule
 from app.models.modelo import Paciente, Appointment, User, Cita, Resource
 from app import db
 from flask_paginate import Pagination, get_page_parameter
@@ -231,6 +231,14 @@ def save_appointment():
 @main.route('/admin', methods=['GET', 'POST'])
 @login_required
 def admin():
+    if request.method == 'POST':
+        logging.debug("Procesando la solicitud POST en /admin")
+        nuevo_intervalo = request.form.get('time-interval')
+        schedule_id = request.form.get('schedule_id')
+        weekday = request.form.get('weekday')
+        tipo = request.form.get('tipo')
+
+        logging.debug(f"Datos recibidos - Schedule ID: {schedule_id}, Weekday: {weekday}, Tipo: {tipo}, Intervalos: {nuevo_intervalo}")
     # Obtener los intervalos de tiempo organizados por día de la semana
     Schedules = obtenerSchedules_true()
     timeSet = obtenerSchedule()
@@ -250,17 +258,7 @@ def admin():
     # Pasar el objeto `Schedules` a la plantilla para renderizar los intervalos en el modal
     return render_template('admin_int.html', timeSet=timeSet, Schedules=Schedules)
 
-@main.route('/update_intervalos/<schedule_id>', methods=['POST'])
-def update_intervalos(schedule_id):
-    data = request.get_json()
 
-    # Procesa los datos y actualiza en la base de datos
-    # Ejemplo: 
-    # for day, intervals in data.items():
-    #     update_intervals_in_db(schedule_id, day, intervals)
-    
-    # Simulación de respuesta
-    return jsonify({'success': True})
 
 
 @main.route('/get_intervalos/<int:schedule_id>', methods=['GET'])
@@ -316,6 +314,26 @@ def update_citas(cita_id):
             flash('Error al actualizar la cita', 'danger')
         return render_template('updateSucefull.html')
     return render_template('update_citas.html', cita=cita)
+
+@main.route('/update_intervalos', methods=['POST'])
+def update_intervalos():
+    data = request.get_json()
+    schedule_id = data.get('schedule_id')
+    updated_intervals = data.get('updated_intervals')
+
+    # Procesar y actualizar solo los intervalos que se hayan modificado
+    for day, intervals in updated_intervals.items():
+        if 'citable' in intervals:
+            # Actualizar solo los intervalos citables para ese día
+            actualizar_intervalo(schedule_id, day, 'citable', intervals['citable'])
+        
+        if 'bloqueado' in intervals:
+            # Actualizar solo los intervalos bloqueados para ese día
+            actualizar_intervalo(schedule_id, day, 'bloqueado', intervals['bloqueado'])
+
+    return jsonify({"message": "Intervalos actualizados con éxito"})
+
+
 
 @main.route('/delete_citas/<int:cita_id>', methods=['GET', 'POST'])
 @login_required
@@ -436,17 +454,3 @@ def block_dates():
     
     # En el caso de una solicitud GET, renderiza la página de bloqueo de fechas
     return render_template('block_dates.html', recursos=recursos, selected_resource_id=int(selected_resource_id))
-
-
-
-
-
-
-
-
-
-
-
-
-
-

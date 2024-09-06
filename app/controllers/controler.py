@@ -149,14 +149,6 @@ def obtener_intervalo_time(schedule_id):
 
     # return resultado
 
-def actualizar_intervalo(nuevo_intervalo):
-    setting = Settings.query.filter_by(name='time_interval').first()
-    if setting:
-        setting.value = str(nuevo_intervalo)
-    else:
-        setting = Settings(name='time_interval', value=str(nuevo_intervalo))
-        db.session.add(setting)
-    db.session.commit()
 
     
 
@@ -171,6 +163,9 @@ def obtenerSchedules_true():
 
 def obtener_time_sets():
     return TimeSet.query.all()
+
+def obtener_timeSet_porIdSchedule(schedule_id):
+    return TimeSet.query.filter(Schedule.query.get(schedule_id))
 
 def obtenerSchedule():
     # Ejemplo de cómo podrías inicializar el diccionario
@@ -195,10 +190,6 @@ def obtenerSchedule():
 
 def convertir_numero_a_dia(weekDay):
     dias = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo']
-    
-    # Registro para depurar el valor de weekDay
-    print(f"Valor de weekDay recibido: {weekDay}")
-    
     # Si el valor de weekDay es un número, convertir a día
     if isinstance(weekDay, int):
         if 1 <= weekDay <= 7:
@@ -288,14 +279,32 @@ def register_cita(form_data):
     return nueva_cita
 
 
-def actualizar_intervalo(nuevo_intervalo):
-    setting = db.session.query(Settings).filter_by(name='time_interval').first()
-    if setting:
-        setting.value = str(nuevo_intervalo)
-    else:
-        setting = Settings(name='time_interval', value=str(nuevo_intervalo))
-        db.session.add(setting)
-    db.session.commit()
+def actualizar_intervalo(schedule_id, weekday, tipo, intervalos):
+    try:
+        logging.debug(f"Actualizando intervalos para schedule_id={schedule_id}, weekday={weekday}, tipo={tipo}")
+        logging.debug(f"Intervalos: {intervalos}")
+
+        # Elimina los intervalos existentes para ese `schedule_id`, `weekday` y `tipo`
+        db.session.query(TimeSet).filter_by(schedule_id=schedule_id, weekDay=weekday, tipe=tipo).delete()
+
+        # Inserta los nuevos intervalos
+        for intervalo in intervalos:
+            start, end = intervalo.split('-')
+            nuevo_intervalo = TimeSet(
+                schedule_id=schedule_id,
+                weekDay=weekday,
+                intervalStart=start.strip(),
+                intervalEnd=end.strip(),
+                tipe=tipo
+            )
+            db.session.add(nuevo_intervalo)
+
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        logging.error(f"Error al actualizar intervalos: {e}")
+        raise
+
     
 def obtener_usuario_por_id(user_id):
     return User.query.get(user_id)

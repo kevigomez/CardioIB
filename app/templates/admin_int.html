@@ -115,7 +115,7 @@
                 <br>
                 <div class="modal-footer">
                     <button class="btn-ghost">Cancelar</button>
-                    <button class="btn-green">Actualizar</button>
+                    <button id="update-intervals" class="btn-green">Actualizar</button>
                 </div>
             </div>
         </form>
@@ -196,11 +196,7 @@ document.querySelector('.btn-green').onclick = function() {
         };
     });
 
-    // Enviar datos al servidor
-    const scheduleId = document.querySelector('.openModal').getAttribute('data-resource-id'); // O usa el ID correcto de donde sea necesario
-    const url = `/update_intervalos/${scheduleId}`;
-
-    fetch(url, {
+    fetch("{{ url_for('main.update_intervalos') }}", {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -237,6 +233,55 @@ document.querySelectorAll('.tabs-trigger').forEach(tab => {
         document.getElementById(this.dataset.day + '-content').classList.add('active');
     }
 });
+
+document.getElementById('update-intervals').onclick = function() {
+    // Solo envía los datos modificados
+    const updatedData = {};
+
+    document.querySelectorAll('.tabs-content').forEach(content => {
+        const day = content.id.split('-')[0];  // Lunes, martes, etc.
+        const citablesTextArea = content.querySelector('textarea:nth-child(1)');
+        const bloqueadosTextArea = content.querySelector('textarea:nth-child(2)');
+
+        // Verifica si los valores han cambiado y agrega al objeto solo los modificados
+        if (citablesTextArea.dataset.originalValue !== citablesTextArea.value) {
+            updatedData[day] = updatedData[day] || {};
+            updatedData[day]['citable'] = citablesTextArea.value.split("\n");
+        }
+
+        if (bloqueadosTextArea.dataset.originalValue !== bloqueadosTextArea.value) {
+            updatedData[day] = updatedData[day] || {};
+            updatedData[day]['bloqueado'] = bloqueadosTextArea.value.split("\n");
+        }
+    });
+
+    // Verifica si hay datos modificados para enviar
+    if (Object.keys(updatedData).length > 0) {
+        fetch("{{ url_for('main.update_intervalos') }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                schedule_id: scheduleId,  // El ID de la planificación actual
+                updated_intervals: updatedData
+            }),
+        })
+        .then(response => response.json())
+        .then(result => {
+            alert(result.message);
+        })
+        .catch(error => console.error('Error al actualizar intervalos:', error));
+    } else {
+        alert('No se ha modificado ningún intervalo');
+    }
+};
+
+// Al cargar los valores en el modal, guarda los originales para comparar
+document.querySelectorAll('.tabs-content textarea').forEach(textarea => {
+    textarea.dataset.originalValue = textarea.value;
+});
+
 
 </script>
 

@@ -39,8 +39,8 @@
     <div class="container-citas">
     <div class="Info_cita">
         <select class="cita" id="cita-select">
-            {% for recurso in recursos %}
-            <option value="{{ recurso.resource_id }}" {% if recurso.resource_id == selected_resource_id %}selected{% endif %}>{{ recurso.name }}</option>
+            {% for Schedule in Schedules %}
+            <option value="{{ Schedule.schedule_id }}" {% if Schedule.schedule_id == selected_schedule_id %}selected{% endif %}>{{ Schedule.name }}</option>
             {% endfor %}
         </select>        
     </div>
@@ -69,7 +69,7 @@
     <div class="form-container" style="display:none;">
         <h2>Formulario de Registro de Citas</h2>
         <form method="post" action="{{ url_for('main.reg_citas') }}">
-            <input type="hidden" id="resource_id" name="resource_id">
+            <input type="hidden" id="schedule_id" name="schedule_id">
             <div id="appointment-form">
                 <div>
                     <h3>Detalles de la Cita</h3>

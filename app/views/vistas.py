@@ -123,13 +123,9 @@ def usuarios():
 @login_required
 def citas():
     # Consulta para obtener solo algunos recursos
-    selected_resource_ids = [1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 21, 22]  # IDs de los recursos que deseas mostrar
-    recursos = Resource.query.filter(Resource.resource_id.in_(selected_resource_ids)).all()
-    
-    # Obtener el recurso seleccionado de los parámetros de la URL
-    selected_resource_id = request.args.get('resource_id', recursos[0].resource_id)  # Si no hay recurso seleccionado, tomar el primero de la lista
+    Shedule = obtenerSchedules_true()
 
-    return render_template('calendariocitas.html', recursos=recursos, selected_resource_id=int(selected_resource_id))
+    return render_template('calendariocitas.html', Shedule=Shedule)
 
 
           

@@ -1,7 +1,7 @@
 #app/views/vistas.py
 from flask import Blueprint, Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from app.controllers.controler import registrar_usuarios, obtener_usuarios_paginados, register_cita, obtenerCitas_paginas, actualizar_intervalo, obtener_cita_por_id, actualizar_cita, obtener_usuario_por_id, actualizar_usuario, registrar_usuariosAses, save_blocked_dates_to_appointments, obtenerSchedule, obtener_intervalo_time, obtenerSchedules_true, obtener_timeSet_porIdSchedule
-from app.models.modelo import Paciente, Appointment, User, Cita, Resource
+from app.models.modelo import Paciente, Appointment, User, Cita, Resource, TimeSet
 from app import db
 from flask_paginate import Pagination, get_page_parameter
 import hashlib
@@ -60,7 +60,6 @@ def index():
         logging.debug(f"Contraseña ingresada: {password}")
         # Realizar la consulta utilizando el modelo User
         user = User.query.filter_by(username=username).first()
-        
         if user:
             # Obtener el salt almacenado
             salt = user.salt
@@ -119,13 +118,23 @@ def usuarios():
     else:
         return render_template('usuarios.html', users=[])
 
-@main.route('/citas')
+@main.route('/citas ', methods=['GET'])
 @login_required
 def citas():
     # Consulta para obtener solo algunos recursos
     Shedule = obtenerSchedules_true()
 
-    return render_template('calendariocitas.html', Shedule=Shedule)
+    print(type(Shedule)) 
+
+    if not Shedule:
+        flash('No hay horarios disponibles.')
+        return redirect(url_for('main.home'))
+
+    # Asumiendo que Shedule es una lista y quieres enviar el primer schedule_id
+    scheduleId = Shedule[0].schedule_id if Shedule else None
+
+    return render_template('calendariocitas.html', Shedule=Shedule, scheduleId=scheduleId)
+
 
 
           
@@ -260,8 +269,19 @@ def admin():
 @main.route('/get_intervalos/<int:schedule_id>', methods=['GET'])
 @login_required
 def get_intervalos(schedule_id):
-    intervalos = obtener_intervalo_time(schedule_id)
-    return jsonify(intervalos)
+    weekDay = request.args.get('weekDay')  # Obtener correctamente el weekDay del query string
+
+    # Filtra los intervalos en la base de datos según el schedule_id y el día de la semana
+    intervals = db.session.query(TimeSet).filter_by(schedule_id=schedule_id, weekDay=weekDay).all()
+
+    # Transformar los datos para devolver en formato JSON
+    response_intervals = [{
+        'intervalStart': interval.intervalStart,
+        'intervalEnd': interval.intervalEnd,
+        'tipe': interval.tipe
+    } for interval in intervals]
+
+    return jsonify({'intervals': response_intervals})
 
 
 

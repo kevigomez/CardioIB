@@ -23,48 +23,73 @@
         <!-- FullCalendar -->
         <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.2/main.min.js'></script>
         
-        <!-- Definir las URLs necesarias en una variable global -->
-        <script>
+        <script type="text/javascript">
+            // Definir las URLs necesarias en una variable global
             var blockedDatesUrl = "{{ url_for('main.get_blocked_dates') }}";
             var citasUrl = "{{ url_for('main.citas') }}";
-            var timeIntervalUrl = "{{ url_for('main.get_time_interval') }}";
             var appointmentsUrl = "{{ url_for('main.get_appointments') }}";
             var searchUserUrl = "{{ url_for('main.search_user') }}";
             var updateCitasUrl = "{{ url_for('main.update_citas', cita_id=0) }}";
+            var scheduleId = "{{ scheduleId }}";
+            var baseTimeIntervalUrl = "{{ url_for('main.get_intervalos', schedule_id='') }}";
+    
+            // Actualizar la URL de intervalos basado en la selección del usuario
+            function updateTimeIntervalUrl(scheduleId) {
+                return baseTimeIntervalUrl.replace('schedule_id=', 'schedule_id=' + scheduleId);
+            }
+            
+            $(document).ready(function() {
+                var citaSelect = $('#cita-select');
+                var scheduleId = citaSelect.val();  // Inicialmente tomamos el primer valor seleccionado
+                var timeIntervalUrl = updateTimeIntervalUrl(scheduleId);
+    
+                // Listener para actualizar la URL cuando cambie la selección
+                citaSelect.change(function() {
+                    scheduleId = citaSelect.val();  // Actualizar el scheduleId cuando cambie la selección
+                    timeIntervalUrl = updateTimeIntervalUrl(scheduleId);
+                    console.log('Nuevo scheduleId:', scheduleId);
+                    // Aquí puedes realizar una llamada AJAX para actualizar la vista con los nuevos intervalos
+                });
+    
+                // Cargar intervalos iniciales si es necesario
+                $.get(timeIntervalUrl, function(data) {
+                    // Actualiza la vista con los intervalos cargados
+                });
+            });
         </script>
     </head>
-<body>
-    {% extends "base.html" %}
-    {% block content %}
-    <div class="container-citas">
-    <div class="Info_cita">
-        <select class="cita" id="cita-select">
-            {% for Schedule in Schedules %}
-            <option value="{{ Schedule.schedule_id }}" {% if Schedule.schedule_id == selected_schedule_id %}selected{% endif %}>{{ Schedule.name }}</option>
-            {% endfor %}
-        </select>        
-    </div>
-    <br><br>
-    <div class="calendar-container">
-        <button id="prev-btn"><i class="fa-solid fa-arrow-left"></i></button>
-        <div id="calendar"></div>
-        <button id="next-btn"><i class="fa-solid fa-arrow-right"></i></button>
-    </div>
-    <div class="container-citas-module">
-    <div class="hour-selection"><!--con este -->
-        <h2>Selecciona una hora</h2>
-        <table id="schedule-table" border="1" class="table_citas">
-            <thead>
-                <tr>
-                    <th>Día y Fecha</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Las filas se generarán aquí -->
-            </tbody>
-        </table>
-    </div>
-</div>
+    <body>
+        {% extends "base.html" %}
+        {% block content %}
+        <div class="container-citas">
+            <div class="Info_cita">
+                <select class="cita" id="cita-select">
+                    {% for Schedule in Shedule %}
+                    <option value="{{ Schedule.schedule_id }}">{{ Schedule.name }}</option>
+                    {% endfor %}
+                </select>     
+            </div>
+            <br><br>
+            <div class="calendar-container">
+                <button id="prev-btn"><i class="fa-solid fa-arrow-left"></i></button>
+                <div id="calendar"></div>
+                <button id="next-btn"><i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+            <div class="container-citas-module">
+                <div class="hour-selection">
+                    <h2>Selecciona una hora</h2>
+                    <table id="schedule-table" border="1" class="table_citas">
+                        <thead>
+                            <tr>
+                                <th>Día y Fecha</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Las filas se generarán aquí -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
     <div class="form-container" style="display:none;">
         <h2>Formulario de Registro de Citas</h2>
@@ -136,7 +161,23 @@
         </div>
   
     </div>
-    <script src="{{ url_for('static', filename='script/script_o.js') }}"></script>
+    <script src="{{ url_for('static', filename='script/script_o.js') }}"></script>        
+    <script type="text/javascript">
+        // Obtener el valor seleccionado inicialmente del select
+        var citaSelect = document.getElementById('cita-select');
+        var scheduleId = citaSelect.value;  // Inicialmente tomamos el primer valor seleccionado
+    
+        // Definir la URL con el scheduleId
+        var timeIntervalUrl = "{{ url_for('main.get_intervalos', schedule_id='') }}".replace('{{ scheduleId }}', scheduleId);
+    
+        // Listener para actualizar la URL cuando cambie la selección
+        citaSelect.addEventListener('change', function() {
+            scheduleId = citaSelect.value;  // Actualizar el scheduleId cuando cambie la selección
+            timeIntervalUrl = "{{ url_for('main.get_intervalos', schedule_id='') }}".replace('{{ scheduleId }}', scheduleId);
+            console.log('Nuevo scheduleId:', scheduleId);
+        });
+    </script>
+    
     </div>
     {% endblock %}
 </body>

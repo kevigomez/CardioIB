@@ -148,9 +148,39 @@ $(document).ready(function() {
         });
     }
 
-    $.getJSON(timeIntervalUrl, function(data) {
-        generateTable(selectedDate, parseInt(data.interval));
-    });
+    function loadTimeIntervals() {
+        let selectedResourceId = $('#cita-select').val();  // Aquí seleccionas el schedule_id desde el campo
+        let selectedDate = $('#schedule-table').data('selected-date');
+        let dayOfWeek = new Date(selectedDate).getDay();  // Obtiene el día de la semana (0-6)
+    
+        // Solicita los intervalos al servidor
+        return $.ajax({
+            url: timeIntervalUrl.replace('0', selectedResourceId),  // Inserta el schedule_id en la URL
+            method: "GET",
+            data: { 
+                weekDay: dayOfWeek  // Envía el dayOfWeek en los parámetros
+            },
+            success: function(response) {
+                let intervals = response.intervals;
+    
+                // Filtrar los intervalos según el tipo
+                let citables = intervals.filter(interval => interval.tipe === 'citable');
+                let bloqueosManuales = intervals.filter(interval => interval.tipe === 'bloqueado');
+    
+                console.log("Intervalos citables:", citables);
+                console.log("Bloqueos manuales:", bloqueosManuales);
+    
+                // Generar las celdas solo con los intervalos citables y bloqueos
+                generateTimeSlots(citables, bloqueosManuales);
+            },
+            error: function(error) {
+                console.log("Error al obtener los intervalos:", error);
+            }
+        });
+    }
+    
+    
+    
 
     $('#paciente').on('input', function() {
         let query = $(this).val();
@@ -278,20 +308,50 @@ $(document).ready(function() {
         return `${hours} horas ${minutes} minutos`;
     }
 
-    function generateTimeSlots(start, end, interval) {
-        let slots = [];
-        let startTime = new Date();
-        startTime.setHours(start.split(':')[0], start.split(':')[1], 0, 0);
-        let endTime = new Date();
-        endTime.setHours(end.split(':')[0], end.split(':')[1], 0, 0);
-
-        while (startTime < endTime) {
-            let endTimeSlot = new Date(startTime.getTime() + interval * 60000);
-            slots.push(`${startTime.getHours().toString().padStart(2, '0')}:${startTime.getMinutes().toString().padStart(2, '0')} - ${endTimeSlot.getHours().toString().padStart(2, '0')}:${endTimeSlot.getMinutes().toString().padStart(2, '0')}`);
-            startTime = endTimeSlot;
-        }
-        return slots;
+    function generateTimeSlots(citables, bloqueosManuales) {
+        let tableBody = '';
+        let currentDay = $('#schedule-table').data('selected-date');
+    
+        // Iterar sobre los intervalos citables y generar las celdas correspondientes
+        citables.forEach(interval => {
+            let startTime = interval.intervalStart;
+            let endTime = interval.intervalEnd;
+            let isBlocked = bloqueosManuales.some(bloqueo => bloqueo.intervalStart === startTime && bloqueo.intervalEnd === endTime);
+    
+            // Si el intervalo está bloqueado manualmente, lo marcamos como no disponible
+            if (isBlocked) {
+                tableBody += `<tr><td>${formatTime(startTime)} - ${formatTime(endTime)}</td>`;
+                tableBody += `<td class="hour-column blocked" data-date="${formatDate(currentDay)}" data-time="${startTime} - ${endTime}">Bloqueado</td>`;
+            } else {
+                tableBody += `<tr><td>${formatTime(startTime)} - ${formatTime(endTime)}</td>`;
+                tableBody += `<td class="hour-column available" data-date="${formatDate(currentDay)}" data-time="${startTime} - ${endTime}"></td>`;
+            }
+            tableBody += `</tr>`;
+        });
+    
+        $('#schedule-table tbody').html(tableBody);
+    
+        // Añade eventos de clic a los intervalos disponibles
+        $('.hour-column.available').off('click').on('click', function() {
+            let timeSlot = $(this).data('time');
+            let date = $(this).data('date');
+            console.log("Fecha seleccionada:", date, "Intervalo:", timeSlot);
+    
+            // Actualiza los campos del formulario según el intervalo seleccionado
+            $('#inicio-hora').val(timeSlot.split(' - ')[0]);
+            $('#fin-hora').val(timeSlot.split(' - ')[1]);
+            $('#inicio-fecha').val(date);
+            $('#fin-fecha').val(date);
+        });
+    
+        // Estilo para los intervalos bloqueados manualmente
+        $('.hour-column.blocked').css({
+            'background-color': '#FF0000',  // Rojo para los bloqueados
+            'color': '#FFFFFF',             // Texto blanco para contraste
+            'pointer-events': 'none'        // Deshabilitar clics en intervalos bloqueados
+        });
     }
+    
     // Renderiza el calendario primero
     renderCalendar(); 
     loadBlockedDates().then(() => {

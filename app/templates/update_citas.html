@@ -8,7 +8,7 @@
     
 </head>
 <body>
-    {% extends "base.html" %}
+    {% extends "view_administrator.html"" %}
     {% block content %}
     <div class="container">
         <form method="post" action="{{ url_for('main.update_citas', cita_id=cita.cita_id) }}">

@@ -8,7 +8,7 @@
 <body>
     {% extends "base.html" %}
     {% block content %}
-    <form method="GET" action="{{ url_for('excel.excelByDates') }}">
+    <form method="GET" action="{{ url_for('excel.excelByDates') }}" class="excelByDates">
         <label for="start_date">Fecha de Inicio:</label>
         <input type="date" id="start_date" name="start_date" required>
         

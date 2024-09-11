@@ -78,11 +78,9 @@ def index():
                 session['fname'] = user.fname
                 session['lname'] = user.lname
                 logging.debug(f"Usuario de sesion: {session['fname']}")
-                flash('Inicio de sesión exitoso!', 'success')
                 return redirect(url_for('main.dashboard'))
         
         # Si la verificación falla, mostrar un mensaje de error
-        flash('Credenciales incorrectas. Inténtalo de nuevo.', 'danger')
         return render_template("credencialesError.html")
     
     # Si el método es GET, renderizar la página de inicio de sesión
@@ -118,19 +116,21 @@ def usuarios():
     else:
         return render_template('usuarios.html', users=[])
 
-@main.route('/citas ', methods=['GET'])
+@main.route('/citas', methods=['GET'])
 @login_required
 def citas():
     # Consulta para obtener solo algunos recursos
     Shedule = obtenerSchedules_true()
 
+    # Verifica el tipo de Shedule
+    print(Shedule)
     print(type(Shedule)) 
 
     if not Shedule:
         flash('No hay horarios disponibles.')
         return redirect(url_for('main.home'))
 
-    # Asumiendo que Shedule es una lista y quieres enviar el primer schedule_id
+    # Asumiendo que Shedule es una lista de objetos y quieres enviar el primer schedule_id
     scheduleId = Shedule[0].schedule_id if Shedule else None
 
     return render_template('calendariocitas.html', Shedule=Shedule, scheduleId=scheduleId)
@@ -266,22 +266,50 @@ def admin():
 
 
 
+
+
 @main.route('/get_intervalos/<int:schedule_id>', methods=['GET'])
 @login_required
 def get_intervalos(schedule_id):
-    weekDay = request.args.get('weekDay')  # Obtener correctamente el weekDay del query string
+    # Obtener el día de la semana desde los parámetros
+    weekDay = request.args.get('weekDay')
 
-    # Filtra los intervalos en la base de datos según el schedule_id y el día de la semana
-    intervals = db.session.query(TimeSet).filter_by(schedule_id=schedule_id, weekDay=weekDay).all()
+    # Obtener todos los intervalos para el schedule y día específicos
+    intervals = db.session.query(TimeSet).filter_by(schedule_id=schedule_id, weekDay=weekDay).order_by(TimeSet.intervalStart).all()
 
-    # Transformar los datos para devolver en formato JSON
+    # Separar los intervalos en "citable" y "bloqueado"
+    citables = [interval for interval in intervals if interval.tipe == 'citable']
+    bloqueados = [interval for interval in intervals if interval.tipe == 'bloqueado']
+
+    # Determinar el inicio y final del día usando los intervalos bloqueados
+    if bloqueados:
+        dia_inicio = bloqueados[0].intervalStart
+        dia_fin = bloqueados[-1].intervalEnd
+
+        # Convertir los valores de tiempo a objetos datetime si son cadenas
+        if isinstance(dia_inicio, str):
+            dia_inicio = datetime.strptime(dia_inicio, '%H:%M').time()
+        if isinstance(dia_fin, str):
+            dia_fin = datetime.strptime(dia_fin, '%H:%M').time()
+    else:
+        dia_inicio = datetime.strptime('00:00', '%H:%M').time()
+        dia_fin = datetime.strptime('23:59', '%H:%M').time()
+
+    # Ahora puedes llamar a strftime sin problemas
+    dayStart = dia_inicio.strftime('%H:%M')
+    dayEnd = dia_fin.strftime('%H:%M')
+
+    # Transformar los intervalos citables en formato JSON
     response_intervals = [{
-        'intervalStart': interval.intervalStart,
-        'intervalEnd': interval.intervalEnd,
-        'tipe': interval.tipe
-    } for interval in intervals]
+        'intervalStart': interval.intervalStart.strftime('%H:%M'),
+        'intervalEnd': interval.intervalEnd.strftime('%H:%M')
+    } for interval in citables]
 
-    return jsonify({'intervals': response_intervals})
+    return jsonify({
+        'intervals': response_intervals,
+        'dayStart': dayStart,
+        'dayEnd': dayEnd
+    })
 
 
 

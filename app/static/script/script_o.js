@@ -13,68 +13,93 @@ $(document).ready(function() {
         return Array.from({ length: 3 }, (_, i) => new Date(year, startMonth + i));
     }
 
-    function renderCalendar(resourceId) {
-        $('#schedule-table td').each(function() {
-            let cellDate = $(this).data('date');
-            let adjustedDate = new Date(cellDate);
-            adjustedDate.setMinutes(adjustedDate.getMinutes() + adjustedDate.getTimezoneOffset()); // Ajuste para la zona horaria
-            if (isDayBlocked(adjustedDate)) {
-                $(this).addClass('blocked-day'); // Asegúrate de que esta clase tenga los estilos adecuados en CSS
-            }
-        });
+    function renderCalendar(scheduleId, weekDay) {
+        // Limpiar el contenido del contenedor del calendario
         calendarContainer.innerHTML = '';
-        const months = getMonthsArray(currentYear, currentMonth);
-        months.forEach(date => {
-            const monthDiv = document.createElement('div');
-            monthDiv.className = 'month';
     
-            const monthNameDiv = document.createElement('div');
-            monthNameDiv.className = 'month-name';
-            monthNameDiv.textContent = date.toLocaleString('es-ES', { month: 'long', year: 'numeric' });
-            monthDiv.appendChild(monthNameDiv);
+        // Llamar al backend para obtener los intervalos del día
+        fetch(`/get_intervalos/${scheduleId}?weekDay=${weekDay}`)
+            .then(response => response.json())
+            .then(data => {
+                const { intervals, dayStart, dayEnd } = data; // Destructuring para obtener intervalos y los límites del día
+                const months = getMonthsArray(currentYear, currentMonth); // Obtener los meses para renderizar
+                const hourStart = parseInt(dayStart.split(':')[0]);
+                const hourEnd = parseInt(dayEnd.split(':')[0]);
     
-            const weekdaysDiv = document.createElement('div');
-            weekdaysDiv.className = 'weekdays';
-            ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].forEach(day => {
-                const weekdayDiv = document.createElement('div');
-                weekdayDiv.className = 'weekday';
-                weekdayDiv.textContent = day;
-                weekdaysDiv.appendChild(weekdayDiv);
-            });
-            monthDiv.appendChild(weekdaysDiv);
+                // Iterar sobre cada mes del año
+                months.forEach(date => {
+                    const monthDiv = document.createElement('div');
+                    monthDiv.className = 'month';
     
-            const daysDiv = document.createElement('div');
-            daysDiv.className = 'days';
-            const firstDay = new Date(date.getFullYear(), date.getMonth(), 1).getDay() || 7;
-            const daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+                    // Renderizar el nombre del mes
+                    const monthNameDiv = document.createElement('div');
+                    monthNameDiv.className = 'month-name';
+                    monthNameDiv.textContent = date.toLocaleString('es-ES', { month: 'long', year: 'numeric' });
+                    monthDiv.appendChild(monthNameDiv);
     
-            for (let i = 1; i < firstDay; i++) {
-                const emptyDiv = document.createElement('div');
-                emptyDiv.className = 'day empty';
-                daysDiv.appendChild(emptyDiv);
-            }
+                    // Renderizar los días de la semana
+                    const weekdaysDiv = document.createElement('div');
+                    weekdaysDiv.className = 'weekdays';
+                    ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].forEach(day => {
+                        const weekdayDiv = document.createElement('div');
+                        weekdayDiv.className = 'weekday';
+                        weekdayDiv.textContent = day;
+                        weekdaysDiv.appendChild(weekdayDiv);
+                    });
+                    monthDiv.appendChild(weekdaysDiv);
     
-            for (let day = 1; day <= daysInMonth; day++) {
-                const dayDiv = document.createElement('div');
-                dayDiv.className = 'day';
-                let dayDate = new Date(date.getFullYear(), date.getMonth(), day);
-                if (isDayBlocked(dayDate)) {
-                    dayDiv.classList.add('blocked');
-                }
-                dayDiv.textContent = day;
-                dayDiv.addEventListener('click', () => {
-                    if (!dayDiv.classList.contains('blocked')) {
-                        selectedDate = new Date(date.getFullYear(), date.getMonth(), day);
-                        console.log('Fecha seleccionada:', selectedDate);
+                    // Renderizar los días del mes
+                    const daysDiv = document.createElement('div');
+                    daysDiv.className = 'days';
+                    const firstDay = new Date(date.getFullYear(), date.getMonth(), 1).getDay() || 7;
+                    const daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+    
+                    // Rellenar los días vacíos antes del primer día del mes
+                    for (let i = 1; i < firstDay; i++) {
+                        const emptyDiv = document.createElement('div');
+                        emptyDiv.className = 'day empty';
+                        daysDiv.appendChild(emptyDiv);
                     }
-                });
-                daysDiv.appendChild(dayDiv);
-            }
     
-            monthDiv.appendChild(daysDiv);
-            calendarContainer.appendChild(monthDiv);
-        });
+                    // Renderizar los días del mes con base en los intervalos citables
+                    for (let day = 1; day <= daysInMonth; day++) {
+                        const dayDiv = document.createElement('div');
+                        dayDiv.className = 'day';
+                        let dayDate = new Date(date.getFullYear(), date.getMonth(), day);
+                        
+                        // Verificar si hay intervalos citables disponibles para ese día
+                        const availableIntervals = intervals.filter(interval => {
+                            const hourStartInterval = parseInt(interval.intervalStart.split(':')[0]);
+                            const hourEndInterval = parseInt(interval.intervalEnd.split(':')[0]);
+                            return hourStartInterval >= hourStart && hourEndInterval <= hourEnd;
+                        });
+    
+                        // Si hay intervalos disponibles, mostramos el día como disponible
+                        if (availableIntervals.length > 0) {
+                            dayDiv.classList.add('citable');
+                            dayDiv.textContent = day;
+                            dayDiv.addEventListener('click', () => {
+                                selectedDate = new Date(date.getFullYear(), date.getMonth(), day);
+                                console.log('Fecha seleccionada:', selectedDate);
+                            });
+                        } else {
+                            dayDiv.classList.add('blocked');
+                        }
+                        
+    
+                        daysDiv.appendChild(dayDiv);
+                    }
+    
+                    monthDiv.appendChild(daysDiv);
+                    calendarContainer.appendChild(monthDiv);
+                });
+            })
+            .catch(error => console.error('Error al obtener los intervalos:', error));
     }
+    
+    // Llamar a renderCalendar para el horario y día seleccionados
+    renderCalendar(scheduleId, 'lunes'); // Por ejemplo, para lunes
+    
     
 
     prevBtn.addEventListener('click', () => {
@@ -84,10 +109,10 @@ $(document).ready(function() {
             currentYear -= 1;
         }
         loadBlockedDates().then(() => {
-            renderCalendar();
+            renderCalendar(scheduleId, weekDay); // Pasar los parámetros correctos
         });
     });
-
+    
     nextBtn.addEventListener('click', () => {
         currentMonth += 3;
         if (currentMonth > 11) {
@@ -95,9 +120,10 @@ $(document).ready(function() {
             currentYear += 1;
         }
         loadBlockedDates().then(() => {
-            renderCalendar();
+            renderCalendar(scheduleId, weekDay); // Pasar los parámetros correctos
         });
     });
+    
     function loadAppointments() {
         let selectedResource = $('#cita-select').val();
         console.log("Recurso seleccionado:", selectedResource);
@@ -336,13 +362,14 @@ $(document).ready(function() {
             let timeSlot = $(this).data('time');
             let date = $(this).data('date');
             console.log("Fecha seleccionada:", date, "Intervalo:", timeSlot);
-    
+        
             // Actualiza los campos del formulario según el intervalo seleccionado
             $('#inicio-hora').val(timeSlot.split(' - ')[0]);
             $('#fin-hora').val(timeSlot.split(' - ')[1]);
             $('#inicio-fecha').val(date);
             $('#fin-fecha').val(date);
         });
+        
     
         // Estilo para los intervalos bloqueados manualmente
         $('.hour-column.blocked').css({
@@ -353,13 +380,13 @@ $(document).ready(function() {
     }
     
     // Renderiza el calendario primero
-    renderCalendar(); 
     loadBlockedDates().then(() => {
-        renderCalendar();
-        loadAppointments();
+        renderCalendar(scheduleId, weekDay);
+        loadAppointments();  // Esto debería actualizar las citas en el calendario
     }).fail(function() {
         console.log('Error al cargar días bloqueados o citas');
     });
+    
     let updateBaseUrl = updateCitasUrl;
     function loadBlockedDates() {
         let selectedResource = $('#cita-select').val();

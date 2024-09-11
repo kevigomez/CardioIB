@@ -30,33 +30,45 @@
             var appointmentsUrl = "{{ url_for('main.get_appointments') }}";
             var searchUserUrl = "{{ url_for('main.search_user') }}";
             var updateCitasUrl = "{{ url_for('main.update_citas', cita_id=0) }}";
-            var scheduleId = "{{ scheduleId }}";
-            var baseTimeIntervalUrl = "{{ url_for('main.get_intervalos', schedule_id='') }}";
-    
-            // Actualizar la URL de intervalos basado en la selección del usuario
-            function updateTimeIntervalUrl(scheduleId) {
-                return baseTimeIntervalUrl.replace('schedule_id=', 'schedule_id=' + scheduleId);
+            var scheduleId = "{{ scheduleId if scheduleId is not none else '0' }}";  // Asegúrate de que `scheduleId` no sea una cadena vacía
+            // Construye la URL base para obtener los intervalos
+            var baseTimeIntervalUrl = "{{ url_for('main.get_intervalos', schedule_id=0) }}".replace('/0', '');
+            console.log("ID de recursos: " + scheduleId)
+            function updateTimeIntervalUrl(scheduleId, weekDay) {
+                return baseTimeIntervalUrl + '/' + scheduleId + '?weekDay=' + weekDay;
             }
-            
+
             $(document).ready(function() {
                 var citaSelect = $('#cita-select');
-                var scheduleId = citaSelect.val();  // Inicialmente tomamos el primer valor seleccionado
-                var timeIntervalUrl = updateTimeIntervalUrl(scheduleId);
-    
-                // Listener para actualizar la URL cuando cambie la selección
+                var weekDaySelect = $('#week-day-select');
+
+                // Inicializa la URL para cargar los intervalos
+                var timeIntervalUrl = updateTimeIntervalUrl(scheduleId, weekDaySelect.val());
+
+                function loadIntervals(url) {
+                    $.get(url, function(data) {
+                        $('#schedule-table tbody').empty();
+                        data.intervals.forEach(function(interval) {
+                            $('#schedule-table tbody').append('<tr><td>' + interval.intervalStart + ' - ' + interval.intervalEnd + '</td></tr>');
+                        });
+                    });
+                }
+
                 citaSelect.change(function() {
-                    scheduleId = citaSelect.val();  // Actualizar el scheduleId cuando cambie la selección
-                    timeIntervalUrl = updateTimeIntervalUrl(scheduleId);
-                    console.log('Nuevo scheduleId:', scheduleId);
-                    // Aquí puedes realizar una llamada AJAX para actualizar la vista con los nuevos intervalos
+                    scheduleId = citaSelect.val();
+                    timeIntervalUrl = updateTimeIntervalUrl(scheduleId, weekDaySelect.val());
+                    loadIntervals(timeIntervalUrl);
                 });
-    
-                // Cargar intervalos iniciales si es necesario
-                $.get(timeIntervalUrl, function(data) {
-                    // Actualiza la vista con los intervalos cargados
+
+                weekDaySelect.change(function() {
+                    timeIntervalUrl = updateTimeIntervalUrl(scheduleId, weekDaySelect.val());
+                    loadIntervals(timeIntervalUrl);
                 });
-            });
-        </script>
+
+                // Inicializa la carga de intervalos si es necesario
+                loadIntervals(timeIntervalUrl);
+            });        
+    </script>
     </head>
     <body>
         {% extends "base.html" %}
@@ -162,22 +174,6 @@
   
     </div>
     <script src="{{ url_for('static', filename='script/script_o.js') }}"></script>        
-    <script type="text/javascript">
-        // Obtener el valor seleccionado inicialmente del select
-        var citaSelect = document.getElementById('cita-select');
-        var scheduleId = citaSelect.value;  // Inicialmente tomamos el primer valor seleccionado
-    
-        // Definir la URL con el scheduleId
-        var timeIntervalUrl = "{{ url_for('main.get_intervalos', schedule_id='') }}".replace('{{ scheduleId }}', scheduleId);
-    
-        // Listener para actualizar la URL cuando cambie la selección
-        citaSelect.addEventListener('change', function() {
-            scheduleId = citaSelect.value;  // Actualizar el scheduleId cuando cambie la selección
-            timeIntervalUrl = "{{ url_for('main.get_intervalos', schedule_id='') }}".replace('{{ scheduleId }}', scheduleId);
-            console.log('Nuevo scheduleId:', scheduleId);
-        });
-    </script>
-    
     </div>
     {% endblock %}
 </body>

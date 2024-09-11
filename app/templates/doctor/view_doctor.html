@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrador</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/stylesadm.css') }}">
+    <script src="https://kit.fontawesome.com/6131ecdde6.js" crossorigin="anonymous"></script>
+    
+</head>
+<body>
+  <div class="head-perfil">
+<header class="main-header">
+    <label for="btn-nav" class="btn-nav">
+      <div class="menuBarra">
+        <p> <center>{{ session['fname'] }}</center></p>
+      </div>
+    </label>
+  </header>
+</div>
+    <nav class="nav">
+      <ul class="list">
+        <img class="img-nav" src="{{ url_for('static', filename='img/custom-logo.png') }}" href="{{ url_for('main.dashboard') }}" />
+        <li class="list_item list_item--click">
+          <div class="list_button">
+            <i class="fa-solid fa-table"style="color: #ffffff;"></i><a class="nav_link"  href="" >Table</a>
+          </div>
+        </li>
+        <li class="list_item list_item--click">
+          <div class="list_button list_button--click">
+            <i class="fa-solid fa-user" style="color: #ffffff;"></i><a class="nav_link" style="color: #ffffff;">Mi cuenta</a>
+            <i class="fa-solid fa-arrow-right" style="color: #ffffff;" ></i>
+          </div>
+          <ul class="list_show">
+            <li class="list_inside">
+              <a class="nav_link nav_link--inside" href="{{ url_for('main.citas') }}" >Perfil</a>
+            </li>
+            <li class="list_inside">
+              <a class="nav_link nav_link--inside">Cambiar contraseña</a>
+            </li>
+            <li class="list_inside">
+              <a class="nav_link nav_link--inside">Preferencias de notificación</a>
+            </li>
+            <li class="list_inside">
+              <a class="nav_link nav_link--inside">Invitaciones pendientes</a>
+            </li>
+          </ul>
+        </li>
+        <li class="list_item list_item--click">
+          <div class="list_button list_button--click">
+          <i class="fa-regular fa-clipboard" style="color: #ffffff;"></i><a class="nav_link" style="color: #ffffff;">Planificación</a>
+          <i class="fa-solid fa-arrow-right" style="color: #ffffff;"></i>
+          </div>
+          <ul class="list_show">
+            <li class="list_inside">
+              <a class="nav_link nav_link--inside" href="{{ url_for('main.citas') }}">Mi Calendario</a>
+            </li>
+            <li class="list_inside">
+              <a class="nav_link nav_link--inside" href="{{ url_for('main.calendario') }}">Calendario de recursos</a>
+            </li>
+            <li class="list_inside">
+              <a class="nav_link nav_link--inside">Buscar Citas</a>
+            </li>
+          </ul>
+        </li>
+        <li class="list_item list_item--click">
+          <div class="list_button list_button--click" >
+            <i class="fa-solid fa-list-check" style="color: #ffffff;"></i><a class="nav_link" style="color: #ffffff;">Gestión aplicación</a>
+            <i class="fa-solid fa-arrow-right" style="color: #ffffff;"></i>
+          </div>
+            <ul class="list_show">
+              <li class="list_inside">
+                <a class="nav_link nav_link--inside" href="{{ url_for('main.Con_Citas') }}">Gestionar Citas</a>
+              </li>
+              <li class="list_inside">
+                <a class="nav_link nav_link--inside" href="{{ url_for('main.bloqueo_citas') }}">Agenda de no disponibilidad</a>
+              </li>
+              <li class="list_inside">
+                <a class="nav_link nav_link--inside" href="{{ url_for('main.admin') }}">Planificaciones</a>
+              </li>
+              <li class="list_inside">
+                <a class="nav_link nav_link--inside">Recursos</a>
+              </li>
+              <li class="list_inside">
+                <a class="nav_link nav_link--inside" href="{{ url_for('main.usuarios') }}">Usuarios</a>
+              </li>
+              <li class="list_inside">
+                <a class="nav_link nav_link--inside">Grupos</a>
+              </li>
+              <li class="list_inside"> 
+                <a class="nav_link nav_link--inside">Anuncios</a>
+              </li>
+              <li class="list_inside">
+                <a class="nav_link nav_link--inside">Enviar resultados</a>
+              </li>
+            </ul>
+
+        </li>        
+        <li class="list_item list_item--click">
+          <div class="list_button list_button--click ">
+            <i class="fa-solid fa-clipboard" style="color: #ffffff;"></i><a class="nav_link" style="color: #ffffff;">Informes</a>
+            <i class="fa-solid fa-arrow-right" style="color: #ffffff;"></i>
+          </div>
+          <ul class="list_show">
+            <li class="list_inside">
+              <a class="nav_link nav_link--inside" href="{{ url_for('excel.reportes_excel') }}" >Nuevo Informe</a>
+            </li>
+            <li class="list_inside">
+              <a class="nav_link nav_link--inside">Informes Guardados</a>
+            </li>
+            <li class="list_inside">
+              <a class="nav_link nav_link--inside" href="{{ url_for('excel.reportes_fecha_excel') }}">Reportes por fechas</a>
+            </li>
+          </ul>
+        </li>
+        <li class="list_item list_item--click">
+          <div class="list_button list_button--click">
+          <i class="fa-solid fa-right-from-bracket" style="color: #ffffff;"></i> 
+          <a class="nav_link logout" href="{{ url_for('main.logout') }}" onclick="return confirm('¿Estás seguro de que deseas cerrar sesión?');">Cerrar sesión</a>
+
+        </div>
+        </li>
+      </ul>
+      
+    </nav>
+  
+   
+  <script src="{{ url_for('static', filename='script/main.js') }}" ></script>
+</body>
+</html>

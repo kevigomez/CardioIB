@@ -271,8 +271,25 @@ def admin():
 @main.route('/get_intervalos/<int:schedule_id>', methods=['GET'])
 @login_required
 def get_intervalos(schedule_id):
+    weekDay = request.args.get('weekDay')
+    day_map = {
+                'lunes': 1,
+                'martes': 2,
+                'miércoles': 3,
+                'jueves': 4,
+                'viernes': 5,
+                'sábado': 6,
+                'domingo': 7
+        }
+    weekDay = day_map.get(weekDay, None)
+
+    if weekDay is None:
+        return jsonify({'error': 'Día de la semana inválido'}), 400
+
+    intervals = db.session.query(TimeSet).filter_by(schedule_id=schedule_id, weekDay=weekDay).order_by(TimeSet.intervalStart).all()
     # Obtener el día de la semana desde los parámetros
     weekDay = request.args.get('weekDay')
+    logging.debug(f"weekDay recibido: {weekDay}")
 
     # Obtener todos los intervalos para el schedule y día específicos
     intervals = db.session.query(TimeSet).filter_by(schedule_id=schedule_id, weekDay=weekDay).order_by(TimeSet.intervalStart).all()
@@ -291,6 +308,7 @@ def get_intervalos(schedule_id):
             dia_inicio = datetime.strptime(dia_inicio, '%H:%M').time()
         if isinstance(dia_fin, str):
             dia_fin = datetime.strptime(dia_fin, '%H:%M').time()
+            logging.debug(f"Dia Inicio: {dia_inicio}, Dia Fin: {dia_fin}")
     else:
         dia_inicio = datetime.strptime('00:00', '%H:%M').time()
         dia_fin = datetime.strptime('23:59', '%H:%M').time()
